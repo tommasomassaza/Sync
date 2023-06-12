@@ -1,23 +1,21 @@
 package it.ter.sync.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private var TAG = this::class.simpleName
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
+
     val loginResult: MutableLiveData<Boolean> = MutableLiveData()
     val registrationResult: MutableLiveData<String> = MutableLiveData()
-
 
     fun login(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -32,12 +30,30 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun register(name: String, email: String, password: String) {
+    fun register(name: String, age: String, place: String, email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        registrationResult.postValue("Success")
+                        val user = firebaseAuth.currentUser
+                        user?.let {
+                            // Aggiorna le informazioni aggiuntive dell'utente nel database
+                            val userAdditionalData = hashMapOf(
+                                "name" to name,
+                                "age" to age,
+                                "place" to place
+                            )
+                            // Salva le informazioni aggiuntive dell'utente nel database Firestore
+                            fireStore.collection("users")
+                                .document(user.uid)
+                                .set(userAdditionalData)
+                                .addOnSuccessListener {
+                                    registrationResult.postValue("Success")
+                                }
+                                .addOnFailureListener { exception ->
+                                    registrationResult.postValue(exception.message.toString())
+                                }
+                        }
                     } else {
                         // Si è verificato un errore durante la registrazione dell'utente
                         val exception = task.exception
@@ -46,6 +62,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 }
         }
     }
+
 
     fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
