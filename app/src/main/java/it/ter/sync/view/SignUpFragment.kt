@@ -43,8 +43,8 @@ class SignUpFragment : Fragment() {
         val buttonSignup: MaterialButton = root.findViewById(R.id.signUpBtn)
         val insertName : EditText = root.findViewById(R.id.nameSignUp)
         val insertEmail : EditText = root.findViewById(R.id.emailSignUp)
-        val insertAge : EditText = root.findViewById(R.id.age)
-        val insertLocation : EditText = root.findViewById(R.id.location)
+        val insertAge : EditText = root.findViewById(R.id.ageSignUp)
+        val insertLocation : EditText = root.findViewById(R.id.locationSignUp)
         val insertPassword1 : EditText = root.findViewById(R.id.password1)
         val insertPassword2 : EditText = root.findViewById(R.id.password2)
 
