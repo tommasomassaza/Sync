@@ -42,16 +42,14 @@ class LoginFragment : Fragment() {
         initObservers()
 
         // Inflate the layout for this fragment
-        val email: TextView = root.findViewById(R.id.email)
-        val password: TextView = root.findViewById(R.id.password)
-        val signUpLink: TextView = root.findViewById(R.id.signUpLink)
-        val buttonLogin: MaterialButton = root.findViewById(R.id.loginBtn)
+        val signUpLink = binding.signUpLink
+        val buttonLogin = binding.loginBtn
 
         buttonLogin.setOnClickListener {
-            val userEmail = email.text.toString()
-            val userPassword = password.text.toString()
+            val email = binding.email.text.toString()
+            val password = binding.password.text.toString()
             loginButtonClicked = true
-            userViewModel.login(userEmail,userPassword)
+            userViewModel.login(email,password)
         }
 
         signUpLink.setOnClickListener{

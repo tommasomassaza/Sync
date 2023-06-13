@@ -29,7 +29,7 @@ abstract class MyRoomDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MyRoomDatabase::class.java,
-                    "ter_database"
+                    "sync_database"
                 )
                     .addMigrations()
                     // Wipes and rebuilds instead of migrating if no Migration object.

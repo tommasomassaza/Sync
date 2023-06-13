@@ -17,16 +17,16 @@ class Repository (application: Context?) : ViewModel() {
      * Se rowsInserted è diverso da null, viene restituito il suo valore.
      * Altrimenti, viene restituito il valore di fallback 0.
      */
-    suspend fun insertUser(user: UserData): Boolean{
-        val rowsInserted = dBUserDao.insert(user)
-        return rowsInserted > 0
+    suspend fun insertUser(user: UserData) {
+        dBUserDao.insert(user)
     }
 
-    suspend fun existsUser(email: String): Boolean {
-        return dBUserDao.existsUser(email)
+
+    suspend fun getUserByUid(uid: String): UserData? {
+        return dBUserDao.getUserByUid(uid)
     }
 
-    suspend fun getUserByEmail(email: String): UserData? {
-        return dBUserDao.getUserByEmail(email)
+    suspend fun updateUser(userData: UserData) {
+        dBUserDao.updateUser(userData)
     }
 }

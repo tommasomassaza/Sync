@@ -5,26 +5,29 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface UserDataDAO {
     ///////////////////// insertion queries /////////////////////
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(userData: UserData?): Long
+    suspend fun insert(userData: UserData)
 
 
     ///////////////////// selection queries /////////////////////
-    @Query("SELECT * FROM users WHERE email = :email")
-    fun getUserByEmail(email: String): UserData?
+    @Query("SELECT * FROM users WHERE uid = :uid")
+    suspend fun getUserByUid(uid: String): UserData?
 
-    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE email = :email LIMIT 1)")
-    fun existsUser(email: String): Boolean
+
+    ///////////////////// update query /////////////////////
+    @Update
+    suspend fun updateUser(userData: UserData)
 
 
     ///////////////////// Deletion queries ////////////////// ///
     @Delete
-    fun delete(userData: UserData?)
+    suspend fun delete(userData: UserData?)
 
     @Delete
-    fun deleteAll(vararg usersData: UserData?)
+    suspend fun deleteAll(vararg usersData: UserData?)
 }

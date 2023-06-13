@@ -40,22 +40,17 @@ class SignUpFragment : Fragment() {
 
         initObservers()
 
-        val buttonSignup: MaterialButton = root.findViewById(R.id.signUpBtn)
-        val insertName : EditText = root.findViewById(R.id.nameSignUp)
-        val insertEmail : EditText = root.findViewById(R.id.emailSignUp)
-        val insertAge : EditText = root.findViewById(R.id.age)
-        val insertLocation : EditText = root.findViewById(R.id.location)
-        val insertPassword1 : EditText = root.findViewById(R.id.password1)
-        val insertPassword2 : EditText = root.findViewById(R.id.password2)
+        val buttonSignup = binding.signUpBtn
+        val name = binding.nameSignUp.text.toString()
+        val email = binding.emailSignUp.text.toString()
+        val age = binding.ageSignUp.text.toString()
+        val location = binding.locationSignUp.text.toString()
+        val password1 = binding.password1.text.toString()
+        val password2 = binding.password2.text.toString()
 
         buttonSignup.setOnClickListener {
             signUpButtonClicked = true
-            val name = insertName.text.toString()
-            val email = insertEmail.text.toString()
-            val location = insertLocation.text.toString()
-            val age = insertAge.text.toString()
-            val password1 = insertPassword1.text.toString()
-            val password2 = insertPassword2.text.toString()
+
             if( name.isEmpty() || email.isEmpty() || age.isEmpty() ||
                 location.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
                 Toast.makeText(activity,"Inserire i campi mancanti",Toast.LENGTH_SHORT).show()
