@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import it.ter.sync.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -30,6 +32,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun isUserLoggedIn() : Boolean{
+        // Verifica se l'utente è autenticato
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            return true
+        }
+        return false
+    }
+
     fun register(name: String, age: String, place: String, email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -37,7 +48,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     if (task.isSuccessful) {
                         val user = firebaseAuth.currentUser
                         user?.let {
-                            // Aggiorna le informazioni aggiuntive dell'utente nel database
+                            // Aggiungi le informazioni aggiuntive dell'utente nel database firestore
                             val userAdditionalData = hashMapOf(
                                 "name" to name,
                                 "age" to age,
@@ -53,6 +64,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                                 .addOnFailureListener { exception ->
                                     registrationResult.postValue(exception.message.toString())
                                 }
+
+                            // Salva le informazioni dell'utente anche nel Database locale
+
                         }
                     } else {
                         // Si è verificato un errore durante la registrazione dell'utente

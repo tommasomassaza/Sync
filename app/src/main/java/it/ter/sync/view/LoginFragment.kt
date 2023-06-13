@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -60,6 +61,15 @@ class LoginFragment : Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (userViewModel.isUserLoggedIn()) {
+            // Utente autenticato, se finisco nel loginFragment devo fare il logout
+            performLogout()
+        }
+    }
+
     /**
      * it initializes the view model and the methods used to retrieve the live data for the interface
      */
@@ -80,5 +90,11 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun performLogout() {
+        userViewModel.logout()
+        Toast.makeText(activity, "Logout successful", Toast.LENGTH_SHORT).show()
+        Log.i(TAG, "Logout")
     }
 }

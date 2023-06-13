@@ -9,18 +9,17 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
 import it.ter.sync.R
-import it.ter.sync.databinding.FragmentHomeBinding
-import it.ter.sync.viewmodel.HomeViewModel
+import it.ter.sync.databinding.FragmentAccountBinding
+import it.ter.sync.databinding.FragmentLoginBinding
 import it.ter.sync.viewmodel.UserViewModel
 
-class HomeFragment : Fragment() {
+class AccountFragment : Fragment()  {
     private val TAG: String = javaClass.simpleName
-    private val homeViewModel: HomeViewModel by activityViewModels()
     private val userViewModel: UserViewModel by activityViewModels()
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentAccountBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -31,10 +30,10 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentAccountBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        initObservers()
+
 
         return root
     }
@@ -42,24 +41,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (!userViewModel.isUserLoggedIn()) {
-            // Utente non autenticato, reindirizza al fragment di login
-            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-        }
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    /**
-     * it initializes the view model and the methods used to retrieve the live data for the interface
-     */
-    private fun initObservers() {
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
     }
 }
