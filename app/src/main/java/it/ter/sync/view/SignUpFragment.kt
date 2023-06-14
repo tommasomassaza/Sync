@@ -36,16 +36,17 @@ class SignUpFragment : Fragment() {
 
         initObservers()
 
-        val buttonSignup = binding.signUpBtn
-        val name = binding.nameSignUp.text.toString()
-        val email = binding.emailSignUp.text.toString()
-        val age = binding.ageSignUp.text.toString()
-        val location = binding.locationSignUp.text.toString()
-        val password1 = binding.password1.text.toString()
-        val password2 = binding.password2.text.toString()
+        val buttonSignUp = binding.signUpBtn
 
-        buttonSignup.setOnClickListener {
+        buttonSignUp.setOnClickListener {
             signUpButtonClicked = true
+
+            val name = binding.nameSignUp.text.toString()
+            val email = binding.emailSignUp.text.toString()
+            val age = binding.ageSignUp.text.toString()
+            val location = binding.locationSignUp.text.toString()
+            val password1 = binding.password1.text.toString()
+            val password2 = binding.password2.text.toString()
 
             if( name.isEmpty() || email.isEmpty() || age.isEmpty() ||
                 location.isEmpty() || password1.isEmpty() || password2.isEmpty()) {

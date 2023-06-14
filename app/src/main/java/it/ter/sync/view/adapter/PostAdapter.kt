@@ -31,6 +31,5 @@ class PostAdapter(private val postList: List<UserData>) : RecyclerView.Adapter<P
                 agePost.text = postList[position].age
                 locationPost.text = postList[position].location
             }
-
         }
 }

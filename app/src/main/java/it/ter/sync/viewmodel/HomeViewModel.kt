@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import it.ter.sync.database.Repository
 import it.ter.sync.database.user.UserData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

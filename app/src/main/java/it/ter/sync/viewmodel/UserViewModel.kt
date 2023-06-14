@@ -61,9 +61,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         registrationResult.postValue("Success")
-
                         viewModelScope.launch(Dispatchers.IO) {
-                            addUserToFireStore(name,age,location,email)
+                            task.result.user?.let { addUserToFireStore(it.uid,name,age,location,email) }
                         }
                     } else {
                         // Si è verificato un errore durante la registrazione dell'utente
@@ -74,34 +73,29 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private suspend fun addUserToFireStore(name: String, age: String, location: String, email: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = firebaseAuth.currentUser
-            user?.let {
-                // Aggiungi le informazioni aggiuntive dell'utente nel database firestore
-                val userAdditionalData = hashMapOf(
-                    "name" to name,
-                    "age" to age,
-                    "location" to location
-                )
-                // Salva le informazioni aggiuntive dell'utente nel database Firestore
-                fireStore.collection("users")
-                    .document(user.uid)
-                    .set(userAdditionalData)
-                    .addOnSuccessListener {
+    private suspend fun addUserToFireStore(uid: String, name: String, age: String, location: String, email: String){
 
-                        // Salva le informazioni dell'utente anche nel Database locale
-                        val userData = UserData(user.uid,name,email,location,age)
-                        viewModelScope.launch(Dispatchers.IO) {
-                            repository.insertUser(userData)
-                        }
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.i(TAG, exception.message.toString())
-                    }
+        // Aggiungi le informazioni aggiuntive dell'utente nel database firestore
+        val userAdditionalData = hashMapOf(
+            "name" to name,
+            "age" to age,
+            "location" to location
+        )
+        // Salva le informazioni aggiuntive dell'utente nel database Firestore
+        fireStore.collection("users")
+            .document(uid)
+            .set(userAdditionalData)
+            .addOnSuccessListener {
 
+                // Salva le informazioni dell'utente anche nel Database locale
+                val userData = UserData(uid,name,email,location,age)
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.insertUser(userData)
+                }
             }
-        }
+            .addOnFailureListener { exception ->
+                Log.i(TAG, exception.message.toString())
+            }
     }
 
     fun logout() {

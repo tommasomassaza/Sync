@@ -38,11 +38,11 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        homeViewModel.getAllUsers()
-
         recyclerView = binding.recyclerPost
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
+
+        homeViewModel.getAllUsers()
 
         initObservers()
 
