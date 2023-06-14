@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -41,23 +42,31 @@ class LoginFragment : Fragment() {
         initObservers()
 
         // Inflate the layout for this fragment
-        val email: TextView = root.findViewById(R.id.email)
-        val password: TextView = root.findViewById(R.id.password)
-        val signUpLink: TextView = root.findViewById(R.id.signUpLink)
-        val buttonLogin: MaterialButton = root.findViewById(R.id.loginBtn)
+        val signUpLink = binding.signUpLink
+        val buttonLogin = binding.loginBtn
 
         buttonLogin.setOnClickListener {
-            val userEmail = email.text.toString()
-            val userPassword = password.text.toString()
+            val email = binding.email.text.toString()
+            val password = binding.password.text.toString()
             loginButtonClicked = true
-            userViewModel.login(userEmail,userPassword)
+            userViewModel.login(email,password)
         }
 
         signUpLink.setOnClickListener{
+            println("ENTRATO IN LISTENER......")
             findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
         }
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (userViewModel.isUserLoggedIn()) {
+            // Utente autenticato, se finisco nel loginFragment devo fare il logout
+            performLogout()
+        }
     }
 
     /**
@@ -80,5 +89,11 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun performLogout() {
+        userViewModel.logout()
+        Toast.makeText(activity, "Logout successful", Toast.LENGTH_SHORT).show()
+        Log.i(TAG, "Logout")
     }
 }

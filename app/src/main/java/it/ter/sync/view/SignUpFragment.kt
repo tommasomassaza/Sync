@@ -6,19 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.button.MaterialButton
 import it.ter.sync.R
 import it.ter.sync.databinding.FragmentSignupBinding
 import it.ter.sync.viewmodel.UserViewModel
+
 
 class SignUpFragment : Fragment() {
     private val TAG: String = javaClass.simpleName
     private val userViewModel: UserViewModel by activityViewModels()
     private var _binding: FragmentSignupBinding? = null
+
+    private var signUpButtonClicked: Boolean = false
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -35,24 +36,24 @@ class SignUpFragment : Fragment() {
 
         initObservers()
 
-        val buttonSignup: MaterialButton = root.findViewById(R.id.signUpBtn)
-        val insertName : EditText = root.findViewById(R.id.nameSignUp)
-        val insertEmail : EditText = root.findViewById(R.id.emailSignUp)
-        val insertPassword1 : EditText = root.findViewById(R.id.password1)
-        val insertPassword2 : EditText = root.findViewById(R.id.password2)
+        val buttonSignup = binding.signUpBtn
+        val name = binding.nameSignUp.text.toString()
+        val email = binding.emailSignUp.text.toString()
+        val age = binding.ageSignUp.text.toString()
+        val location = binding.locationSignUp.text.toString()
+        val password1 = binding.password1.text.toString()
+        val password2 = binding.password2.text.toString()
 
         buttonSignup.setOnClickListener {
-            val name = insertName.text.toString()
-            val email = insertEmail.text.toString()
-            val password1 = insertPassword1.text.toString()
-            val password2 = insertPassword2.text.toString()
-            if( name.isEmpty() || email.isEmpty() ||
-                password1.isEmpty() || password2.isEmpty()) {
+            signUpButtonClicked = true
+
+            if( name.isEmpty() || email.isEmpty() || age.isEmpty() ||
+                location.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
                 Toast.makeText(activity,"Inserire i campi mancanti",Toast.LENGTH_SHORT).show()
             } else if(password1 != password2) {
                 Toast.makeText(activity,"Le password non corrispondono",Toast.LENGTH_SHORT).show()
             } else {
-                userViewModel.register(name,email,password1)
+                userViewModel.register(name,age,location,email,password1)
             }
         }
 
@@ -63,13 +64,16 @@ class SignUpFragment : Fragment() {
     private fun initObservers() {
         Log.i(TAG, "Registering Observers: ViewModel? $userViewModel")
         userViewModel.registrationResult.observe(viewLifecycleOwner) { registrationResult ->
-            if (registrationResult == "Success") {
-                Toast.makeText(activity, "Sign Up Success", Toast.LENGTH_SHORT).show()
-                Log.i(TAG, "Sign Up Success")
-                findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
-            } else {
-                Toast.makeText(activity, "$registrationResult", Toast.LENGTH_SHORT).show()
-                Log.i(TAG, "$registrationResult")
+            if(signUpButtonClicked) {
+                signUpButtonClicked = false
+                if (registrationResult == "Success") {
+                    Toast.makeText(activity, "Sign Up Success", Toast.LENGTH_SHORT).show()
+                    Log.i(TAG, "Sign Up Success")
+                    findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
+                } else {
+                    Toast.makeText(activity, "$registrationResult", Toast.LENGTH_SHORT).show()
+                    Log.i(TAG, "$registrationResult")
+                }
             }
         }
     }

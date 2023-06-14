@@ -16,20 +16,22 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.ui.NavigationUI
 import it.ter.sync.R
 import it.ter.sync.databinding.ActivityMainBinding
 import it.ter.sync.viewmodel.UserViewModel
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity() {
     private val TAG: String = javaClass.simpleName
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var userViewModel: UserViewModel
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +54,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.homeFragment, R.id.loginFragment
+                R.id.homeFragment, R.id.accountFragment, R.id.loginFragment
             ), drawerLayout
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        navView.setNavigationItemSelectedListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -68,6 +70,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        // Se mi trovo nel loginFragment non posso accedere al menù
+        val currentFragment = navController.currentDestination
+        if(currentFragment?.id == R.id.loginFragment){
+            return false
+        }
+
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -78,21 +87,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             super.onBackPressed()
         }
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_logout -> {
-                userViewModel.logout()
-                Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
-                Log.i(TAG, "Logout")
-                navController.navigate(R.id.loginFragment)
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-
-        // chiudo il menù al click
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
     }
 }

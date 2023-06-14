@@ -1,25 +1,30 @@
 package it.ter.sync.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import it.ter.sync.R
 import it.ter.sync.databinding.FragmentHomeBinding
+import it.ter.sync.view.adapter.PostAdapter
 import it.ter.sync.viewmodel.HomeViewModel
+import it.ter.sync.viewmodel.UserViewModel
 
 class HomeFragment : Fragment() {
     private val TAG: String = javaClass.simpleName
+    private val userViewModel: UserViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private lateinit var firebaseAuth: FirebaseAuth
     private var _binding: FragmentHomeBinding? = null
+
+    private lateinit var recyclerView: RecyclerView
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -33,6 +38,12 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        homeViewModel.getAllUsers()
+
+        recyclerView = binding.recyclerPost
+        val layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = layoutManager
+
         initObservers()
 
         return root
@@ -41,14 +52,9 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        firebaseAuth = FirebaseAuth.getInstance()
-
-        // Verifica se l'utente è autenticato
-        val currentUser = firebaseAuth.currentUser
-        if (currentUser == null) {
+        if (!userViewModel.isUserLoggedIn()) {
             // Utente non autenticato, reindirizza al fragment di login
-            val navController = findNavController()
-            navController.navigate(R.id.action_homeFragment_to_loginFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
         }
     }
 
@@ -61,9 +67,13 @@ class HomeFragment : Fragment() {
      * it initializes the view model and the methods used to retrieve the live data for the interface
      */
     private fun initObservers() {
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        Log.i(TAG, "Registering Observers: ViewModel? $homeViewModel")
+        homeViewModel.users.observe(viewLifecycleOwner) {
+
+            val adapter = PostAdapter(it)
+            recyclerView.adapter = adapter
         }
+
     }
+
 }
