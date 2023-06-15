@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- message_background.xml -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#ECECEC" /> <!-- Colore di sfondo -->
+    <corners android:radius="8dp" /> <!-- Contorni arrotondati con un raggio di 8dp -->
+</shape>

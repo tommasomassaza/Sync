@@ -19,10 +19,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: Repository = Repository(application)
 
-    val loginResult: MutableLiveData<Boolean> = MutableLiveData()
-    val registrationResult: MutableLiveData<String> = MutableLiveData()
-    val currentUser: MutableLiveData<UserData> = MutableLiveData()
-    val userUpdated: MutableLiveData<Boolean> = MutableLiveData()
+    var loginResult: MutableLiveData<Boolean> = MutableLiveData()
+    var registrationResult: MutableLiveData<String> = MutableLiveData()
+    var currentUser: MutableLiveData<UserData> = MutableLiveData()
+    var userUpdated: MutableLiveData<Boolean> = MutableLiveData()
+    var users: MutableLiveData<List<UserData>> = MutableLiveData()
 
     fun login(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -61,8 +62,16 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         registrationResult.postValue("Success")
-                        viewModelScope.launch(Dispatchers.IO) {
-                            task.result.user?.let { addUserToFireStore(it.uid,name,age,location,email) }
+                        task.result.user?.let {
+                            val userData = UserData(it.uid,name,email,location,age)
+
+                            // Salva le informazioni su fireStore
+                            addUserToFireStore(userData)
+
+                            // Salva le informazioni dell'utente anche nel Database locale
+                            viewModelScope.launch(Dispatchers.IO) {
+                                repository.insertUser(userData)
+                            }
                         }
                     } else {
                         // Si è verificato un errore durante la registrazione dell'utente
@@ -73,29 +82,26 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private suspend fun addUserToFireStore(uid: String, name: String, age: String, location: String, email: String){
+    private fun addUserToFireStore(userData: UserData) {
+        viewModelScope.launch(Dispatchers.IO) {
 
-        // Aggiungi le informazioni aggiuntive dell'utente nel database firestore
-        val userAdditionalData = hashMapOf(
-            "name" to name,
-            "age" to age,
-            "location" to location
-        )
-        // Salva le informazioni aggiuntive dell'utente nel database Firestore
-        fireStore.collection("users")
-            .document(uid)
-            .set(userAdditionalData)
-            .addOnSuccessListener {
-
-                // Salva le informazioni dell'utente anche nel Database locale
-                val userData = UserData(uid,name,email,location,age)
-                viewModelScope.launch(Dispatchers.IO) {
-                    repository.insertUser(userData)
+            // Aggiungi le informazioni aggiuntive dell'utente nel database firestore
+            val userAdditionalData = hashMapOf(
+                "name" to userData.name,
+                "age" to userData.age,
+                "location" to userData.location
+            )
+            // Salva le informazioni aggiuntive dell'utente nel database Firestore
+            fireStore.collection("users")
+                .document(userData.uid)
+                .set(userAdditionalData)
+                .addOnSuccessListener {
+                    Log.i(TAG, "User add to fireStore")
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.i(TAG, exception.message.toString())
-            }
+                .addOnFailureListener { exception ->
+                    Log.i(TAG, exception.message.toString())
+                }
+        }
     }
 
     fun logout() {
@@ -106,35 +112,65 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateUser(name: String, age: String, location: String) {
-        val user = firebaseAuth.currentUser
-        user?.let {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            user?.let {
+                val userAdditionalData = hashMapOf<String, Any>(
+                    "name" to name,
+                    "age" to age,
+                    "location" to location
+                )
 
-            val userAdditionalData = hashMapOf<String,Any>(
-                "name" to name,
-                "age" to age,
-                "location" to location
-            )
+                fireStore.collection("users")
+                    .document(user.uid)
+                    .update(userAdditionalData)
+                    .addOnSuccessListener {
 
-            fireStore.collection("users")
-                .document(user.uid)
-                .update(userAdditionalData)
-                .addOnSuccessListener {
+                        userUpdated.postValue(true)
 
-                    // Aggiorna le informazioni dell'utente anche nel Database locale
-                    val userData = UserData(user.uid,name,user.email!!,location,age)
-                    viewModelScope.launch(Dispatchers.IO) {
-                        try {
+                        // Aggiorna le informazioni dell'utente anche nel Database locale
+                        val userData = UserData(user.uid, name, user.email!!, location, age)
+                        viewModelScope.launch(Dispatchers.IO) {
                             repository.updateUser(userData)
-                            userUpdated.postValue(true)
-                        } catch (e: Exception) {
-                            userUpdated.postValue(true)
                         }
                     }
+                    .addOnFailureListener { exception ->
+                        userUpdated.postValue(false)
+                        Log.i(TAG, exception.message.toString())
+                    }
+
+            }
+        }
+    }
+
+    fun getAllUsers() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            fireStore.collection("users")
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    val userList = mutableListOf<UserData>()
+
+                    for (document in querySnapshot) {
+                        val uid = document.id
+                        // se si tratta dell'utente loggato non mi interessa
+                        if(uid != user?.uid) {
+                            val name = document.getString("name") ?: ""
+                            val age = document.getString("age") ?: ""
+                            val location = document.getString("location") ?: ""
+
+                            // Crea un oggetto User utilizzando i dati ottenuti dal documento
+                            val user = UserData(uid = uid, name = name, location = location, age = age)
+                            userList.add(user)
+                        }
+                    }
+
+                    users.postValue(userList)
+                    Log.i(TAG, "GetAllUsers Success")
                 }
                 .addOnFailureListener { exception ->
                     Log.i(TAG, exception.message.toString())
                 }
-
         }
     }
 }

@@ -1,4 +1,4 @@
-package it.ter.sync.database.user
+package it.ter.sync.database.message
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,28 +6,19 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import it.ter.sync.database.user.UserData
 
 @Dao
-interface UserDataDAO {
+interface MessageDataDAO {
     ///////////////////// insertion queries /////////////////////
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(userData: UserData)
+    suspend fun insert(messageData: MessageData)
 
 
     ///////////////////// selection queries /////////////////////
-    @Query("SELECT * FROM users WHERE uid = :uid")
-    suspend fun getUserByUid(uid: String): UserData?
-
 
     ///////////////////// update query /////////////////////
-    @Update
-    suspend fun updateUser(userData: UserData)
 
 
     ///////////////////// Deletion queries /////////////////////
-    @Delete
-    suspend fun delete(userData: UserData?)
-
-    @Delete
-    suspend fun deleteAll(vararg usersData: UserData?)
 }

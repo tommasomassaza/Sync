@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_homeFragment_to_accountFragment"
             app:destination="@id/accountFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
     </fragment>
 
     <fragment
@@ -57,6 +60,27 @@
         tools:layout="@layout/fragment_signup" >
         <action
             android:id="@+id/action_signUpFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/messageFragment"
+        android:name="it.ter.sync.view.MessageFragment"
+        android:label="@string/menu_message"
+        tools:layout="@layout/fragment_message" >
+        <argument
+            android:name="userUid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_messageFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_messageFragment_to_accountFragment"
+            app:destination="@id/accountFragment" />
+        <action
+            android:id="@+id/action_messageFragment_to_loginFragment"
+            app:popUpTo="@id/messageFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -14,13 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import it.ter.sync.R
 import it.ter.sync.databinding.FragmentHomeBinding
 import it.ter.sync.view.adapter.PostAdapter
-import it.ter.sync.viewmodel.HomeViewModel
 import it.ter.sync.viewmodel.UserViewModel
 
 class HomeFragment : Fragment() {
     private val TAG: String = javaClass.simpleName
     private val userViewModel: UserViewModel by activityViewModels()
-    private val homeViewModel: HomeViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
 
     private lateinit var recyclerView: RecyclerView
@@ -42,7 +39,8 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        homeViewModel.getAllUsers()
+        // chiamo il metodo del viewModel per prendere tutti gli utenti
+        userViewModel.getAllUsers()
 
         initObservers()
 
@@ -67,13 +65,12 @@ class HomeFragment : Fragment() {
      * it initializes the view model and the methods used to retrieve the live data for the interface
      */
     private fun initObservers() {
-        Log.i(TAG, "Registering Observers: ViewModel? $homeViewModel")
-        homeViewModel.users.observe(viewLifecycleOwner) {
+        Log.i(TAG, "Registering Observers: ViewModel? $userViewModel")
+        userViewModel.users.observe(viewLifecycleOwner) {
 
             val adapter = PostAdapter(it)
             recyclerView.adapter = adapter
         }
-
     }
 
 }
