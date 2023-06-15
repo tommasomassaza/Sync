@@ -2,20 +2,13 @@ package it.ter.sync.view.adapter
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import it.ter.sync.R
 import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.PostItemBinding
-import it.ter.sync.viewmodel.MessageViewModel
-import it.ter.sync.viewmodel.UserViewModel
 
 class PostAdapter(private val postList: List<UserData>) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
@@ -41,7 +34,7 @@ class PostAdapter(private val postList: List<UserData>) : RecyclerView.Adapter<P
             buttonChat.setOnClickListener {
                 val navController = Navigation.findNavController(it)
                 val bundle = Bundle()
-                bundle.putString("userId", postList[position].uid) //
+                bundle.putString("userId", postList[position].uid)
                 navController.navigate(R.id.action_homeFragment_to_messageFragment, bundle)
             }
 

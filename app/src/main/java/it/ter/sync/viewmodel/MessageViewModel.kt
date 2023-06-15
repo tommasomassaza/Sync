@@ -19,7 +19,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     private var TAG = this::class.simpleName
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val database: FirebaseDatabase = FirebaseDatabase.getInstance("https://sync-214bf-default-rtdb.europe-west1.firebasedatabase.app")
+
 
     var messageList: MutableLiveData<List<MessageData>> = MutableLiveData()
 

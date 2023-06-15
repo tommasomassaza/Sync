@@ -53,7 +53,6 @@ class LoginFragment : Fragment() {
         }
 
         signUpLink.setOnClickListener{
-            println("ENTRATO IN LISTENER......")
             findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
         }
 
