@@ -4,47 +4,57 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"
+    android:layout_margin="4dp"
     android:background="@drawable/message_background"
-    android:clipToPadding="false"
-    android:clipChildren="false"
     android:elevation="2dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <!-- TextView per il mittente -->
-        <TextView
-            android:id="@+id/textViewSender"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:text="Sender"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/textViewMessage"
-            app:layout_constraintVertical_chainStyle="packed" />
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <!-- TextView per l'ora -->
+            <TextView
+                android:id="@+id/textViewTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:text="12:00 PM" />
+
+            <!-- Spaziatore per separare l'ora dal mittente -->
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <!-- TextView per il mittente -->
+            <TextView
+                android:id="@+id/textViewSender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:text="Sender" />
+
+        </LinearLayout>
 
         <!-- TextView per il testo del messaggio -->
         <TextView
             android:id="@+id/textViewMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:textSize="16sp"
             android:textColor="@android:color/black"
-            android:text="Message Text"
-            app:layout_constraintStart_toEndOf="@id/textViewSender"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:text="Message Text" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

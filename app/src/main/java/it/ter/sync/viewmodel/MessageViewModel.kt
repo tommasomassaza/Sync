@@ -14,6 +14,9 @@ import com.google.firebase.database.ValueEventListener
 import it.ter.sync.database.message.MessageData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MessageViewModel(application: Application) : AndroidViewModel(application) {
     private var TAG = this::class.simpleName
@@ -57,7 +60,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun sendMessage(text: String, arg: String?) {
+    fun sendMessage(text: String, userId: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             val messagesRef = database.getReference("messages")
@@ -65,9 +68,11 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             // Crea un nuovo nodo per il messaggio e aggiungi i dati
             val messageId = messagesRef.push().key
             if (messageId != null) {
-                val timestamp = ServerValue.TIMESTAMP
+                val timestamp = Date().time
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                val dateString = dateFormat.format(Date(timestamp))
                 val message =
-                    MessageData(messageId, text, timestamp.toString(), user?.uid, arg)
+                    MessageData(messageId, text, dateString, user?.uid, userId)
 
                 // Salva il messaggio nella Firebase Realtime Database
                 messagesRef.child(messageId).setValue(message)

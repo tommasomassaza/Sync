@@ -35,6 +35,7 @@ class PostAdapter(private val postList: List<UserData>) : RecyclerView.Adapter<P
                 val navController = Navigation.findNavController(it)
                 val bundle = Bundle()
                 bundle.putString("userId", postList[position].uid)
+                bundle.putString("userName", postList[position].name)
                 navController.navigate(R.id.action_homeFragment_to_messageFragment, bundle)
             }
 
