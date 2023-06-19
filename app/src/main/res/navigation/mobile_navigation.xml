@@ -68,9 +68,6 @@
         android:name="it.ter.sync.view.MessageFragment"
         android:label="@string/menu_message"
         tools:layout="@layout/fragment_message" >
-        <argument
-            android:name="userUid"
-            app:argType="string" />
         <action
             android:id="@+id/action_messageFragment_to_homeFragment"
             app:destination="@id/homeFragment" />

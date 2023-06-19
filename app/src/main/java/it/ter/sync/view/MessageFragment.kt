@@ -44,7 +44,6 @@ class MessageFragment : Fragment() {
 
         val recyclerView = binding.recyclerMessage
         val layoutManager = LinearLayoutManager(requireContext()).apply {
-            reverseLayout = true // Imposta reverseLayout su true per far partire l'Adapter dal fondo
             stackFromEnd = true // Imposta stackFromEnd su true per far partire l'Adapter dal fondo
         }
 
