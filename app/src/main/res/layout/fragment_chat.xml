@@ -9,7 +9,7 @@
 
     <!-- TextView per l'utente con cui si sta parlando -->
     <TextView
-        android:id="@+id/textViewMessenger"
+        android:id="@+id/textSearchMessanger"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -25,7 +25,7 @@
 
 
     <LinearLayout
-        app:layout_constraintTop_toBottomOf="@+id/textViewMessenger"
+        app:layout_constraintTop_toBottomOf="@+id/textSearchMessanger"
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,10 +47,10 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_message"
+        android:id="@+id/recycler_chat"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toEndOf="parent"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
