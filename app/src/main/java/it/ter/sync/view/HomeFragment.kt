@@ -23,7 +23,6 @@ import android.location.LocationManager
 import android.content.Context
 import android.location.Location
 import android.widget.TextView
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
 import it.ter.sync.database.user.UserData
 import kotlin.math.*
@@ -103,41 +102,10 @@ class HomeFragment : Fragment() {
 
                 // Utilizza le coordinate formattate per le operazioni successive
                 userViewModel.updateUser(name, age, location, latitude, longitude)
-
-
-                userViewModel.users.observe(viewLifecycleOwner) {
-
-                    val MAX_DISTANCE = 5.0 // in chilometri
-
-                    it.let{ users ->
-                        for(user in users) {
-                            val distance = calculateDistance(
-                                latitude,
-                                longitude,
-                                user.latitude,
-                                user.longitude
-                            )
-                            // Stampa le coordinate nel log
-                            Log.d("HomeFragment", "Distanza = $distance")
-
-                            if (distance <= MAX_DISTANCE) {
-                                //ichiarare filteredUsers.
-                                //filteredUsers.clear()
-                                if(user !in filteredUsers)
-                                    filteredUsers.add(user)
-                                // Stampa le coordinate nel log
-                                Log.d("HomeFragment", "filteredusers = $filteredUsers")
-
-                            }
-                        }
-                    }
-
-                }
-
-
-
-
-
+                Log.d("HomeFragment", "Sono qui")
+                userViewModel.getAllUsers(latitude, longitude)
+                // Stampa le coordinate nel log
+                Log.d("HomeFragment", "Sono la")
             }
         }
 
@@ -163,31 +131,6 @@ class HomeFragment : Fragment() {
 
 
 
-    fun calculateDistance(
-        lat1: Double, lon1: Double, // Coordinate del primo punto
-        lat2: Double, lon2: Double  // Coordinate del secondo punto
-    ): Double {
-        val earthRadius = 6371 // Raggio medio della Terra in chilometri
-
-        // Converti le coordinate in radianti
-        val lat1Rad = Math.toRadians(lat1)
-        val lon1Rad = Math.toRadians(lon1)
-        val lat2Rad = Math.toRadians(lat2)
-        val lon2Rad = Math.toRadians(lon2)
-
-        // Calcola la differenza tra le latitudini e le longitudini
-        val dLat = lat2Rad - lat1Rad
-        val dLon = lon2Rad - lon1Rad
-
-        // Applica la formula di Haversine
-        val a = sin(dLat/2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon/2).pow(2)
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        val distance = earthRadius * c
-
-        return distance
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -202,7 +145,7 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
 
         // chiamo il metodo del viewModel per prendere tutti gli utenti
-        userViewModel.getAllUsers()
+        //userViewModel.getAllUsers()
 
         userViewModel.getUserInfo()
 
@@ -242,7 +185,7 @@ class HomeFragment : Fragment() {
     private fun initObservers() {
         Log.i(TAG, "Registering Observers: ViewModel? $userViewModel")
         userViewModel.users.observe(viewLifecycleOwner) {
-            
+
             val adapter = PostAdapter(it)
             recyclerView.adapter = adapter
         }

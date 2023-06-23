@@ -1,16 +1,25 @@
 package it.ter.sync.viewmodel
 
+import android.Manifest
 import android.app.Application
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import it.ter.sync.database.Repository
 import it.ter.sync.database.user.UserData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.*
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private var TAG = this::class.simpleName
@@ -24,6 +33,34 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     var currentUser: MutableLiveData<UserData> = MutableLiveData()
     var userUpdated: MutableLiveData<Boolean> = MutableLiveData()
     var users: MutableLiveData<List<UserData>> = MutableLiveData()
+
+
+
+    fun calculateDistance(
+        lat1: Double, lon1: Double, // Coordinate del primo punto
+        lat2: Double, lon2: Double  // Coordinate del secondo punto
+    ): Double {
+        val earthRadius = 6371 // Raggio medio della Terra in chilometri
+
+        // Converti le coordinate in radianti
+        val lat1Rad = Math.toRadians(lat1)
+        val lon1Rad = Math.toRadians(lon1)
+        val lat2Rad = Math.toRadians(lat2)
+        val lon2Rad = Math.toRadians(lon2)
+
+        // Calcola la differenza tra le latitudini e le longitudini
+        val dLat = lat2Rad - lat1Rad
+        val dLon = lon2Rad - lon1Rad
+
+        // Applica la formula di Haversine
+        val a = sin(dLat/2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon/2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val distance = earthRadius * c
+
+        return distance
+    }
+
+
 
     fun login(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -147,7 +184,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getAllUsers() {
+    fun getAllUsers(currentlatitude: Double, currentlongitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             fireStore.collection("users")
@@ -165,10 +202,31 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                             val latitude = document.getDouble("latitude") ?: 0.0
                             val longitude = document.getDouble("longitude") ?: 0.0
 
+                            val MAX_DISTANCE = 5.0 // in chilometri
 
-                            // Crea un oggetto User utilizzando i dati ottenuti dal documento
-                            val user = UserData(uid = uid, name = name, location = location, age = age, latitude = latitude, longitude = longitude)
-                            userList.add(user)
+                            val distance = calculateDistance(
+                                latitude,
+                                longitude,
+                                currentlatitude,
+                                currentlongitude
+                            )
+
+                            // Stampa la distanza nel log
+                            Log.d("TAG", "Distanza = $distance")
+
+                            if (distance <= MAX_DISTANCE) {
+
+                                // Crea un oggetto User utilizzando i dati ottenuti dal documento
+                                val user = UserData(
+                                    uid = uid,
+                                    name = name,
+                                    location = location,
+                                    age = age,
+                                    latitude = latitude,
+                                    longitude = longitude
+                                )
+                                userList.add(user)
+                            }
                         }
                     }
 
