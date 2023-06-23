@@ -15,34 +15,34 @@ class PostAdapter(private val postList: List<UserData>) : RecyclerView.Adapter<P
     // Provide a reference to the views for each data item
     class ViewHolder(val binding: PostItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-        private lateinit var buttonChat : Button
+    private lateinit var buttonChat : Button
 
-        // Return the size of your dataset (invoked by the layout manager)
-        override fun getItemCount() = postList.size
+    // Return the size of your dataset (invoked by the layout manager)
+    override fun getItemCount() = postList.size
 
-        // Create new views (invoked by the layout manager)
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val binding = PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    // Create new views (invoked by the layout manager)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-            buttonChat = binding.chat
+        buttonChat = binding.chat
 
-            return ViewHolder(binding)
+        return ViewHolder(binding)
+    }
+
+    // Replace the contents of a view (invoked by the layout manager)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        buttonChat.setOnClickListener {
+            val navController = Navigation.findNavController(it)
+            val bundle = Bundle()
+            bundle.putString("userId", postList[position].uid)
+            bundle.putString("userName", postList[position].name)
+            navController.navigate(R.id.action_homeFragment_to_messageFragment, bundle)
         }
 
-        // Replace the contents of a view (invoked by the layout manager)
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            buttonChat.setOnClickListener {
-                val navController = Navigation.findNavController(it)
-                val bundle = Bundle()
-                bundle.putString("userId", postList[position].uid)
-                bundle.putString("userName", postList[position].name)
-                navController.navigate(R.id.action_homeFragment_to_messageFragment, bundle)
-            }
-
-            holder.binding.apply {
-                usernamePost.text = postList[position].name
-                agePost.text = postList[position].age
-                locationPost.text = postList[position].location
-            }
+        holder.binding.apply {
+            usernamePost.text = postList[position].name
+            agePost.text = postList[position].age
+            locationPost.text = postList[position].location
         }
+    }
 }

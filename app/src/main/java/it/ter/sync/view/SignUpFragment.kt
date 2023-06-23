@@ -47,6 +47,8 @@ class SignUpFragment : Fragment() {
             val location = binding.locationSignUp.text.toString()
             val password1 = binding.password1.text.toString()
             val password2 = binding.password2.text.toString()
+            val latitude = 45.10
+            val longitude = 7.65
 
             if( name.isEmpty() || email.isEmpty() || age.isEmpty() ||
                 location.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
@@ -54,7 +56,7 @@ class SignUpFragment : Fragment() {
             } else if(password1 != password2) {
                 Toast.makeText(activity,"Le password non corrispondono",Toast.LENGTH_SHORT).show()
             } else {
-                userViewModel.register(name,age,location,email,password1)
+                userViewModel.register(name,age,location,email,password1,latitude, longitude)
             }
         }
 

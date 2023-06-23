@@ -56,14 +56,14 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun register(name: String, age: String, location: String, email: String, password: String) {
+    fun register(name: String, age: String, location: String, email: String, password: String, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         registrationResult.postValue("Success")
                         task.result.user?.let {
-                            val userData = UserData(it.uid,name,email,location,age)
+                            val userData = UserData(it.uid,name,email,location,age, latitude, longitude)
 
                             // Salva le informazioni su fireStore
                             addUserToFireStore(userData)
@@ -89,7 +89,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             val userAdditionalData = hashMapOf(
                 "name" to userData.name,
                 "age" to userData.age,
-                "location" to userData.location
+                "location" to userData.location,
+                "latitude" to userData.latitude,
+                "longitude" to userData.longitude
             )
             // Salva le informazioni aggiuntive dell'utente nel database Firestore
             fireStore.collection("users")
@@ -111,14 +113,16 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateUser(name: String, age: String, location: String) {
+    fun updateUser(name: String, age: String, location: String, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
                 val userAdditionalData = hashMapOf<String, Any>(
                     "name" to name,
                     "age" to age,
-                    "location" to location
+                    "location" to location,
+                    "latitude" to latitude,
+                    "longitude" to longitude
                 )
 
                 fireStore.collection("users")
@@ -129,7 +133,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                         userUpdated.postValue(true)
 
                         // Aggiorna le informazioni dell'utente anche nel Database locale
-                        val userData = UserData(user.uid, name, user.email!!, location, age)
+                        val userData = UserData(user.uid, name, user.email!!, location, age, latitude, longitude)
                         viewModelScope.launch(Dispatchers.IO) {
                             repository.updateUser(userData)
                         }
@@ -158,9 +162,12 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                             val name = document.getString("name") ?: ""
                             val age = document.getString("age") ?: ""
                             val location = document.getString("location") ?: ""
+                            val latitude = document.getDouble("latitude") ?: 0.0
+                            val longitude = document.getDouble("longitude") ?: 0.0
+
 
                             // Crea un oggetto User utilizzando i dati ottenuti dal documento
-                            val user = UserData(uid = uid, name = name, location = location, age = age)
+                            val user = UserData(uid = uid, name = name, location = location, age = age, latitude = latitude, longitude = longitude)
                             userList.add(user)
                         }
                     }

@@ -48,7 +48,7 @@ class AccountFragment : Fragment()  {
             val location = binding.location.text.toString().ifEmpty { binding.location.hint.toString() }
 
             saveButtonClicked = true
-            userViewModel.updateUser(name,age,location)
+            userViewModel.updateUser(name,age,location, 0.0, 0.0)
         }
 
         return root
