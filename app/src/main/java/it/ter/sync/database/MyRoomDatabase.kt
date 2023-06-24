@@ -4,16 +4,20 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import it.ter.sync.database.message.MessageData
+import it.ter.sync.database.message.MessageDataDAO
 import it.ter.sync.database.user.UserData
 import it.ter.sync.database.user.UserDataDAO
 
 @Database(
-    entities = [UserData::class],
-    version = 1,
+    entities = [UserData::class, MessageData::class],
+    version = 6,
     exportSchema = true
 )
 abstract class MyRoomDatabase : RoomDatabase() {
     abstract fun myUserDataDao(): UserDataDAO?
+    abstract fun myMessageDataDao(): MessageDataDAO?
+
 
     companion object {
         // marking the instance as volatile to ensure atomic access to the variable

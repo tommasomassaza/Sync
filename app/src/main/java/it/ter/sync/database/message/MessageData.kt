@@ -9,6 +9,7 @@ class MessageData(
     var uid: String = "",
 
     var text: String = "",
+    val timestampMillis: Long = 0,
     var timeStamp: String = "",
     var senderId: String? = "",
     var receiverId: String? = ""

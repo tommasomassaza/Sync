@@ -7,10 +7,16 @@ import android.widget.Button
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import it.ter.sync.R
+import it.ter.sync.database.message.MessageData
 import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.PostItemBinding
 
-class PostAdapter(private val postList: List<UserData>) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+class PostAdapter(private var postList: List<UserData>) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+
+    fun setPostList(users: List<UserData>) {
+        postList = users
+        notifyDataSetChanged() // Aggiorna la RecyclerView
+    }
 
     // Provide a reference to the views for each data item
     class ViewHolder(val binding: PostItemBinding) : RecyclerView.ViewHolder(binding.root)

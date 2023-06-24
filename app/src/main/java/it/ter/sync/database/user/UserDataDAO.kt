@@ -20,9 +20,14 @@ interface UserDataDAO {
 
 
     ///////////////////// update query /////////////////////
-    @Update
-    suspend fun updateUser(userData: UserData)
+    @Query("UPDATE users SET name = :name WHERE uid = :userId")
+    suspend fun updateUserName(userId: String, name: String)
 
+    @Query("UPDATE users SET location = :location WHERE uid = :userId")
+    suspend fun updateUserLocation(userId: String, location: String)
+
+    @Query("UPDATE users SET age = :age WHERE uid = :userId")
+    suspend fun updateUserAge(userId: String, age: String)
 
     ///////////////////// Deletion queries /////////////////////
     @Delete

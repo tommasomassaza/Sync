@@ -80,4 +80,14 @@
             app:popUpToInclusive="true"
             app:destination="@id/loginFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="it.ter.sync.view.ChatFragment"
+        android:label="@string/menu_chat"
+        tools:layout="@layout/fragment_chat" >
+        <action
+            android:id="@+id/action_chatFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
+    </fragment>
 </navigation>

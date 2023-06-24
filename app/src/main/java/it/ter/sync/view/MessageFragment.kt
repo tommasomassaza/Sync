@@ -1,6 +1,5 @@
 package it.ter.sync.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.internal.ViewUtils.hideKeyboard
+import androidx.recyclerview.widget.RecyclerView
 import it.ter.sync.databinding.FragmentMessageBinding
 import it.ter.sync.view.adapter.MessageAdapter
 import it.ter.sync.viewmodel.MessageViewModel
@@ -20,9 +19,10 @@ class MessageFragment : Fragment() {
     private val messageViewModel: MessageViewModel by activityViewModels()
     private var _binding: FragmentMessageBinding? = null
 
+    private lateinit var recyclerView: RecyclerView
 
-    private var userId: String? = null
-    private lateinit var userName: String
+    private var messengerId: String? = null
+    private lateinit var messengerName: String
     private lateinit var messageAdapter: MessageAdapter
 
     // This property is only valid between onCreateView and
@@ -37,28 +37,28 @@ class MessageFragment : Fragment() {
         _binding = FragmentMessageBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        userId = arguments?.getString("userId") ?: ""
-        userName = arguments?.getString("userName") ?: ""
+        initObservers()
 
-        binding.textViewMessenger.text = userName
+        messengerId = arguments?.getString("userId") ?: ""
+        messengerName = arguments?.getString("userName") ?: ""
 
-        val recyclerView = binding.recyclerMessage
+        binding.textViewMessenger.text = messengerName
+
+        recyclerView = binding.recyclerMessage
         val layoutManager = LinearLayoutManager(requireContext()).apply {
             stackFromEnd = true // Imposta stackFromEnd su true per far partire l'Adapter dal fondo
         }
-
         recyclerView.layoutManager = layoutManager
-        messageAdapter = MessageAdapter(emptyList(), userId!!, userName)
-        recyclerView.adapter = messageAdapter
 
-        initObservers()
+        messageAdapter = MessageAdapter(emptyList(), messengerId!!, messengerName)
+        recyclerView.adapter = messageAdapter
 
         // Gestisci l'invio di nuovi messaggi quando viene premuto il pulsante di invio
         val sendButton = binding.sendButton
         sendButton.setOnClickListener {
             val messageInput = binding.messageInput.text.toString()
             if (messageInput.isNotEmpty()) {
-                messageViewModel.sendMessage(messageInput,userId)
+                messageViewModel.sendMessage(messageInput,messengerId)
                 binding.messageInput.text.clear()
                 binding.messageInput.clearFocus()
 
@@ -75,8 +75,8 @@ class MessageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Recupera i messaggi esistenti dalla Firebase Realtime Database
-        messageViewModel.retrieveMessages(userId)
+        // Recupera i messaggi esistenti
+        messageViewModel.retrieveMessages(messengerId, messengerName)
     }
 
     override fun onDestroyView() {
@@ -87,7 +87,6 @@ class MessageFragment : Fragment() {
     private fun initObservers() {
         messageViewModel.messageList.observe(viewLifecycleOwner) {
             messageAdapter.setMessageList(it)
-            messageAdapter.notifyDataSetChanged()
         }
     }
 }

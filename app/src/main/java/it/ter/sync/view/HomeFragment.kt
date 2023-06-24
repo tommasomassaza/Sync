@@ -18,14 +18,7 @@ import it.ter.sync.databinding.FragmentHomeBinding
 import it.ter.sync.view.adapter.PostAdapter
 import it.ter.sync.viewmodel.UserViewModel
 import android.Manifest
-import android.location.LocationListener
-import android.location.LocationManager
-import android.content.Context
-import android.location.Location
-import android.widget.TextView
 import com.google.android.gms.location.*
-import it.ter.sync.database.user.UserData
-import kotlin.math.*
 
 
 class HomeFragment : Fragment() {
@@ -35,26 +28,15 @@ class HomeFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
+    private lateinit var postAdapter: PostAdapter
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
-
-    val filteredUsers = mutableListOf<UserData>()
-
-    private lateinit var name: String
-    private lateinit var age: String
-    private lateinit var location: String
-
-
-
-
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
-    //Verifica le autorizzazioni dall'utente per la posizione
     private val PERMISSIONS_REQUEST_LOCATION = 1
 
 
@@ -89,23 +71,15 @@ class HomeFragment : Fragment() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val lastLocation = locationResult.lastLocation
                 // Usa lastLocation per le tue operazioni
-                val latitude = lastLocation.latitude
-                val longitude = lastLocation.longitude
-                // Esegui le operazioni desiderate con le coordinate geografiche ottenute
+                val latitude = lastLocation?.latitude!!
+                val longitude = lastLocation?.longitude!!
 
 
                 // Stampa le coordinate nel log
                 Log.d("HomeFragment", "Coordinate: Latitude = $latitude, Longitude = $longitude")
-                // Stampa le coordinate nel log
-                Log.d("HomeFragment", "Nome = $name, Age = $age")
 
-
-                // Utilizza le coordinate formattate per le operazioni successive
-                userViewModel.updateUser(name, age, location, latitude, longitude)
-                Log.d("HomeFragment", "Sono qui")
-                userViewModel.getAllUsers(latitude, longitude)
-                // Stampa le coordinate nel log
-                Log.d("HomeFragment", "Sono la")
+                // Update home
+                userViewModel.updateHome(latitude, longitude)
             }
         }
 
@@ -144,8 +118,8 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        // chiamo il metodo del viewModel per prendere tutti gli utenti
-        //userViewModel.getAllUsers()
+        postAdapter = PostAdapter(emptyList())
+        recyclerView.adapter = postAdapter
 
         userViewModel.getUserInfo()
 
@@ -164,14 +138,10 @@ class HomeFragment : Fragment() {
         if (!userViewModel.isUserLoggedIn()) {
             // Utente non autenticato, reindirizza al fragment di login
             findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-        }else {
-            // L'utente è autenticato, verifica le autorizzazioni della posizione
-            checkLocationPermission()
         }
-    }
 
-    companion object {
-        private const val PERMISSIONS_REQUEST_LOCATION = 123
+        // L'utente è autenticato, verifica le autorizzazioni della posizione
+        checkLocationPermission()
     }
 
     override fun onDestroyView() {
@@ -185,15 +155,7 @@ class HomeFragment : Fragment() {
     private fun initObservers() {
         Log.i(TAG, "Registering Observers: ViewModel? $userViewModel")
         userViewModel.users.observe(viewLifecycleOwner) {
-
-            val adapter = PostAdapter(it)
-            recyclerView.adapter = adapter
-        }
-        userViewModel.currentUser.observe(viewLifecycleOwner) {
-
-            name = it.name
-            age = it.age
-            location = it.location
+            postAdapter.setPostList(it)
         }
     }
 

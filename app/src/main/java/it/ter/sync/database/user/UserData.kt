@@ -12,6 +12,4 @@ open class UserData(
     var email: String = "",
     var location: String = "",
     var age: String = "",
-    var latitude: Double = 0.0,
-    var longitude: Double = 0.0
 ) {}

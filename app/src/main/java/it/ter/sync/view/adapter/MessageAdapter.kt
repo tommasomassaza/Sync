@@ -13,29 +13,29 @@ class MessageAdapter(
 
     fun setMessageList(messages: List<MessageData>) {
         messageList = messages
+        notifyDataSetChanged() // Aggiorna la RecyclerView
     }
 
     class ViewHolder(val binding: MessageItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val binding = MessageItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return ViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = MessageItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.binding.apply {
+            if(userId == messageList[position].senderId)
+                textViewSender.text = userName
+            else
+                textViewSender.text = "Tu"
+
+            textViewMessage.text = messageList[position].text
+            textViewTime.text = messageList[position].timeStamp
         }
+    }
 
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.binding.apply {
-                if(userId == messageList[position].senderId)
-                    textViewSender.text = userName
-                else
-                    textViewSender.text = "Tu"
-
-                textViewMessage.text = messageList[position].text
-                textViewTime.text = messageList[position].timeStamp
-            }
-        }
-
-        override fun getItemCount(): Int {
-            return messageList.size
-        }
-
+    override fun getItemCount(): Int {
+        return messageList.size
+    }
 }

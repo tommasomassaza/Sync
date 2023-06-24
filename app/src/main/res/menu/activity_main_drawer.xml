@@ -13,6 +13,10 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_account" />
         <item
+            android:id="@+id/chatFragment"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_chat"/>
+        <item
             android:id="@+id/loginFragment"
             android:icon="@drawable/ic_menu_logout"
             android:title="@string/menu_logout"/>

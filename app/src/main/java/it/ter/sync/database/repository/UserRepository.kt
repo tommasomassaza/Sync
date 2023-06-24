@@ -1,11 +1,12 @@
-package it.ter.sync.database
+package it.ter.sync.database.repository
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import it.ter.sync.database.MyRoomDatabase
 import it.ter.sync.database.user.UserData
 import it.ter.sync.database.user.UserDataDAO
 
-class Repository (application: Context?) : ViewModel() {
+class UserRepository (application: Context?) : ViewModel() {
     private val dBUserDao: UserDataDAO
 
     init {
@@ -26,7 +27,9 @@ class Repository (application: Context?) : ViewModel() {
         return dBUserDao.getUserByUid(uid)
     }
 
-    suspend fun updateUser(userData: UserData) {
-        dBUserDao.updateUser(userData)
+    suspend fun updateUserInfo(userId: String, name: String, location: String, age: String) {
+        dBUserDao.updateUserName(userId, name)
+        dBUserDao.updateUserLocation(userId, location)
+        dBUserDao.updateUserAge(userId, age)
     }
 }

@@ -1,21 +1,13 @@
 package it.ter.sync.viewmodel
 
-import android.Manifest
 import android.app.Application
-import android.content.pm.PackageManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import it.ter.sync.database.Repository
+import it.ter.sync.database.repository.UserRepository
 import it.ter.sync.database.user.UserData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,39 +18,13 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    private val repository: Repository = Repository(application)
+    private val userRepository: UserRepository = UserRepository(application)
 
     var loginResult: MutableLiveData<Boolean> = MutableLiveData()
     var registrationResult: MutableLiveData<String> = MutableLiveData()
     var currentUser: MutableLiveData<UserData> = MutableLiveData()
     var userUpdated: MutableLiveData<Boolean> = MutableLiveData()
     var users: MutableLiveData<List<UserData>> = MutableLiveData()
-
-
-
-    fun calculateDistance(
-        lat1: Double, lon1: Double, // Coordinate del primo punto
-        lat2: Double, lon2: Double  // Coordinate del secondo punto
-    ): Double {
-        val earthRadius = 6371 // Raggio medio della Terra in chilometri
-
-        // Converti le coordinate in radianti
-        val lat1Rad = Math.toRadians(lat1)
-        val lon1Rad = Math.toRadians(lon1)
-        val lat2Rad = Math.toRadians(lat2)
-        val lon2Rad = Math.toRadians(lon2)
-
-        // Calcola la differenza tra le latitudini e le longitudini
-        val dLat = lat2Rad - lat1Rad
-        val dLon = lon2Rad - lon1Rad
-
-        // Applica la formula di Haversine
-        val a = sin(dLat/2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon/2).pow(2)
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        val distance = earthRadius * c
-
-        return distance
-    }
 
 
 
@@ -88,7 +54,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
-                currentUser.postValue(repository.getUserByUid(user.uid))
+                currentUser.postValue(userRepository.getUserByUid(user.uid))
             }
         }
     }
@@ -100,14 +66,14 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     if (task.isSuccessful) {
                         registrationResult.postValue("Success")
                         task.result.user?.let {
-                            val userData = UserData(it.uid,name,email,location,age, latitude, longitude)
+                            val userData = UserData(it.uid,name,email,location,age)
 
                             // Salva le informazioni su fireStore
-                            addUserToFireStore(userData)
+                            addUserToFireStore(userData, latitude, longitude)
 
                             // Salva le informazioni dell'utente anche nel Database locale
                             viewModelScope.launch(Dispatchers.IO) {
-                                repository.insertUser(userData)
+                                userRepository.insertUser(userData)
                             }
                         }
                     } else {
@@ -119,7 +85,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun addUserToFireStore(userData: UserData) {
+    private fun addUserToFireStore(userData: UserData, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
 
             // Aggiungi le informazioni aggiuntive dell'utente nel database firestore
@@ -127,8 +93,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 "name" to userData.name,
                 "age" to userData.age,
                 "location" to userData.location,
-                "latitude" to userData.latitude,
-                "longitude" to userData.longitude
+                "latitude" to latitude,
+                "longitude" to longitude
             )
             // Salva le informazioni aggiuntive dell'utente nel database Firestore
             fireStore.collection("users")
@@ -150,16 +116,14 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateUser(name: String, age: String, location: String, latitude: Double, longitude: Double) {
+    fun updateUserInfo(name: String, age: String, location: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
                 val userAdditionalData = hashMapOf<String, Any>(
                     "name" to name,
                     "age" to age,
-                    "location" to location,
-                    "latitude" to latitude,
-                    "longitude" to longitude
+                    "location" to location
                 )
 
                 fireStore.collection("users")
@@ -169,10 +133,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
                         userUpdated.postValue(true)
 
-                        // Aggiorna le informazioni dell'utente anche nel Database locale
-                        val userData = UserData(user.uid, name, user.email!!, location, age, latitude, longitude)
                         viewModelScope.launch(Dispatchers.IO) {
-                            repository.updateUser(userData)
+                            userRepository.updateUserInfo(user.uid, name, location, age)
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -183,9 +145,33 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-
-    fun getAllUsers(currentlatitude: Double, currentlongitude: Double) {
+    fun updateUserPosition(latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            user?.let {
+                val userAdditionalData = hashMapOf<String, Any>(
+                    "latitude" to latitude,
+                    "longitude" to longitude
+                )
+
+                fireStore.collection("users")
+                    .document(user.uid)
+                    .update(userAdditionalData)
+                    .addOnSuccessListener {
+                        userUpdated.postValue(true)
+                    }
+                    .addOnFailureListener { exception ->
+                        userUpdated.postValue(false)
+                        Log.i(TAG, exception.message.toString())
+                    }
+
+            }
+        }
+    }
+    fun updateHome(currentLatitude: Double, currentLongitude: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateUserPosition(currentLatitude,currentLongitude)
+
             val user = firebaseAuth.currentUser
             fireStore.collection("users")
                 .get()
@@ -207,23 +193,20 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                             val distance = calculateDistance(
                                 latitude,
                                 longitude,
-                                currentlatitude,
-                                currentlongitude
+                                currentLatitude,
+                                currentLongitude
                             )
 
                             // Stampa la distanza nel log
                             Log.d("TAG", "Distanza = $distance")
 
                             if (distance <= MAX_DISTANCE) {
-
                                 // Crea un oggetto User utilizzando i dati ottenuti dal documento
                                 val user = UserData(
                                     uid = uid,
                                     name = name,
                                     location = location,
-                                    age = age,
-                                    latitude = latitude,
-                                    longitude = longitude
+                                    age = age
                                 )
                                 userList.add(user)
                             }
@@ -237,5 +220,28 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     Log.i(TAG, exception.message.toString())
                 }
         }
+    }
+
+    private fun calculateDistance(
+        lat1: Double, lon1: Double, // Coordinate del primo punto
+        lat2: Double, lon2: Double  // Coordinate del secondo punto
+    ): Double {
+        val earthRadius = 6371 // Raggio medio della Terra in chilometri
+
+        // Converti le coordinate in radianti
+        val lat1Rad = Math.toRadians(lat1)
+        val lon1Rad = Math.toRadians(lon1)
+        val lat2Rad = Math.toRadians(lat2)
+        val lon2Rad = Math.toRadians(lon2)
+
+        // Calcola la differenza tra le latitudini e le longitudini
+        val dLat = lat2Rad - lat1Rad
+        val dLon = lon2Rad - lon1Rad
+
+        // Applica la formula di Haversine
+        val a = sin(dLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return earthRadius * c
     }
 }

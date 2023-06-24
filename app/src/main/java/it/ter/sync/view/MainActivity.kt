@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.homeFragment, R.id.accountFragment, R.id.loginFragment
+                R.id.homeFragment, R.id.accountFragment, R.id.chatFragment, R.id.loginFragment
             ), drawerLayout
         )
 
