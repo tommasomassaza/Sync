@@ -70,8 +70,8 @@ class PostAdapter(private var postList: List<UserData>) : RecyclerView.Adapter<P
         // Imposta l'immagine bitmap nella vista
         val bitmap = imageBitmapList[position]
 
-
-        holder.binding.imagePost.setImageBitmap(bitmap)
+        if(bitmap != null) {
+        holder.binding.imagePost.setImageBitmap(bitmap)}
 
     }
 

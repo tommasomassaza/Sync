@@ -228,7 +228,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                             val latitude = document.getDouble("latitude") ?: 0.0
                             val longitude = document.getDouble("longitude") ?: 0.0
 
-                            val MAX_DISTANCE = 100.0 // in chilometri
+                            val MAX_DISTANCE = 1000000000000000000.0 // in chilometri
 
                             val distance = calculateDistance(
                                 latitude,

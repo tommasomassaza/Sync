@@ -18,6 +18,8 @@ interface UserDataDAO {
     @Query("SELECT * FROM users WHERE uid = :uid")
     suspend fun getUserByUid(uid: String): UserData?
 
+    @Query("SELECT image FROM users WHERE uid = :uid")
+    suspend fun getUserImage(uid: String): String?
 
     ///////////////////// update query /////////////////////
     @Query("UPDATE users SET name = :name WHERE uid = :userId")

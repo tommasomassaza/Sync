@@ -22,6 +22,43 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/name" />
 
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/image_account_cardView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintTop_toBottomOf="@id/saveBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:cardCornerRadius="150dp"
+        android:scaleType="centerInside">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="150dp"
+            android:layout_margin="4dp"
+            android:src="@mipmap/ic_launcher">
+
+            <ImageView
+                android:id="@+id/image_account"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_launcher" />
+
+        </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+
+
+
+
+
+
     <EditText
         android:id="@+id/name"
         android:layout_width="match_parent"
