@@ -44,6 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:textSize="30dp"
+        android:fontFamily="cursive"
+        android:textColor="@color/black"
         android:text="@string/nav_header_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
@@ -51,6 +54,8 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="20dp"
         android:text="@string/nav_header_subtitle" />
 
 </LinearLayout>

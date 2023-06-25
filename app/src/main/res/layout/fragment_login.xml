@@ -4,21 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/background3"
     tools:context=".view.LoginFragment">
 
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/SyncTitle"
+        android:text="Sync"
+        android:textSize="80dp"
+        android:fontFamily="cursive"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"></TextView>
     <TextView
         android:id="@+id/signIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign in"
-        android:textColor="@color/black"
+        android:text="Accedi"
+        android:fontFamily="cursive"
         android:textSize="35dp"
-        android:fontFamily="sans-serif-light"
-        android:layout_margin="50dp"
+
+        android:layout_margin="20dp"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/SyncTitle"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
@@ -26,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Username"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:padding="20dp"
         android:background="#50ffffff"
         android:textColor="@color/black"
@@ -42,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:padding="20dp"
         android:background="#50ffffff"
         android:textColor="@color/black"
@@ -58,9 +72,9 @@
         android:id="@+id/loginBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LOGIN"
-        android:textColor="@color/black"
-        app:backgroundTint="#DCB6AB"
+        android:text="Login"
+        android:textColor="@color/white"
+        app:backgroundTint="#18639F"
         app:layout_constraintTop_toBottomOf="@id/password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -73,16 +87,18 @@
         app:layout_constraintTop_toBottomOf="@id/loginBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/signUpLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CLICCA QUI"
+        android:text="Registrati"
+        android:fontFamily="cursive"
+        android:textSize="30dp"
         app:layout_constraintTop_toBottomOf="@id/signupString"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
