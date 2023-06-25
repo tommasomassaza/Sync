@@ -29,10 +29,15 @@ interface UserDataDAO {
     @Query("UPDATE users SET age = :age WHERE uid = :userId")
     suspend fun updateUserAge(userId: String, age: String)
 
+    @Query("UPDATE users SET image = :image WHERE uid = :userId")
+    suspend fun updateUserImage(userId: String, image: String)
+
     ///////////////////// Deletion queries /////////////////////
     @Delete
     suspend fun delete(userData: UserData?)
 
     @Delete
     suspend fun deleteAll(vararg usersData: UserData?)
+
+
 }

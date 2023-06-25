@@ -123,6 +123,7 @@ class HomeFragment : Fragment() {
 
         userViewModel.getUserInfo()
 
+
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
 

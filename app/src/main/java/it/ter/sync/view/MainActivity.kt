@@ -22,8 +22,10 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
@@ -32,7 +34,13 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import it.ter.sync.databinding.FragmentHomeBinding
+import it.ter.sync.view.adapter.PostAdapter
 
 class MainActivity : AppCompatActivity() {
     private val TAG: String = javaClass.simpleName
@@ -55,8 +63,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         val IMAGE_REQUEST_CODE = 1_000;
     }
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,14 +123,12 @@ class MainActivity : AppCompatActivity() {
             val imageUri = data?.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
             imageView.setImageBitmap(bitmap)
+
+            // Ora che hai il bitmap, puoi chiamare il metodo UpdateUser()
+            userViewModel.updateUserImage(bitmap);
+            
         }
     }
-
-
-
-
-
-
 
 
 

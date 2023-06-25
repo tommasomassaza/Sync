@@ -1,6 +1,9 @@
 package it.ter.sync.viewmodel
 
 import android.app.Application
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +14,7 @@ import it.ter.sync.database.repository.UserRepository
 import it.ter.sync.database.user.UserData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import kotlin.math.*
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
@@ -168,6 +172,41 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+
+     fun updateUserImage(imageBitmap: Bitmap) {
+        // Converti il bitmap in un array di byte
+        val baos = ByteArrayOutputStream()
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val image = baos.toByteArray()
+
+         // Converti l'array di byte in una stringa Base64
+         val imageString = Base64.encodeToString(image, Base64.DEFAULT)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            user?.let {
+                val userAdditionalData = hashMapOf<String, Any>(
+                    "image" to imageString,
+                )
+
+                fireStore.collection("users")
+                    .document(user.uid)
+                    .update(userAdditionalData)
+                    .addOnSuccessListener {
+                        userUpdated.postValue(true)
+                    }
+                    .addOnFailureListener { exception ->
+                        userUpdated.postValue(false)
+                        Log.i(TAG, exception.message.toString())
+                    }
+
+            }
+        }
+
+    }
+
+
     fun updateHome(currentLatitude: Double, currentLongitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             updateUserPosition(currentLatitude,currentLongitude)
@@ -185,10 +224,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                             val name = document.getString("name") ?: ""
                             val age = document.getString("age") ?: ""
                             val location = document.getString("location") ?: ""
+                            val image = document.getString("image") ?: ""
                             val latitude = document.getDouble("latitude") ?: 0.0
                             val longitude = document.getDouble("longitude") ?: 0.0
 
-                            val MAX_DISTANCE = 5.0 // in chilometri
+                            val MAX_DISTANCE = 100.0 // in chilometri
 
                             val distance = calculateDistance(
                                 latitude,
@@ -206,7 +246,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                                     uid = uid,
                                     name = name,
                                     location = location,
-                                    age = age
+                                    age = age,
+                                    image = image
                                 )
                                 userList.add(user)
                             }
