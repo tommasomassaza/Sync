@@ -112,6 +112,8 @@
         android:textColorHint="#403737"
         android:drawableStart="@drawable/android_age_24"
         android:drawablePadding="20dp"
+        android:inputType="none"
+        android:focusableInTouchMode="false"
         app:layout_constraintTop_toBottomOf="@+id/email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

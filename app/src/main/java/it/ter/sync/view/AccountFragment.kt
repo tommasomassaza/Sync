@@ -1,5 +1,6 @@
 package it.ter.sync.view
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -25,6 +26,7 @@ import it.ter.sync.R
 import it.ter.sync.databinding.FragmentAccountBinding
 import it.ter.sync.databinding.FragmentLoginBinding
 import it.ter.sync.viewmodel.UserViewModel
+import java.util.*
 
 
 class AccountFragment : Fragment()  {
@@ -39,6 +41,9 @@ class AccountFragment : Fragment()  {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+
+    private lateinit var ageEditText: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,6 +67,7 @@ class AccountFragment : Fragment()  {
             userViewModel.updateUserInfo(name,age,location)
         }
 
+
         return root
     }
 
@@ -75,10 +81,30 @@ class AccountFragment : Fragment()  {
             binding.imageAccount.setImageURI(imageUri)
         }
 
-
         binding.imageAccount.setOnClickListener {
             pickImageFromGallery()
         }
+
+        ageEditText = view.findViewById(R.id.age)
+
+        ageEditText.setOnClickListener {
+            showDatePicker()
+        }
+    }
+
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(requireContext(), { _, year, monthOfYear, dayOfMonth ->
+            // Il valore della data selezionata viene restituito qui
+            val selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
+            binding.age.setText(selectedDate)
+        }, year, month, day)
+
+        datePickerDialog.show()
     }
     
 
