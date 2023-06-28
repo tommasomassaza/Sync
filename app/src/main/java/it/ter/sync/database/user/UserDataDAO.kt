@@ -34,6 +34,9 @@ interface UserDataDAO {
     @Query("UPDATE users SET image = :image WHERE uid = :userId")
     suspend fun updateUserImage(userId: String, image: String)
 
+    @Query("UPDATE users SET tag = :tag WHERE uid = :userId")
+    suspend fun updateUserTag(userId: String, tag: String)
+
     ///////////////////// Deletion queries /////////////////////
     @Delete
     suspend fun delete(userData: UserData?)

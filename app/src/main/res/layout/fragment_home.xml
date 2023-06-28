@@ -11,28 +11,60 @@
         android:id="@+id/text_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:textAlignment="center"
         android:textSize="40dp"
         android:textColor="@color/black"
         android:text="Persone nelle vicinanze"
         android:fontFamily="cursive"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btn_clean"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_home"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="8dp"
+        android:text="-"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@android:color/black"
+        />
+
+    <EditText
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:hint="Search TAG or User"
+        android:layout_below="@id/text_home"
+        android:layout_toStartOf="@+id/btn_search"
+        android:layout_toEndOf="@+id/btn_clean"
+        />
+
+    <Button
+        android:id="@+id/btn_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_home"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
+        android:text="Search"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@android:color/black"
         />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/post_item"
-        android:layout_below="@id/text_home"
+        android:layout_below="@id/search_view"
         android:padding="10dp"
-        android:id="@+id/recycler_post">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        tools:listitem="@layout/post_item"
+        />
 
 </RelativeLayout>

@@ -12,5 +12,6 @@ open class UserData(
     var email: String = "",
     var location: String = "",
     var age: String = "",
-    var image: String = ""
+    var image: String = "",
+    var tag: String = ""
 ) {}

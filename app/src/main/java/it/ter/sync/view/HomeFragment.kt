@@ -18,6 +18,8 @@ import it.ter.sync.databinding.FragmentHomeBinding
 import it.ter.sync.view.adapter.PostAdapter
 import it.ter.sync.viewmodel.UserViewModel
 import android.Manifest
+import android.widget.Button
+import android.widget.EditText
 import com.google.android.gms.location.*
 
 
@@ -29,6 +31,8 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
 
     private lateinit var postAdapter: PostAdapter
+
+    private var searchString: String = ""
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -62,7 +66,7 @@ class HomeFragment : Fragment() {
 
     private fun requestLocationUpdates() {
         val locationRequest = LocationRequest.create().apply {
-            interval = 10000 // Intervallo di aggiornamento in millisecondi
+            interval = 2000 // Intervallo di aggiornamento in millisecondi
             fastestInterval = 5000 // Intervallo minimo di aggiornamento in millisecondi
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY // Precisione richiesta
         }
@@ -79,7 +83,7 @@ class HomeFragment : Fragment() {
                 Log.d("HomeFragment", "Coordinate: Latitude = $latitude, Longitude = $longitude")
 
                 // Update home
-                userViewModel.updateHome(latitude, longitude)
+                userViewModel.updateHome(latitude, longitude, searchString)
             }
         }
 
@@ -139,6 +143,20 @@ class HomeFragment : Fragment() {
         if (!userViewModel.isUserLoggedIn()) {
             // Utente non autenticato, reindirizza al fragment di login
             findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+        }
+
+        val editTextSearch: EditText = view.findViewById(R.id.search_view)
+        val buttonSearch: Button = view.findViewById(R.id.btn_search)
+        val buttonClean: Button = view.findViewById(R.id.btn_clean)
+
+        buttonSearch.setOnClickListener {
+            searchString = editTextSearch.text.toString().trim()
+
+        }
+
+        buttonClean.setOnClickListener {
+            searchString = ""
+
         }
 
         // L'utente è autenticato, verifica le autorizzazioni della posizione

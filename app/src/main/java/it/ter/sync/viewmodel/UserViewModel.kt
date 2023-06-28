@@ -120,14 +120,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateUserInfo(name: String, age: String, location: String) {
+    fun updateUserInfo(name: String, age: String, location: String, tag: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
                 val userAdditionalData = hashMapOf<String, Any>(
                     "name" to name,
                     "age" to age,
-                    "location" to location
+                    "location" to location,
+                    "tag" to tag
                 )
 
                 fireStore.collection("users")
@@ -138,7 +139,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                         userUpdated.postValue(true)
 
                         viewModelScope.launch(Dispatchers.IO) {
-                            userRepository.updateUserInfo(user.uid, name, location, age)
+                            userRepository.updateUserInfo(user.uid, name, location, age, tag)
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -207,9 +208,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    fun updateHome(currentLatitude: Double, currentLongitude: Double) {
+    fun updateHome(currentLatitude: Double, currentLongitude: Double, tag: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            updateUserPosition(currentLatitude,currentLongitude)
+            updateUserPosition(currentLatitude, currentLongitude)
 
             val user = firebaseAuth.currentUser
             fireStore.collection("users")
@@ -220,13 +221,14 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     for (document in querySnapshot) {
                         val uid = document.id
                         // se si tratta dell'utente loggato non mi interessa
-                        if(uid != user?.uid) {
+                        if (uid != user?.uid) {
                             val name = document.getString("name") ?: ""
                             val age = document.getString("age") ?: ""
                             val location = document.getString("location") ?: ""
                             val image = document.getString("image") ?: ""
                             val latitude = document.getDouble("latitude") ?: 0.0
                             val longitude = document.getDouble("longitude") ?: 0.0
+                            val documentTag = document.getString("tag") ?: ""
 
                             val MAX_DISTANCE = 1000000000000000000.0 // in chilometri
 
@@ -240,14 +242,18 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                             // Stampa la distanza nel log
                             Log.d("TAG", "Distanza = $distance")
 
-                            if (distance <= MAX_DISTANCE) {
+                            val lowercaseTag = documentTag.toLowerCase()
+                            val lowercaseSearchString = tag.toLowerCase()
+
+                            if (distance <= MAX_DISTANCE && (lowercaseTag == lowercaseSearchString || lowercaseSearchString.isEmpty())) {
                                 // Crea un oggetto User utilizzando i dati ottenuti dal documento
                                 val user = UserData(
                                     uid = uid,
                                     name = name,
                                     location = location,
                                     age = age,
-                                    image = image
+                                    image = image,
+                                    tag = tag
                                 )
                                 userList.add(user)
                             }
