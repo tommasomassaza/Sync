@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#C4E198"
+    android:background="#20C4E198"
     android:id="@+id/post_item"
     android:layout_marginTop="20dp"
     android:layout_marginBottom="20dp"
@@ -30,18 +30,43 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:text="Username"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/imageProfile_post"
         app:layout_constraintStart_toEndOf="@id/imageProfile_post"
         app:layout_constraintTop_toTopOf="@id/imageProfile_post" />
 
 
+
+    <TextView
+        android:id="@+id/location_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="70dp"
+        android:drawableStart="@drawable/map_marker_svgrepo_com"
+        android:drawablePadding="10dp"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintEnd_toStartOf="@id/age_post"
+        app:layout_constraintStart_toEndOf="@id/username_post"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/age_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/calendar_days_svgrepo_com"
+        android:drawablePadding="10dp"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintBaseline_toBaselineOf="@id/location_post"
+        app:layout_constraintStart_toEndOf="@id/location_post"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/image_cardView"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:src="@mipmap/ic_launcher"
@@ -69,63 +94,31 @@
 
 
 
-    <Button
-        android:id="@+id/reaction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Button1"
-        app:layout_constraintEnd_toStartOf="@+id/like"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_cardView"
-        android:backgroundTint="@android:color/black"/>
-
-    <Button
+    <ImageButton
         android:id="@+id/like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button2"
-        app:layout_constraintBaseline_toBaselineOf="@+id/reaction"
+        android:layout_marginTop="5dp"
+        app:srcCompat="@drawable/like_svgrepo_com"
+        android:background="@drawable/round_button"
+        android:padding="10dp"
+        app:backgroundTint="@android:color/holo_green_light"
         app:layout_constraintEnd_toStartOf="@+id/chat"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/reaction"
-        android:backgroundTint="@android:color/black"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_cardView" />
 
-    <Button
+    <ImageButton
         android:id="@+id/chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button3"
-        app:layout_constraintBaseline_toBaselineOf="@+id/like"
+        android:layout_marginTop="5dp"
+        app:srcCompat="@drawable/conversation_alt_svgrepo_com"
+        android:background="@drawable/round_button"
+        android:padding="10dp"
+        app:backgroundTint="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/like"
-        android:backgroundTint="@android:color/black"/>
+        app:layout_constraintTop_toBottomOf="@+id/image_cardView" />
 
-
-
-    <TextView
-        android:id="@+id/location_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Location"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintEnd_toStartOf="@id/age_post"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/like" />
-
-    <TextView
-        android:id="@+id/age_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Age"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintBaseline_toBaselineOf="@id/location_post"
-        app:layout_constraintStart_toEndOf="@id/location_post"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

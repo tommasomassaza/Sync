@@ -15,6 +15,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import android.widget.ImageButton
 
 class PostAdapter(private var postList: List<UserData>) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
@@ -33,7 +34,7 @@ class PostAdapter(private var postList: List<UserData>) : RecyclerView.Adapter<P
     // Provide a reference to the views for each data item
     class ViewHolder(val binding: PostItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-    private lateinit var buttonChat : Button
+    private lateinit var buttonChat : ImageButton
 
     private val imageBitmapList: MutableList<Bitmap?> = mutableListOf()
 

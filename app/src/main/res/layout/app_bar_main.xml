@@ -16,7 +16,17 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="#18639F"
-            app:popupTheme="@style/Theme.Sync.PopupOverlay" />
+            app:popupTheme="@style/Theme.Sync.PopupOverlay">
+
+            <ImageButton
+                android:id="@+id/notifyMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/note_21_svgrepo_com"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_gravity="end" />
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

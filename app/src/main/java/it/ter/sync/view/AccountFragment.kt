@@ -19,12 +19,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.navigation.NavigationView
 import it.ter.sync.R
 import it.ter.sync.databinding.FragmentAccountBinding
-import it.ter.sync.databinding.FragmentLoginBinding
 import it.ter.sync.viewmodel.UserViewModel
 import java.util.*
 
@@ -61,11 +57,10 @@ class AccountFragment : Fragment()  {
         buttonSave.setOnClickListener {
             val name = binding.name.text.toString().ifEmpty { binding.name.hint.toString() }
             val age = binding.age.text.toString().ifEmpty { binding.age.hint.toString() }
-            val location = binding.location.text.toString().ifEmpty { binding.location.hint.toString()}
-                val tag1 = binding.tag1.text.toString().ifEmpty { binding.tag1.hint.toString()}
+            val tag1 = binding.tag1.text.toString().ifEmpty { binding.tag1.hint.toString()}
 
             saveButtonClicked = true
-            userViewModel.updateUserInfo(name,age,location,tag1)
+            userViewModel.updateUserInfo(name,age,tag1)
         }
 
 
@@ -115,13 +110,11 @@ class AccountFragment : Fragment()  {
             binding.name.text.clear()
             binding.email.text.clear()
             binding.age.text.clear()
-            binding.location.text.clear()
             binding.tag1.text.clear()
 
             binding.name.hint = it?.name
             binding.email.hint = it?.email
             binding.age.hint = it?.age
-            binding.location.hint = it?.location
             binding.tag1.hint = it?.tag
             if (it != null) {
             val bitmap = base64ToBitmap(it.image)

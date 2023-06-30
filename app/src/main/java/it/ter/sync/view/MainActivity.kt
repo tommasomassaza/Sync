@@ -76,6 +76,10 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        val btnMenu: ImageButton = findViewById(R.id.notifyMenu)
+        btnMenu.setOnClickListener {
+            openOptionsMenu()
+        }
 
         drawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -84,21 +88,19 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
 
 
-
         val headerView = navView.getHeaderView(0)
         imageView = headerView.findViewById(R.id.imageButton)
         cardView = headerView.findViewById(R.id.cardView)
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.homeFragment, R.id.accountFragment, R.id.loginFragment
+                R.id.homeFragment, R.id.accountFragment, R.id.chatFragment, R.id.loginFragment
             ), drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        //imageButton = findViewById(R.id.imageButton)
 
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri ->
             // Aggiungi il codice per visualizzare l'immagine nell'ImageView
@@ -126,15 +128,12 @@ class MainActivity : AppCompatActivity() {
 
             // Ora che hai il bitmap, puoi chiamare il metodo UpdateUser()
             userViewModel.updateUserImage(bitmap);
-            
         }
     }
 
 
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(R.menu.notify_menu, menu)
         return true
     }
 

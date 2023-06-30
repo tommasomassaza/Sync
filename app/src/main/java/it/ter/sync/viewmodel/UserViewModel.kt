@@ -120,14 +120,13 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateUserInfo(name: String, age: String, location: String, tag: String) {
+    fun updateUserInfo(name: String, age: String, tag: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
                 val userAdditionalData = hashMapOf<String, Any>(
                     "name" to name,
                     "age" to age,
-                    "location" to location,
                     "tag" to tag
                 )
 
@@ -139,7 +138,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                         userUpdated.postValue(true)
 
                         viewModelScope.launch(Dispatchers.IO) {
-                            userRepository.updateUserInfo(user.uid, name, location, age, tag)
+                            userRepository.updateUserInfo(user.uid, name, age, tag)
                         }
                     }
                     .addOnFailureListener { exception ->
