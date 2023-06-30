@@ -84,7 +84,25 @@ class AccountFragment : Fragment()  {
         ageEditText = view.findViewById(R.id.age)
 
         ageEditText.setOnClickListener {
-            showDatePicker()
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            // Mostra il DatePickerDialog per selezionare la data di nascita
+            val datePicker = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                // Calcola l'età utilizzando la data selezionata
+                val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                val age = currentYear - selectedYear
+
+                // Imposta il valore dell'età nel campo di testo "age"
+                ageEditText.setText(age.toString())
+            }, year, month, day)
+
+            // Imposta la data massima selezionabile come la data odierna
+            datePicker.datePicker.maxDate = calendar.timeInMillis
+
+            datePicker.show()
         }
     }
 
