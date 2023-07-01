@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -57,6 +58,49 @@
         android:textColor="@color/white"
         android:backgroundTint="@android:color/black"
         />
+
+    <LinearLayout
+        android:id="@+id/layout_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_view"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="end">
+
+
+        <Button
+            android:id="@+id/btn_tag_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/darker_gray"
+            android:layout_marginEnd="8dp"
+            android:visibility="invisible">
+
+        </Button>
+
+        <Button
+            android:id="@+id/btn_tag_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/darker_gray"
+            android:layout_marginEnd="8dp"
+            android:visibility="invisible"
+           >
+        </Button>
+
+        <Button
+            android:id="@+id/btn_tag_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/darker_gray"
+            android:visibility="invisible">
+
+
+
+        </Button>
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_post"

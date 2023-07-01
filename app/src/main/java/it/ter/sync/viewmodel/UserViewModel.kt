@@ -120,14 +120,16 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateUserInfo(name: String, age: String, tag: String) {
+    fun updateUserInfo(name: String, age: String, tag: String, tag2: String, tag3: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
                 val userAdditionalData = hashMapOf<String, Any>(
                     "name" to name,
                     "age" to age,
-                    "tag" to tag
+                    "tag" to tag,
+                    "tag2" to tag2,
+                    "tag3" to tag3
                 )
 
                 fireStore.collection("users")
@@ -138,7 +140,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                         userUpdated.postValue(true)
 
                         viewModelScope.launch(Dispatchers.IO) {
-                            userRepository.updateUserInfo(user.uid, name, age, tag)
+                            userRepository.updateUserInfo(user.uid, name, age, tag, tag2, tag3)
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -228,6 +230,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                             val latitude = document.getDouble("latitude") ?: 0.0
                             val longitude = document.getDouble("longitude") ?: 0.0
                             val documentTag = document.getString("tag") ?: ""
+                            val documentTag2 = document.getString("tag2") ?: ""
+                            val documentTag3 = document.getString("tag3") ?: ""
 
                             val MAX_DISTANCE = 1000000000000000000.0 // in chilometri
 
@@ -241,10 +245,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                             // Stampa la distanza nel log
                             Log.d("TAG", "Distanza = $distance")
 
-                            val lowercaseTag = documentTag.toLowerCase()
+
                             val lowercaseSearchString = tag.toLowerCase()
 
-                            if (distance <= MAX_DISTANCE && (lowercaseTag == lowercaseSearchString || lowercaseSearchString.isEmpty())) {
+                            val lowercaseTag = documentTag.toLowerCase()
+                            val lowercaseTag2 = documentTag2.toLowerCase()
+                            val lowercaseTag3 = documentTag3.toLowerCase()
+
+                            if (distance <= MAX_DISTANCE && (lowercaseTag == lowercaseSearchString || lowercaseSearchString.isEmpty() ||lowercaseTag2 == lowercaseSearchString
+                                        || lowercaseTag3 == lowercaseSearchString || name == lowercaseSearchString)) {
                                 // Crea un oggetto User utilizzando i dati ottenuti dal documento
                                 val user = UserData(
                                     uid = uid,
@@ -252,7 +261,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                                     location = location,
                                     age = age,
                                     image = image,
-                                    tag = tag
+                                    tag = documentTag,
+                                    tag2 = documentTag2,
+                                    tag3 = documentTag3
                                 )
                                 userList.add(user)
                             }
