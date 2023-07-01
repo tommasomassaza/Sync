@@ -11,7 +11,7 @@ import it.ter.sync.database.user.UserDataDAO
 
 @Database(
     entities = [UserData::class, MessageData::class],
-    version = 9,
+    version = 10,
     exportSchema = true
 )
 abstract class MyRoomDatabase : RoomDatabase() {

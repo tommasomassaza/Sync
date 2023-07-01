@@ -18,13 +18,38 @@
             android:background="#18639F"
             app:popupTheme="@style/Theme.Sync.PopupOverlay">
 
-            <ImageButton
-                android:id="@+id/notifyMenu"
+            <RelativeLayout
+                android:id="@+id/badge_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/note_21_svgrepo_com"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_gravity="end" />
+                android:layout_toRightOf="@+id/badge_layout"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="end">
+
+                <RelativeLayout
+                    android:id="@+id/relative_layout_item_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageButton
+                        android:id="@+id/notifyMenu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/notification_bell_1396_svgrepo_com"
+                        android:background="?attr/selectableItemBackgroundBorderless" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/badge_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignRight="@id/relative_layout_item_count"
+                    android:background="@android:drawable/ic_notification_overlay"
+                    android:textColor="#FFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="invisible"/>
+            </RelativeLayout>
 
         </androidx.appcompat.widget.Toolbar>
 

@@ -14,5 +14,9 @@
     <string name="menu_logout">Logout</string>
     <string name="menu_message">Message</string>
     <string name="menu_chat">Chats</string>
+    <string name="menu_notification">Notifications</string>
     <string name="save">Save</string>
+    <string name="notifications">Notifications</string>
+    <string name="chats">Chats</string>
+    <string name="notification_message_default">Ha messo mi piace al tuo post</string>
 </resources>

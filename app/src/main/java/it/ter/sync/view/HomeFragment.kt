@@ -21,11 +21,13 @@ import android.Manifest
 import android.widget.Button
 import android.widget.EditText
 import com.google.android.gms.location.*
+import it.ter.sync.viewmodel.NotificationViewModel
 
 
 class HomeFragment : Fragment() {
     private val TAG: String = javaClass.simpleName
     private val userViewModel: UserViewModel by activityViewModels()
+    private val notificationViewModel: NotificationViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
 
     private lateinit var recyclerView: RecyclerView
@@ -122,7 +124,7 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        postAdapter = PostAdapter(emptyList())
+        postAdapter = PostAdapter(emptyList(), notificationViewModel)
         recyclerView.adapter = postAdapter
 
         userViewModel.getUserInfo()
@@ -148,16 +150,72 @@ class HomeFragment : Fragment() {
         val editTextSearch: EditText = view.findViewById(R.id.search_view)
         val buttonSearch: Button = view.findViewById(R.id.btn_search)
         val buttonClean: Button = view.findViewById(R.id.btn_clean)
+        val searchView: EditText = view.findViewById(R.id.search_view)
+
+        // Ottenere il riferimento ai bottoni
+        val btnTag1 = view?.findViewById<Button>(R.id.btn_tag_1)
+        val btnTag2 = view?.findViewById<Button>(R.id.btn_tag_2)
+        val btnTag3 = view?.findViewById<Button>(R.id.btn_tag_3)
+
 
         buttonSearch.setOnClickListener {
             searchString = editTextSearch.text.toString().trim()
 
+
+            // Verificare se i bottoni sono visibili
+            val isBtnTag1Visible = btnTag1?.visibility == View.VISIBLE
+            val isBtnTag2Visible = btnTag2?.visibility == View.VISIBLE
+            val isBtnTag3Visible = btnTag3?.visibility == View.VISIBLE
+
+            if(!isBtnTag1Visible) {
+                // Impostare la visibilità dei bottoni
+                btnTag1?.visibility = View.VISIBLE
+                // Impostare il testo del bottone
+                btnTag1?.text = searchString
+
+            }
+            if(!isBtnTag2Visible && isBtnTag1Visible) {
+                btnTag2?.visibility = View.VISIBLE
+                btnTag2?.text = searchString
+
+
+            }
+            if(!isBtnTag3Visible && isBtnTag1Visible && isBtnTag2Visible) {
+                btnTag3?.visibility = View.VISIBLE
+                btnTag3?.text = searchString
+
+            }
+
+        }
+
+
+        btnTag1?.setOnClickListener {
+            searchString = ""
+            searchView.setText("")
+            // Rendere invisibili i bottoni
+            btnTag1?.visibility = View.INVISIBLE
+        }
+
+        btnTag2?.setOnClickListener {
+            searchString = ""
+            searchView.setText("")
+            // Rendere invisibili i bottoni
+            btnTag2?.visibility = View.INVISIBLE
+        }
+
+        btnTag3?.setOnClickListener {
+            searchString = ""
+            searchView.setText("")
+            // Rendere invisibili i bottoni
+            btnTag3?.visibility = View.INVISIBLE
         }
 
         buttonClean.setOnClickListener {
             searchString = ""
+            searchView.setText("")
 
         }
+
 
         // L'utente è autenticato, verifica le autorizzazioni della posizione
         checkLocationPermission()

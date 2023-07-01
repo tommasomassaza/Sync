@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -13,13 +14,17 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.message.MessageData
+import it.ter.sync.database.notify.NotificationData
+import it.ter.sync.database.notify.NotificationType
 import it.ter.sync.database.repository.MessageRepository
+import it.ter.sync.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.UUID
 
 class MessageViewModel(application: Application) : AndroidViewModel(application) {
     private var TAG = this::class.simpleName
@@ -53,7 +58,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             lastTimestamp = lastMessageInLocal?.timestampMillis ?: 0
 
             // last message in Firebase
-            val chatId = generateChatId(user?.uid ?: "",messengerId ?: "")
+            val chatId = Utils.generateChatId(user?.uid ?: "",messengerId ?: "")
             val messagesRef = database.getReference("messages/${chatId}")
             messagesRef.orderByChild("timestampMillis")
                 .limitToFirst(1)
@@ -90,7 +95,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
     private fun updateMessage(snapshot: DataSnapshot): MutableList<MessageData> {
         val messages: MutableList<MessageData> = mutableListOf()
-        var lastMessage : MessageData? = null
+        var lastMessage = MessageData()
         for (messageSnapshot in snapshot.children) {
             val message = messageSnapshot.getValue(MessageData::class.java)
             message?.let {
@@ -104,9 +109,12 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 }
             }
         }
-        lastTimestamp = lastMessage?.timestampMillis ?: 0
+        lastTimestamp = lastMessage.timestampMillis
 
-        lastMessage?.let { updateChat(it) }
+        updateChat(lastMessage)
+        if(lastMessage.senderId == messengerId) {
+            addMessageNotification(lastMessage.text)
+        }
 
         return messages
     }
@@ -127,13 +135,50 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    private fun addMessageNotification(lastMessageText: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            val ref = database.getReference("notifications/${user?.uid}/${messengerId}/message")
+
+            val notificationId = ref.push().key
+            if (notificationId != null) {
+                val timestampMillis = System.currentTimeMillis()
+
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                dateFormat.timeZone =
+                    TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
+                val dateString = dateFormat.format(Date(timestampMillis))
+
+                val notification = NotificationData(
+                    NotificationType.MESSAGE,
+                    lastMessageText,
+                    dateString,
+                    timestampMillis,
+                    false,
+                    messengerId,
+                    messengerName
+                )
+
+                // Salva il messaggio nella Firebase Realtime Database
+                ref.child(notificationId).setValue(notification)
+                    .addOnSuccessListener {
+                        Log.i(TAG, "Notifica inviata con successo")
+                    }
+                    .addOnFailureListener { error ->
+                        Log.e(TAG, "${error.message}")
+                    }
+            } else {
+                Log.e(TAG, "Error")
+            }
+        }
+    }
+
     fun sendMessage(text: String, messengerId: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
-            val chatId = generateChatId(user?.uid ?: "",messengerId ?: "")
+            val chatId = Utils.generateChatId(user?.uid ?: "",messengerId ?: "")
             val messagesRef = database.getReference("messages/${chatId}")
 
-            // Crea un nuovo nodo per il messaggio e aggiungi i dati
             val messageId = messagesRef.push().key
             if (messageId != null) {
                 val timestampMillis = System.currentTimeMillis()
@@ -156,12 +201,5 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 Log.e(TAG, "Error")
             }
         }
-    }
-
-    private fun generateChatId(string1: String, string2: String): String {
-        val minString = if (string1 < string2) string1 else string2
-        val maxString = if (minString == string1) string2 else string1
-
-        return minString + maxString
     }
 }

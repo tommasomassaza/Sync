@@ -20,28 +20,28 @@ class ChatAdapter (private var chatList: List<ChatData>) : RecyclerView.Adapter<
 
     class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.root.setOnClickListener {
-            val navController = Navigation.findNavController(it)
-            val bundle = Bundle()
-            bundle.putString("userId", chatList[position].uid)
-            bundle.putString("userName", chatList[position].messengerName)
-            navController.navigate(R.id.action_chatFragment_to_messageFragment, bundle)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val binding = ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ViewHolder(binding)
         }
 
-        holder.binding.apply {
-            lastMessage.text = chatList[position].lastMessage
-            messageTime.text = chatList[position].timeStamp
-            contactName.text = chatList[position].messengerName
-        }
-    }
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.binding.root.setOnClickListener {
+                val navController = Navigation.findNavController(it)
+                val bundle = Bundle()
+                bundle.putString("userId", chatList[position].uid)
+                bundle.putString("userName", chatList[position].messengerName)
+                navController.navigate(R.id.action_chatFragment_to_messageFragment, bundle)
+            }
 
-    override fun getItemCount(): Int {
-        return chatList.size
-    }
+            holder.binding.apply {
+                lastMessage.text = chatList[position].lastMessage
+                messageTime.text = chatList[position].timeStamp
+                contactName.text = chatList[position].messengerName
+            }
+        }
+
+        override fun getItemCount(): Int {
+            return chatList.size
+        }
 }

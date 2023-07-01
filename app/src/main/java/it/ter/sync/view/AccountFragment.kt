@@ -58,9 +58,11 @@ class AccountFragment : Fragment()  {
             val name = binding.name.text.toString().ifEmpty { binding.name.hint.toString() }
             val age = binding.age.text.toString().ifEmpty { binding.age.hint.toString() }
             val tag1 = binding.tag1.text.toString().ifEmpty { binding.tag1.hint.toString()}
+            val tag2 = binding.tag2.text.toString().ifEmpty { binding.tag2.hint.toString()}
+            val tag3 = binding.tag3.text.toString().ifEmpty { binding.tag3.hint.toString()}
 
             saveButtonClicked = true
-            userViewModel.updateUserInfo(name,age,tag1)
+            userViewModel.updateUserInfo(name,age,tag1, tag2, tag3)
         }
 
 
@@ -129,11 +131,15 @@ class AccountFragment : Fragment()  {
             binding.email.text.clear()
             binding.age.text.clear()
             binding.tag1.text.clear()
+            binding.tag2.text.clear()
+            binding.tag3.text.clear()
 
             binding.name.hint = it?.name
             binding.email.hint = it?.email
             binding.age.hint = it?.age
             binding.tag1.hint = it?.tag
+            binding.tag2.hint = it?.tag2
+            binding.tag3.hint = it?.tag3
             if (it != null) {
             val bitmap = base64ToBitmap(it.image)
             binding.imageAccount.setImageBitmap(bitmap)}

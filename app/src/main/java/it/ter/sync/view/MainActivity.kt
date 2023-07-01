@@ -1,8 +1,6 @@
 package it.ter.sync.view
 
 import android.os.Bundle
-import android.view.Menu
-import android.widget.Toast
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -17,53 +15,30 @@ import androidx.navigation.NavController
 import it.ter.sync.R
 import it.ter.sync.databinding.ActivityMainBinding
 import it.ter.sync.viewmodel.UserViewModel
-
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 
 import android.provider.MediaStore
-import android.util.Base64
 import android.util.Log
 import android.view.View
-import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import it.ter.sync.databinding.FragmentHomeBinding
-import it.ter.sync.view.adapter.PostAdapter
+import it.ter.sync.viewmodel.NotificationViewModel
 
 class MainActivity : AppCompatActivity() {
     private val TAG: String = javaClass.simpleName
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var userViewModel: UserViewModel
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
-
-
-
 
     private lateinit var imageView: ImageView
     private lateinit var cardView: CardView
     private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
 
-    private val PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1
-
-
-    companion object {
-        val IMAGE_REQUEST_CODE = 1_000;
-    }
-
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var notificationViewModel: NotificationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,15 +46,15 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+        notificationViewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
+
+        // Prendo le notifiche non ancora visualizzate
+        notificationViewModel.retrieveNotifications(displayed = false)
+
+        initObservers()
 
         setSupportActionBar(binding.appBarMain.toolbar)
-
-        val btnMenu: ImageButton = findViewById(R.id.notifyMenu)
-        btnMenu.setOnClickListener {
-            openOptionsMenu()
-        }
 
         drawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -101,6 +76,17 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.loginFragment || destination.id == R.id.loginFragment) {
+                binding.appBarMain.badgeLayout.visibility = View.INVISIBLE
+            } else  {
+                binding.appBarMain.badgeLayout.visibility = View.VISIBLE
+            }
+        }
+
+        binding.appBarMain.notifyMenu.setOnClickListener {
+            navController.navigate(R.id.notificationFragment)
+        }
 
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri ->
             // Aggiungi il codice per visualizzare l'immagine nell'ImageView
@@ -112,11 +98,6 @@ class MainActivity : AppCompatActivity() {
             pickImageFromGallery()
         }
 
-    }
-
-    private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, 101)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -131,18 +112,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.notify_menu, menu)
-        return true
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
 
         // Se mi trovo nel loginFragment non posso accedere al menù
-        val currentFragment = navController.currentDestination
-        if (currentFragment?.id == R.id.loginFragment) {
+        if (navController.currentDestination?.id == R.id.loginFragment) {
             return false
         }
 
@@ -158,5 +132,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun updateNotificationOnChangeUser(){
+        notificationViewModel.retrieveNotifications(displayed = false)
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, 101)
+    }
+
+    private fun initObservers() {
+        Log.i(TAG, "Registering Observers: ViewModel? $notificationViewModel")
+        notificationViewModel.notificationListNotDisplayed.observe(this) {
+            if(it.isNotEmpty()) {
+                binding.appBarMain.badgeNotification.visibility = View.VISIBLE
+                binding.appBarMain.badgeNotification.text = it.size.toString()
+            } else {
+                binding.appBarMain.badgeNotification.visibility = View.INVISIBLE
+            }
+        }
+    }
 }
 
