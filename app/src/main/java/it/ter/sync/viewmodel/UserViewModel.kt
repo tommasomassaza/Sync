@@ -120,7 +120,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateUserInfo(name: String, age: String, tag: String, tag2: String,tag3: String) {
+    fun updateUserInfo(name: String, age: String, tag: String, tag2: String, tag3: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
