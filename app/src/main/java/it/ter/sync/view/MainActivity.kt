@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         userViewModel.currentUser.observe(this) {
-            nameUser.
+            nameUser.text = it?.name
             Glide.with(this)
                 .load(it?.image)
                 .into(imageUser)
