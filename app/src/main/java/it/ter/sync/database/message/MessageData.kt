@@ -8,8 +8,9 @@ class MessageData(
     @PrimaryKey()
     var uid: String = "",
 
+    var image: String = "",
     var text: String = "",
-    val timestampMillis: Long = 0,
+    val timestampMillis: String = "0",
     var timeStamp: String = "",
     var senderId: String? = "",
     var receiverId: String? = ""

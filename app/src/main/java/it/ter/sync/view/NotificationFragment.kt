@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,9 +14,11 @@ import it.ter.sync.database.notify.NotificationData
 import it.ter.sync.databinding.FragmentChatBinding
 import it.ter.sync.view.adapter.NotificationAdapter
 import it.ter.sync.viewmodel.NotificationViewModel
+import it.ter.sync.viewmodel.UserViewModel
 
 class NotificationFragment : Fragment() {
     private val TAG: String = javaClass.simpleName
+    private val userViewModel: UserViewModel by activityViewModels()
     private val notificationViewModel: NotificationViewModel by activityViewModels()
     private var _binding: FragmentChatBinding? = null
 
@@ -41,7 +42,7 @@ class NotificationFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        notificationAdapter = NotificationAdapter(emptyList())
+        notificationAdapter = NotificationAdapter(emptyList(),"")
         recyclerView.adapter = notificationAdapter
 
 
@@ -77,7 +78,7 @@ class NotificationFragment : Fragment() {
                 // below line is to notify our item is removed from adapter.
                 notificationAdapter.notifyItemRemoved(position)
 
-                //notificationViewModel.remove(deletedNotification.uid)
+                notificationViewModel.remove(deletedNotification)
 
                 // below line is to display our snackbar with action.
                 Snackbar.make(recyclerView, "Deleted", Snackbar.LENGTH_LONG)
@@ -107,8 +108,10 @@ class NotificationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        userViewModel.getUserInfo()
+
         notificationViewModel.notificationsDisplayed()
-        notificationViewModel.retrieveNotifications(displayed = true)
+        notificationViewModel.retrieveNotifications()
     }
 
     override fun onDestroyView() {
@@ -120,6 +123,9 @@ class NotificationFragment : Fragment() {
         notificationViewModel.notificationList.observe(viewLifecycleOwner) {
             notificationListInFragment = it as ArrayList<NotificationData>
             notificationAdapter.setNotificationList(it)
+        }
+        userViewModel.currentUser.observe(viewLifecycleOwner) {
+            notificationAdapter.setCurrentUser(it)
         }
     }
 }

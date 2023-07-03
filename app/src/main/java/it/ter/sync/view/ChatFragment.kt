@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import it.ter.sync.databinding.FragmentChatBinding
 import it.ter.sync.view.adapter.ChatAdapter
 import it.ter.sync.viewmodel.ChatViewModel
+import it.ter.sync.viewmodel.UserViewModel
 
 class ChatFragment : Fragment() {
     private val TAG: String = javaClass.simpleName
+    private val userViewModel: UserViewModel by activityViewModels()
     private val chatViewModel: ChatViewModel by activityViewModels()
     private var _binding: FragmentChatBinding? = null
 
@@ -36,7 +38,7 @@ class ChatFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        chatAdapter = ChatAdapter(emptyList())
+        chatAdapter = ChatAdapter(emptyList(),"")
         recyclerView.adapter = chatAdapter
 
 
@@ -47,6 +49,8 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        userViewModel.getUserInfo()
 
         // Recupera i messaggi esistenti dalla Firebase Realtime Database
         chatViewModel.retrieveChats()
@@ -60,6 +64,9 @@ class ChatFragment : Fragment() {
     private fun initObservers() {
         chatViewModel.chatList.observe(viewLifecycleOwner) {
             chatAdapter.setChatList(it)
+        }
+        userViewModel.currentUser.observe(viewLifecycleOwner) {
+            chatAdapter.setCurrentUser(it)
         }
     }
 }

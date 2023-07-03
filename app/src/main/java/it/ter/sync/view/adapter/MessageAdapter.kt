@@ -8,8 +8,8 @@ import it.ter.sync.databinding.MessageItemBinding
 
 class MessageAdapter(
     private var messageList: List<MessageData>,
-    private val userId: String,
-    private val userName: String) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+    private val messengerId: String,
+    private val messengerName: String) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     fun setMessageList(messages: List<MessageData>) {
         messageList = messages
@@ -25,8 +25,8 @@ class MessageAdapter(
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.binding.apply {
-                if(userId == messageList[position].senderId)
-                    textViewSender.text = userName
+                if(messengerId == messageList[position].senderId)
+                    textViewSender.text = messengerName
                 else
                     textViewSender.text = "Tu"
 

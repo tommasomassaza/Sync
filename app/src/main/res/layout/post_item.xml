@@ -32,6 +32,7 @@
         android:layout_marginBottom="10dp"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@id/imageProfile_post"
         app:layout_constraintStart_toEndOf="@id/imageProfile_post"
         app:layout_constraintTop_toTopOf="@id/imageProfile_post" />
@@ -46,6 +47,7 @@
         android:layout_marginStart="70dp"
         android:drawableStart="@drawable/map_marker_svgrepo_com"
         android:drawablePadding="10dp"
+        android:textColor="@color/black"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintEnd_toStartOf="@id/age_post"
@@ -58,6 +60,7 @@
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/calendar_days_svgrepo_com"
         android:drawablePadding="10dp"
+        android:textColor="@color/black"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintBaseline_toBaselineOf="@id/location_post"
         app:layout_constraintStart_toEndOf="@id/location_post"

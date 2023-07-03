@@ -1,5 +1,6 @@
 package it.ter.sync.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -19,11 +20,15 @@ import android.content.Intent
 
 import android.provider.MediaStore
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
+import com.bumptech.glide.Glide
 import it.ter.sync.viewmodel.NotificationViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -33,13 +38,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
 
-    private lateinit var imageView: ImageView
-    private lateinit var cardView: CardView
-    private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
+    private lateinit var imageUser: ImageView
+    private lateinit var nameUser: TextView
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var notificationViewModel: NotificationViewModel
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         notificationViewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
 
         // Prendo le notifiche non ancora visualizzate
-        notificationViewModel.retrieveNotifications(displayed = false)
+        notificationViewModel.retrieveNotificationsNotDisplayed()
 
         initObservers()
 
@@ -62,22 +67,26 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 
-
-        val headerView = navView.getHeaderView(0)
-        imageView = headerView.findViewById(R.id.imageButton)
-        cardView = headerView.findViewById(R.id.cardView)
-
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.homeFragment, R.id.accountFragment, R.id.chatFragment, R.id.loginFragment
             ), drawerLayout
         )
 
+        // Nascondi la tastiera quando si fa clic al di fuori della tastiera
+        binding.root.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+            }
+            false
+        }
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.loginFragment || destination.id == R.id.loginFragment) {
+            if (destination.id == R.id.loginFragment || destination.id == R.id.signUpFragment) {
                 binding.appBarMain.badgeLayout.visibility = View.INVISIBLE
             } else  {
                 binding.appBarMain.badgeLayout.visibility = View.VISIBLE
@@ -88,38 +97,16 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.notificationFragment)
         }
 
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri ->
-            // Aggiungi il codice per visualizzare l'immagine nell'ImageView
-            imageView.setImageURI(imageUri)
-        }
-
-
-        imageView.setOnClickListener {
-            pickImageFromGallery()
-        }
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == 101) {
-            val imageUri = data?.data
-            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-            imageView.setImageBitmap(bitmap)
-
-            // Ora che hai il bitmap, puoi chiamare il metodo UpdateUser()
-            userViewModel.updateUserImage(bitmap);
-        }
+        imageUser = navView.findViewById(R.id.imageUser)
+        nameUser = navView.findViewById(R.id.textNameUser)
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-
         // Se mi trovo nel loginFragment non posso accedere al menù
         if (navController.currentDestination?.id == R.id.loginFragment) {
             return false
         }
-
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -132,13 +119,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun updateNotificationOnChangeUser(){
-        notificationViewModel.retrieveNotifications(displayed = false)
-    }
+    fun onChangeUser(){
+        notificationViewModel.retrieveNotificationsNotDisplayed()
 
-    private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, 101)
+        userViewModel.getUserInfo()
     }
 
     private fun initObservers() {
@@ -150,6 +134,12 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.appBarMain.badgeNotification.visibility = View.INVISIBLE
             }
+        }
+        userViewModel.currentUser.observe(this) {
+            nameUser.
+            Glide.with(this)
+                .load(it?.image)
+                .into(imageUser)
         }
     }
 }

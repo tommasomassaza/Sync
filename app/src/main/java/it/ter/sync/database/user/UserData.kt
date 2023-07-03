@@ -2,6 +2,7 @@ package it.ter.sync.database.user
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 
 @Entity(tableName = "users")
 open class UserData(

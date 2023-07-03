@@ -23,7 +23,8 @@
         android:layout_toEndOf="@id/profile_image"
         android:layout_marginStart="8dp"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/notification_message"
@@ -33,13 +34,15 @@
         android:layout_toEndOf="@id/profile_image"
         android:text="@string/notification_message_default"
         android:layout_marginStart="8dp"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/notification_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:textColor="@color/black" />
 
 </RelativeLayout>

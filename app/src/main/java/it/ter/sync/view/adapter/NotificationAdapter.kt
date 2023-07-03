@@ -5,18 +5,26 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import it.ter.sync.R
 import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.notify.NotificationData
 import it.ter.sync.database.notify.NotificationType
+import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.ChatItemBinding
 import it.ter.sync.databinding.NotificationItemBinding
 
-class NotificationAdapter (private var notificationList: List<NotificationData>) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+class NotificationAdapter (private var notificationList: List<NotificationData>, private var currentUserName: String) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
 
     fun setNotificationList(notifications: List<NotificationData>) {
         notificationList = notifications
         notifyDataSetChanged() // Aggiorna la RecyclerView
+    }
+
+    fun setCurrentUser(currentUser: UserData?) {
+        if (currentUser != null) {
+            currentUserName = currentUser.name
+        }
     }
 
     class ViewHolder(val binding: NotificationItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -28,13 +36,29 @@ class NotificationAdapter (private var notificationList: List<NotificationData>)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
+        holder.binding.root.setOnClickListener {
+            val navController = Navigation.findNavController(it)
+            val bundle = Bundle()
+            bundle.putString("messengerId", notificationList[position].notifierId)
+            bundle.putString("messengerName", notificationList[position].notifierName)
+            bundle.putString("currentUserName", currentUserName)
+            bundle.putString("imageUrl", notificationList[position].image)
+            navController.navigate(R.id.action_notificationFragment_to_messageFragment, bundle)
+        }
+
         holder.binding.apply {
             if(notificationList[position].type == NotificationType.MESSAGE){
                 notificationMessage.text = notificationList[position].text
             }
 
             notificationTime.text = notificationList[position].timeStamp
-            contactName.text = notificationList[position].userName
+            contactName.text = notificationList[position].notifierName
+
+            if(notificationList[position].image != "") {
+                Glide.with(root)
+                    .load(notificationList[position].image)
+                    .into(profileImage)
+            }
         }
     }
 

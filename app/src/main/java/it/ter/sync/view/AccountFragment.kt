@@ -2,24 +2,19 @@ package it.ter.sync.view
 
 import android.app.DatePickerDialog
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import it.ter.sync.R
+import com.bumptech.glide.Glide
 import it.ter.sync.databinding.FragmentAccountBinding
 import it.ter.sync.viewmodel.UserViewModel
 import java.util.*
@@ -37,9 +32,6 @@ class AccountFragment : Fragment()  {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-
-
-    private lateinit var ageEditText: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,7 +67,7 @@ class AccountFragment : Fragment()  {
         userViewModel.getUserInfo()
 
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri ->
-            // Aggiungi il codice per visualizzare l'immagine nell'ImageView
+            // Codice per visualizzare l'immagine nell'ImageView
             binding.imageAccount.setImageURI(imageUri)
         }
 
@@ -83,28 +75,8 @@ class AccountFragment : Fragment()  {
             pickImageFromGallery()
         }
 
-        ageEditText = view.findViewById(R.id.age)
-
-        ageEditText.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-            // Mostra il DatePickerDialog per selezionare la data di nascita
-            val datePicker = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-                // Calcola l'età utilizzando la data selezionata
-                val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-                val age = currentYear - selectedYear
-
-                // Imposta il valore dell'età nel campo di testo "age"
-                ageEditText.setText(age.toString())
-            }, year, month, day)
-
-            // Imposta la data massima selezionabile come la data odierna
-            datePicker.datePicker.maxDate = calendar.timeInMillis
-
-            datePicker.show()
+        binding.age.setOnClickListener {
+            showDatePicker()
         }
     }
 
@@ -114,15 +86,33 @@ class AccountFragment : Fragment()  {
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(requireContext(), { _, year, monthOfYear, dayOfMonth ->
+        // Mostra il DatePickerDialog per selezionare la data di nascita
+        val datePicker = DatePickerDialog(requireContext(), { _, year, monthOfYear, dayOfMonth ->
             // Il valore della data selezionata viene restituito qui
             val selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
             binding.age.setText(selectedDate)
         }, year, month, day)
 
-        datePickerDialog.show()
+        // Imposta la data massima selezionabile come la data odierna
+        datePicker.datePicker.maxDate = calendar.timeInMillis
+
+        datePicker.show()
     }
-    
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, 101)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == AppCompatActivity.RESULT_OK && requestCode == 101) {
+            val imageUri = data?.data
+
+            // Ora che hai il bitmap, puoi chiamare il metodo UpdateUser()
+            userViewModel.updateUserImage(imageUri)
+        }
+    }
 
     private fun initObservers() {
         userViewModel.currentUser.observe(viewLifecycleOwner) {
@@ -140,10 +130,13 @@ class AccountFragment : Fragment()  {
             binding.tag1.hint = it?.tag
             binding.tag2.hint = it?.tag2
             binding.tag3.hint = it?.tag3
-            if (it != null) {
-            val bitmap = base64ToBitmap(it.image)
-            binding.imageAccount.setImageBitmap(bitmap)}
 
+            it?.let{
+                Log.i(TAG, "${it.image}")
+                Glide.with(this)
+                    .load(it.image)
+                    .into(binding.imageAccount)
+            }
         }
 
         userViewModel.userUpdated.observe(viewLifecycleOwner) { result ->
@@ -156,37 +149,6 @@ class AccountFragment : Fragment()  {
                     Log.i(TAG, "Save failed")
                 }
             }
-        }
-    }
-
-    private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, 101)
-    }
-
-    fun base64ToBitmap(base64String: String): Bitmap? {
-        try {
-            val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-            val options = BitmapFactory.Options()
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888
-            val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size, options)
-
-            return bitmap
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == AppCompatActivity.RESULT_OK && requestCode == 101) {
-            val imageUri = data?.data
-            val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
-            binding.imageAccount.setImageBitmap(bitmap)
-
-            // Ora che hai il bitmap, puoi chiamare il metodo UpdateUser()
-            userViewModel.updateUserImage(bitmap)
         }
     }
 }

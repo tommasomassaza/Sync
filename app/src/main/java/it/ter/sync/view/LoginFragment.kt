@@ -81,7 +81,7 @@ class LoginFragment : Fragment() {
                     Log.i(TAG, "Login Successful")
 
                     // Richiamo nella main activity il metodo retrieveNotification
-                    (requireActivity() as MainActivity).updateNotificationOnChangeUser()
+                    (requireActivity() as MainActivity).onChangeUser()
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 } else {
                     Toast.makeText(activity, "Wrong username or password", Toast.LENGTH_SHORT)

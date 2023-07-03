@@ -1,60 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- message_item.xml -->
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
-    android:background="@drawable/message_background"
-    android:elevation="2dp">
+    android:background="#20C4E198"
+    android:elevation="2dp"
+    android:padding="8dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- TextView per il mittente -->
+    <TextView
+        android:id="@+id/textViewSender"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:layout_marginStart="8dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end">
+    <TextView
+        android:id="@+id/textViewMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewSender"
+        android:layout_marginStart="8dp"
+        android:textSize="14sp"
+        android:textColor="@color/black" />
 
-            <!-- TextView per l'ora -->
-            <TextView
-                android:id="@+id/textViewTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@android:color/darker_gray"
-                android:text="12:00 PM" />
 
-            <!-- Spaziatore per separare l'ora dal mittente -->
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="1dp" />
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:textSize="12sp"
+        android:textColor="@color/black" />
 
-            <!-- TextView per il mittente -->
-            <TextView
-                android:id="@+id/textViewSender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
-                android:text="Sender" />
-
-        </LinearLayout>
-
-        <!-- TextView per il testo del messaggio -->
-        <TextView
-            android:id="@+id/textViewMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:text="Message Text" />
-
-    </LinearLayout>
-
-</androidx.cardview.widget.CardView>
+</RelativeLayout>

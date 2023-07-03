@@ -74,5 +74,8 @@
         android:name="it.ter.sync.view.NotificationFragment"
         android:label="@string/menu_notification"
         tools:layout="@layout/fragment_notification" >
+        <action
+            android:id="@+id/action_notificationFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
     </fragment>
 </navigation>

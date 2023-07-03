@@ -21,8 +21,10 @@ class MessageFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
-    private var messengerId: String? = null
+    private lateinit var messengerId: String
     private lateinit var messengerName: String
+    private lateinit var currentUserName: String
+
     private lateinit var messageAdapter: MessageAdapter
 
     // This property is only valid between onCreateView and
@@ -39,8 +41,10 @@ class MessageFragment : Fragment() {
 
         initObservers()
 
-        messengerId = arguments?.getString("userId") ?: ""
-        messengerName = arguments?.getString("userName") ?: ""
+        messengerId = arguments?.getString("messengerId") ?: ""
+        messengerName = arguments?.getString("messengerName") ?: ""
+        currentUserName = arguments?.getString("currentUserName") ?: ""
+        val imageUrl = arguments?.getString("imageUrl") ?: ""
 
         binding.textViewMessenger.text = messengerName
 
@@ -53,12 +57,13 @@ class MessageFragment : Fragment() {
         messageAdapter = MessageAdapter(emptyList(), messengerId!!, messengerName)
         recyclerView.adapter = messageAdapter
 
+
         // Gestisci l'invio di nuovi messaggi quando viene premuto il pulsante di invio
         val sendButton = binding.sendButton
         sendButton.setOnClickListener {
             val messageInput = binding.messageInput.text.toString()
             if (messageInput.isNotEmpty()) {
-                messageViewModel.sendMessage(messageInput,messengerId)
+                messageViewModel.sendMessage(messageInput,messengerId,imageUrl)
                 binding.messageInput.text.clear()
                 binding.messageInput.clearFocus()
 
@@ -74,9 +79,8 @@ class MessageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // Recupera i messaggi esistenti
-        messageViewModel.retrieveMessages(messengerId, messengerName)
+        messageViewModel.retrieveMessages(messengerId, messengerName, currentUserName)
     }
 
     override fun onDestroyView() {
@@ -87,6 +91,7 @@ class MessageFragment : Fragment() {
     private fun initObservers() {
         messageViewModel.messageList.observe(viewLifecycleOwner) {
             messageAdapter.setMessageList(it)
+            recyclerView.scrollToPosition(it.size - 1)
         }
     }
 }

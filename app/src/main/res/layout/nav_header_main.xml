@@ -6,7 +6,7 @@
     android:background="@drawable/side_nav_bar"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin"
     android:paddingTop="24dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
@@ -27,7 +27,7 @@
             android:layout_margin="4dp">
 
             <ImageView
-                android:id="@+id/imageButton"
+                android:id="@+id/imageUser"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@mipmap/ic_launcher"
@@ -39,10 +39,11 @@
 
 
     <TextView
+        android:id="@+id/textNameUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:fontFamily="cursive"
         android:textColor="@color/black"
         android:text="@string/nav_header_title"

@@ -21,6 +21,7 @@ import android.Manifest
 import android.widget.Button
 import android.widget.EditText
 import com.google.android.gms.location.*
+import it.ter.sync.database.user.UserData
 import it.ter.sync.viewmodel.NotificationViewModel
 
 
@@ -31,7 +32,6 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
 
     private lateinit var recyclerView: RecyclerView
-
     private lateinit var postAdapter: PostAdapter
 
     private var searchString: String = ""
@@ -43,74 +43,6 @@ class HomeFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
-    private val PERMISSIONS_REQUEST_LOCATION = 1
-
-
-    private fun checkLocationPermission() {
-        val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
-        val hasPermission = ContextCompat.checkSelfPermission(
-            requireContext(),
-            locationPermission
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (hasPermission) {
-            requestLocationUpdates()
-        } else {
-            // Richiedi l'autorizzazione all'utente
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(locationPermission),
-                PERMISSIONS_REQUEST_LOCATION
-            )
-        }
-    }
-
-
-    private fun requestLocationUpdates() {
-        val locationRequest = LocationRequest.create().apply {
-            interval = 2000 // Intervallo di aggiornamento in millisecondi
-            fastestInterval = 5000 // Intervallo minimo di aggiornamento in millisecondi
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY // Precisione richiesta
-        }
-
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                val lastLocation = locationResult.lastLocation
-                // Usa lastLocation per le tue operazioni
-                val latitude = lastLocation?.latitude!!
-                val longitude = lastLocation?.longitude!!
-
-
-                // Stampa le coordinate nel log
-                Log.d("HomeFragment", "Coordinate: Latitude = $latitude, Longitude = $longitude")
-
-                // Update home
-                userViewModel.updateHome(latitude, longitude, searchString)
-            }
-        }
-
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                null
-            )
-        } else {
-            // Richiedi l'autorizzazione all'utente
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                PERMISSIONS_REQUEST_LOCATION
-            )
-        }
-    }
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -119,16 +51,12 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
         recyclerView = binding.recyclerPost
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        postAdapter = PostAdapter(emptyList(), notificationViewModel)
+        postAdapter = PostAdapter(emptyList(), "",notificationViewModel)
         recyclerView.adapter = postAdapter
-
-        userViewModel.getUserInfo()
-
 
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -146,6 +74,8 @@ class HomeFragment : Fragment() {
             // Utente non autenticato, reindirizza al fragment di login
             findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
         }
+
+        userViewModel.getUserInfo()
 
         val editTextSearch: EditText = view.findViewById(R.id.search_view)
         val buttonSearch: Button = view.findViewById(R.id.btn_search)
@@ -216,15 +146,58 @@ class HomeFragment : Fragment() {
 
         }
 
-
         // L'utente è autenticato, verifica le autorizzazioni della posizione
-        checkLocationPermission()
+        requestLocationUpdates()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun requestLocationUpdates() {
+        val locationRequest = LocationRequest.create().apply {
+            interval = 5000 // Intervallo di aggiornamento in millisecondi
+            fastestInterval = 5000 // Intervallo minimo di aggiornamento in millisecondi
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY // Precisione richiesta
+        }
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                val lastLocation = locationResult.lastLocation
+                // Usa lastLocation per le tue operazioni
+                val latitude = lastLocation?.latitude!!
+                val longitude = lastLocation?.longitude!!
+
+                // Update home
+                userViewModel.updateHome(latitude, longitude, searchString)
+
+                // Stampa le coordinate nel log
+                Log.d("HomeFragment", "Coordinate: Latitude = $latitude, Longitude = $longitude")
+
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                null
+            )
+        } else {
+            // Richiedi l'autorizzazione all'utente
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1
+            )
+        }
+    }
+
 
     /**
      * it initializes the view model and the methods used to retrieve the live data for the interface
@@ -233,6 +206,9 @@ class HomeFragment : Fragment() {
         Log.i(TAG, "Registering Observers: ViewModel? $userViewModel")
         userViewModel.users.observe(viewLifecycleOwner) {
             postAdapter.setPostList(it)
+        }
+        userViewModel.currentUser.observe(viewLifecycleOwner) {
+            postAdapter.setCurrentUser(it)
         }
     }
 

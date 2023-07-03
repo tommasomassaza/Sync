@@ -2,16 +2,17 @@ package it.ter.sync.viewmodel
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import it.ter.sync.database.repository.UserRepository
 import it.ter.sync.database.user.UserData
+import it.ter.sync.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
@@ -21,15 +22,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private var TAG = this::class.simpleName
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
 
     private val userRepository: UserRepository = UserRepository(application)
 
     var loginResult: MutableLiveData<Boolean> = MutableLiveData()
     var registrationResult: MutableLiveData<String> = MutableLiveData()
-    var currentUser: MutableLiveData<UserData> = MutableLiveData()
+    var currentUser: MutableLiveData<UserData?> = MutableLiveData()
     var userUpdated: MutableLiveData<Boolean> = MutableLiveData()
     var users: MutableLiveData<List<UserData>> = MutableLiveData()
-
 
 
     fun login(email: String, password: String) {
@@ -58,7 +59,33 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
-                currentUser.postValue(userRepository.getUserByUid(user.uid))
+                val userData = userRepository.getUserByUid(user.uid)
+                if (userData != null && userData.image != "") { // è presente in locale
+                    currentUser.postValue(userData)
+                } else {
+                    fireStore.collection("users")
+                        .document(user.uid)
+                        .get()
+                        .addOnSuccessListener { documentSnapshot ->
+                            if (documentSnapshot.exists()) {
+                                val name = documentSnapshot.getString("name") ?: ""
+                                val age = documentSnapshot.getString("age") ?: ""
+                                val location = documentSnapshot.getString("location") ?: ""
+                                val imageUrl = documentSnapshot.getString("image") ?: ""
+                                val email = user.email ?: ""
+                                val userData = UserData(user.uid, name, email, location, age, imageUrl)
+                                currentUser.postValue(userData)
+
+                                // Salva le informazioni dell'utente anche nel Database locale
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    userRepository.insertUser(userData)
+                                }
+                            }
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e(TAG, "Errore durante il recupero delle informazioni dell'utente da Firestore: ${exception.message}")
+                        }
+                }
             }
         }
     }
@@ -74,11 +101,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
                             // Salva le informazioni su fireStore
                             addUserToFireStore(userData, latitude, longitude)
-
-                            // Salva le informazioni dell'utente anche nel Database locale
-                            viewModelScope.launch(Dispatchers.IO) {
-                                userRepository.insertUser(userData)
-                            }
                         }
                     } else {
                         // Si è verificato un errore durante la registrazione dell'utente
@@ -151,7 +173,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-    fun updateUserPosition(latitude: Double, longitude: Double) {
+    private fun updateUserPosition(latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
@@ -175,33 +197,38 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-     fun updateUserImage(imageBitmap: Bitmap) {
-        // Converti il bitmap in un array di byte
-        val baos = ByteArrayOutputStream()
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val image = baos.toByteArray()
-
-         // Converti l'array di byte in una stringa Base64
-         val imageString = Base64.encodeToString(image, Base64.DEFAULT)
-
+    fun updateUserImage(imageUri: Uri?) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             user?.let {
-                val userAdditionalData = hashMapOf<String, Any>(
-                    "image" to imageString,
-                )
+                val storageRef = storage.reference.child("images/${user.uid}.jpg")
+                val uploadTask = storageRef.putFile(imageUri!!)
 
-                fireStore.collection("users")
-                    .document(user.uid)
-                    .update(userAdditionalData)
-                    .addOnSuccessListener {
-                        userUpdated.postValue(true)
+                uploadTask.addOnSuccessListener {
+                    Log.e(TAG, "Immagine aggiunta con successo.")
+                    storageRef.downloadUrl.addOnSuccessListener {
+                        val userAdditionalData = hashMapOf<String, Any>(
+                            "image" to it.toString(),
+                        )
+
+                        val imageUrl = it
+                        fireStore.collection("users")
+                            .document(user.uid)
+                            .update(userAdditionalData)
+                            .addOnSuccessListener {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    userRepository.updateUserImage(user.uid, imageUrl.toString())
+                                    getUserInfo()
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                userUpdated.postValue(false)
+                                Log.i(TAG, exception.message.toString())
+                            }
                     }
-                    .addOnFailureListener { exception ->
-                        userUpdated.postValue(false)
-                        Log.i(TAG, exception.message.toString())
-                    }
+                }.addOnFailureListener { exception ->
+                    Log.e(TAG, "Error uploading image to Firebase Storage: ${exception.message}")
+                }
 
             }
         }
@@ -223,47 +250,36 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                         val uid = document.id
                         // se si tratta dell'utente loggato non mi interessa
                         if (uid != user?.uid) {
-                            val name = document.getString("name") ?: ""
-                            val age = document.getString("age") ?: ""
-                            val location = document.getString("location") ?: ""
-                            val image = document.getString("image") ?: ""
+                            val userData = document.toObject(UserData::class.java)
                             val latitude = document.getDouble("latitude") ?: 0.0
                             val longitude = document.getDouble("longitude") ?: 0.0
-                            val documentTag = document.getString("tag") ?: ""
-                            val documentTag2 = document.getString("tag2") ?: ""
-                            val documentTag3 = document.getString("tag3") ?: ""
 
                             val MAX_DISTANCE = 1000000000000000000.0 // in chilometri
 
-                            val distance = calculateDistance(
-                                latitude,
-                                longitude,
-                                currentLatitude,
-                                currentLongitude
-                            )
+                            val distance = Utils.calculateDistance(latitude,longitude,currentLatitude,currentLongitude)
 
                             // Stampa la distanza nel log
                             Log.d("TAG", "Distanza = $distance")
 
-
                             val lowercaseSearchString = tag.toLowerCase()
 
-                            val lowercaseTag = documentTag.toLowerCase()
-                            val lowercaseTag2 = documentTag2.toLowerCase()
-                            val lowercaseTag3 = documentTag3.toLowerCase()
+                            val lowercaseTag = userData.tag.toLowerCase()
+                            val lowercaseTag2 = userData.tag2.toLowerCase()
+                            val lowercaseTag3 = userData.tag3.toLowerCase()
 
                             if (distance <= MAX_DISTANCE && (lowercaseTag == lowercaseSearchString || lowercaseSearchString.isEmpty() ||lowercaseTag2 == lowercaseSearchString
-                                        || lowercaseTag3 == lowercaseSearchString || name == lowercaseSearchString)) {
+                                        || lowercaseTag3 == lowercaseSearchString || userData.name == lowercaseSearchString)) {
+
                                 // Crea un oggetto User utilizzando i dati ottenuti dal documento
                                 val user = UserData(
                                     uid = uid,
-                                    name = name,
-                                    location = location,
-                                    age = age,
-                                    image = image,
-                                    tag = documentTag,
-                                    tag2 = documentTag2,
-                                    tag3 = documentTag3
+                                    name = userData.name,
+                                    location = userData.location,
+                                    age = Utils.calculateAge(userData.age).toString(),
+                                    image = userData.image,
+                                    tag = userData.tag,
+                                    tag2 = userData.tag2,
+                                    tag3 = userData.tag3
                                 )
                                 userList.add(user)
                             }
@@ -279,26 +295,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun calculateDistance(
-        lat1: Double, lon1: Double, // Coordinate del primo punto
-        lat2: Double, lon2: Double  // Coordinate del secondo punto
-    ): Double {
-        val earthRadius = 6371 // Raggio medio della Terra in chilometri
+    fun setCoordinates(latitude: Double, longitude: Double) {
 
-        // Converti le coordinate in radianti
-        val lat1Rad = Math.toRadians(lat1)
-        val lon1Rad = Math.toRadians(lon1)
-        val lat2Rad = Math.toRadians(lat2)
-        val lon2Rad = Math.toRadians(lon2)
-
-        // Calcola la differenza tra le latitudini e le longitudini
-        val dLat = lat2Rad - lat1Rad
-        val dLon = lon2Rad - lon1Rad
-
-        // Applica la formula di Haversine
-        val a = sin(dLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2).pow(2)
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-        return earthRadius * c
     }
 }
