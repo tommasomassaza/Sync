@@ -97,8 +97,9 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.notificationFragment)
         }
 
-        imageUser = navView.findViewById(R.id.imageUser)
-        nameUser = navView.findViewById(R.id.textNameUser)
+        val headerView = navView.getHeaderView(0)
+        imageUser = headerView.findViewById(R.id.imageUser)
+        nameUser = headerView.findViewById(R.id.textNameUser)
     }
 
     override fun onSupportNavigateUp(): Boolean {
