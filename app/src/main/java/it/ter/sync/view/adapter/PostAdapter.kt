@@ -1,5 +1,6 @@
 package it.ter.sync.view.adapter
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -40,6 +41,7 @@ class PostAdapter(private var postList: List<UserData>, private var currentUser:
 
 
     // Replace the contents of a view (invoked by the layout manager)
+        @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.binding.chat.setOnClickListener {
                 val navController = Navigation.findNavController(it)
@@ -60,6 +62,11 @@ class PostAdapter(private var postList: List<UserData>, private var currentUser:
                 usernamePost.text = postList[position].name
                 agePost.text = postList[position].age
                 locationPost.text = postList[position].location
+                tagsView.setText("#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3)
+
+
+
+
 
                 if(postList[position].image != "") {
                     Glide.with(root)

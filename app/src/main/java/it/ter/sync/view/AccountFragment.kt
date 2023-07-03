@@ -47,7 +47,7 @@ class AccountFragment : Fragment()  {
         binding.email.isEnabled = false
 
         buttonSave.setOnClickListener {
-            val name = binding.name.text.toString().ifEmpty { binding.name.hint.toString() }
+            val name = binding.name.text.toString().ifEmpty { binding.name.hint.toString()}
             val age = binding.age.text.toString().ifEmpty { binding.age.hint.toString() }
             val tag1 = binding.tag1.text.toString().ifEmpty { binding.tag1.hint.toString()}
             val tag2 = binding.tag2.text.toString().ifEmpty { binding.tag2.hint.toString()}

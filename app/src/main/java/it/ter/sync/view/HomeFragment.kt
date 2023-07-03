@@ -20,6 +20,7 @@ import it.ter.sync.viewmodel.UserViewModel
 import android.Manifest
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.view.marginTop
 import com.google.android.gms.location.*
 import it.ter.sync.database.user.UserData
 import it.ter.sync.viewmodel.NotificationViewModel
@@ -143,6 +144,9 @@ class HomeFragment : Fragment() {
         buttonClean.setOnClickListener {
             searchString = ""
             searchView.setText("")
+            btnTag1?.visibility = View.INVISIBLE
+            btnTag2?.visibility = View.INVISIBLE
+            btnTag3?.visibility = View.INVISIBLE
 
         }
 

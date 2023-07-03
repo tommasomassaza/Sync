@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -37,22 +45,6 @@
 
         </androidx.cardview.widget.CardView>
     </androidx.cardview.widget.CardView>
-
-    <ImageView
-        android:id="@+id/modifyProfilepic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="100dp"
-        android:src="@drawable/outline_insert_photo_24"
-
-
-        app:layout_constraintLeft_toRightOf="@id/image_account_cardView"
-        app:layout_constraintStart_toEndOf="@id/image_account_cardView"
-
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
 
 
 
@@ -158,3 +150,4 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
