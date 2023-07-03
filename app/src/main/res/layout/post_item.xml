@@ -90,7 +90,8 @@
                 android:id="@+id/image_post"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/ic_launcher"
+                android:scaleType="centerCrop"/>
 
         </androidx.cardview.widget.CardView>
     </androidx.cardview.widget.CardView>

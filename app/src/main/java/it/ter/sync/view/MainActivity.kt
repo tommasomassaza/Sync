@@ -16,18 +16,12 @@ import androidx.navigation.NavController
 import it.ter.sync.R
 import it.ter.sync.databinding.ActivityMainBinding
 import it.ter.sync.viewmodel.UserViewModel
-import android.content.Intent
-
-import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.cardview.widget.CardView
 import com.bumptech.glide.Glide
 import it.ter.sync.viewmodel.NotificationViewModel
 
@@ -111,6 +105,7 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             // Il menu laterale è aperto, chiudi il menu
