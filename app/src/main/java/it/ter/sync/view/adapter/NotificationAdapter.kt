@@ -14,7 +14,7 @@ import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.ChatItemBinding
 import it.ter.sync.databinding.NotificationItemBinding
 
-class NotificationAdapter (private var notificationList: List<NotificationData>, private var currentUserName: String) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+class NotificationAdapter (private var notificationList: List<NotificationData>, private var currentUser: UserData) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
 
     fun setNotificationList(notifications: List<NotificationData>) {
         notificationList = notifications
@@ -23,7 +23,7 @@ class NotificationAdapter (private var notificationList: List<NotificationData>,
 
     fun setCurrentUser(currentUser: UserData?) {
         if (currentUser != null) {
-            currentUserName = currentUser.name
+            this@NotificationAdapter.currentUser = currentUser
         }
     }
 
@@ -41,8 +41,8 @@ class NotificationAdapter (private var notificationList: List<NotificationData>,
             val bundle = Bundle()
             bundle.putString("messengerId", notificationList[position].notifierId)
             bundle.putString("messengerName", notificationList[position].notifierName)
-            bundle.putString("currentUserName", currentUserName)
-            bundle.putString("imageUrl", notificationList[position].image)
+            bundle.putString("currentUserName", currentUser.name)
+            bundle.putString("imageUrl", currentUser.image)
             navController.navigate(R.id.action_notificationFragment_to_messageFragment, bundle)
         }
 

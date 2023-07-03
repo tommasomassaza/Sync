@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.FragmentChatBinding
 import it.ter.sync.view.adapter.ChatAdapter
 import it.ter.sync.viewmodel.ChatViewModel
@@ -38,7 +39,7 @@ class ChatFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        chatAdapter = ChatAdapter(emptyList(),"")
+        chatAdapter = ChatAdapter(emptyList(), UserData())
         recyclerView.adapter = chatAdapter
 
 

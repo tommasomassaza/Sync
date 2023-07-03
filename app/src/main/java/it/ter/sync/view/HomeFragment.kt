@@ -55,7 +55,7 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        postAdapter = PostAdapter(emptyList(), "",notificationViewModel)
+        postAdapter = PostAdapter(emptyList(),UserData(),notificationViewModel)
         recyclerView.adapter = postAdapter
 
         fusedLocationClient =

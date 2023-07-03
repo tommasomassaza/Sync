@@ -13,7 +13,7 @@ import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.ChatItemBinding
 import it.ter.sync.databinding.MessageItemBinding
 
-class ChatAdapter (private var chatList: List<ChatData>, private var currentUserName: String) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
+class ChatAdapter (private var chatList: List<ChatData>, private var currentUser: UserData) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
     fun setChatList(chats: List<ChatData>) {
         chatList = chats
@@ -22,7 +22,7 @@ class ChatAdapter (private var chatList: List<ChatData>, private var currentUser
 
     fun setCurrentUser(currentUser: UserData?) {
         if (currentUser != null) {
-            currentUserName = currentUser.name
+            this@ChatAdapter.currentUser = currentUser
         }
     }
 
@@ -39,8 +39,8 @@ class ChatAdapter (private var chatList: List<ChatData>, private var currentUser
                 val bundle = Bundle()
                 bundle.putString("messengerId", chatList[position].uid)
                 bundle.putString("messengerName", chatList[position].messengerName)
-                bundle.putString("currentUserName", currentUserName)
-                bundle.putString("imageUrl", chatList[position].image)
+                bundle.putString("currentUserName", currentUser.name)
+                bundle.putString("imageUrl", currentUser.image)
                 navController.navigate(R.id.action_chatFragment_to_messageFragment, bundle)
             }
 

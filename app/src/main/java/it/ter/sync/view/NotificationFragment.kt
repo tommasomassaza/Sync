@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import it.ter.sync.database.notify.NotificationData
+import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.FragmentChatBinding
 import it.ter.sync.view.adapter.NotificationAdapter
 import it.ter.sync.viewmodel.NotificationViewModel
@@ -42,7 +43,7 @@ class NotificationFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        notificationAdapter = NotificationAdapter(emptyList(),"")
+        notificationAdapter = NotificationAdapter(emptyList(), UserData())
         recyclerView.adapter = notificationAdapter
 
 

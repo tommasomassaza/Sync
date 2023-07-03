@@ -12,7 +12,7 @@ import it.ter.sync.databinding.PostItemBinding
 import com.bumptech.glide.Glide
 import it.ter.sync.viewmodel.NotificationViewModel
 
-class PostAdapter(private var postList: List<UserData>, private var currentUserName: String, private var notificationViewModel: NotificationViewModel) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+class PostAdapter(private var postList: List<UserData>, private var currentUser: UserData, private var notificationViewModel: NotificationViewModel) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     fun setPostList(users: List<UserData>) {
         postList = users
@@ -22,7 +22,7 @@ class PostAdapter(private var postList: List<UserData>, private var currentUserN
 
     fun setCurrentUser(currentUser: UserData?) {
         if (currentUser != null) {
-            currentUserName = currentUser.name
+            this@PostAdapter.currentUser = currentUser
         }
     }
 
@@ -46,13 +46,13 @@ class PostAdapter(private var postList: List<UserData>, private var currentUserN
                 val bundle = Bundle()
                 bundle.putString("messengerId", postList[position].uid)
                 bundle.putString("messengerName", postList[position].name)
-                bundle.putString("currentUserName", currentUserName)
-                bundle.putString("imageUrl", postList[position].image)
+                bundle.putString("currentUserName", currentUser.name)
+                bundle.putString("imageUrl", currentUser.image)
                 navController.navigate(R.id.action_homeFragment_to_messageFragment, bundle)
             }
 
             holder.binding.like.setOnClickListener {
-                notificationViewModel.addLikeNotification(postList[position].uid, currentUserName,postList[position].image)
+                notificationViewModel.addLikeNotification(postList[position].uid,currentUser.name,currentUser.image)
             }
 
 

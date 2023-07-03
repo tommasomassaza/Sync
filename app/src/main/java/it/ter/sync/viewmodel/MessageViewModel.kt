@@ -99,7 +99,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 }
             }
         }
-        // Se sono entrato nel for
+        // Se sono entrato nel'if del for
         if(lastTimestamp < lastMessage.timestampMillis.toLong()) {
             lastTimestamp = lastMessage.timestampMillis.toLong()
 
@@ -108,7 +108,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 addMessageNotification(lastMessage)
             }
         }
-
 
         return messages
     }

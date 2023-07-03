@@ -106,7 +106,7 @@
     <EditText
         android:id="@+id/tag1"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="20dp"
         android:background="#50ffffff"
@@ -120,7 +120,7 @@
     <EditText
         android:id="@+id/tag2"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="20dp"
         android:background="#50ffffff"
@@ -134,7 +134,7 @@
     <EditText
         android:id="@+id/tag3"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="20dp"
         android:background="#50ffffff"
