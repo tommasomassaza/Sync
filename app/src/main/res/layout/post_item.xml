@@ -68,8 +68,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/image_cardView"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:src="@mipmap/ic_launcher"
@@ -94,7 +94,34 @@
                 android:scaleType="centerCrop"/>
 
         </androidx.cardview.widget.CardView>
+
     </androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/interessi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Interessi:"
+        android:fontFamily="cursive"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/image_cardView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+    </TextView>
+
+    <TextView
+        android:id="@+id/tags_view"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif-medium"
+        android:textAlignment="center"
+
+        app:layout_constraintTop_toBottomOf="@id/interessi"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+    </TextView>
 
 
 
@@ -109,7 +136,7 @@
         app:backgroundTint="@android:color/holo_green_light"
         app:layout_constraintEnd_toStartOf="@+id/chat"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_cardView" />
+        app:layout_constraintTop_toBottomOf="@+id/tags_view" />
 
     <ImageButton
         android:id="@+id/chat"
@@ -122,7 +149,7 @@
         app:backgroundTint="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/like"
-        app:layout_constraintTop_toBottomOf="@+id/image_cardView" />
+        app:layout_constraintTop_toBottomOf="@+id/tags_view" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
