@@ -20,7 +20,6 @@ import it.ter.sync.viewmodel.UserViewModel
 import android.Manifest
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.core.view.marginTop
 import com.google.android.gms.location.*
 import it.ter.sync.database.user.UserData
@@ -106,12 +105,10 @@ class HomeFragment : Fragment() {
                 // Impostare il testo del bottone
                 btnTag1?.text = searchString
 
-
             }
             if(!isBtnTag2Visible && isBtnTag1Visible) {
                 btnTag2?.visibility = View.VISIBLE
                 btnTag2?.text = searchString
-
 
 
             }
@@ -121,11 +118,6 @@ class HomeFragment : Fragment() {
 
             }
 
-        }
-        fun setMargins(view: View, left: Int, top: Int, right: Int, bottom: Int) {
-            val params = view.layoutParams as? ViewGroup.MarginLayoutParams
-            params?.setMargins(left, top, right, bottom)
-            view.requestLayout()
         }
 
 
