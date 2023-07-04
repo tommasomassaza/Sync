@@ -42,7 +42,8 @@ class NotificationAdapter (private var notificationList: List<NotificationData>,
             bundle.putString("messengerId", notificationList[position].notifierId)
             bundle.putString("messengerName", notificationList[position].notifierName)
             bundle.putString("currentUserName", currentUser.name)
-            bundle.putString("imageUrl", currentUser.image)
+            bundle.putString("userImageUrl", currentUser.image)
+            bundle.putString("messengerImageUrl", notificationList[position].image)
             navController.navigate(R.id.action_notificationFragment_to_messageFragment, bundle)
         }
 
@@ -57,6 +58,7 @@ class NotificationAdapter (private var notificationList: List<NotificationData>,
             if(notificationList[position].image != "") {
                 Glide.with(root)
                     .load(notificationList[position].image)
+                    .error(R.mipmap.ic_launcher)
                     .into(profileImage)
             }
         }

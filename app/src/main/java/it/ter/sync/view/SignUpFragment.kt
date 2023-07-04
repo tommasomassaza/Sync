@@ -1,5 +1,6 @@
 package it.ter.sync.view
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import it.ter.sync.R
 import it.ter.sync.databinding.FragmentSignupBinding
 import it.ter.sync.viewmodel.UserViewModel
+import java.util.Calendar
 
 
 class SignUpFragment : Fragment() {
@@ -47,8 +49,6 @@ class SignUpFragment : Fragment() {
             val location = binding.locationSignUp.text.toString()
             val password1 = binding.password1.text.toString()
             val password2 = binding.password2.text.toString()
-            val latitude = 45.10
-            val longitude = 7.65
 
             if( name.isEmpty() || email.isEmpty() || age.isEmpty() ||
                 location.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
@@ -56,12 +56,39 @@ class SignUpFragment : Fragment() {
             } else if(password1 != password2) {
                 Toast.makeText(activity,"Le password non corrispondono",Toast.LENGTH_SHORT).show()
             } else {
-                userViewModel.register(name,age,location,email,password1,latitude, longitude)
+                userViewModel.register(name,age,location,email,password1)
             }
         }
 
         // Inflate the layout for this fragment
         return root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.ageSignUp.setOnClickListener{
+            showDatePicker()
+        }
+    }
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        // Mostra il DatePickerDialog per selezionare la data di nascita
+        val datePicker = DatePickerDialog(requireContext(), { _, year, monthOfYear, dayOfMonth ->
+            // Il valore della data selezionata viene restituito qui
+            val selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
+            binding.ageSignUp.setText(selectedDate)
+        }, year, month, day)
+
+        // Imposta la data massima selezionabile la minima per avere 18 anni
+        calendar.add(Calendar.YEAR, -18)
+        val minDate = calendar.timeInMillis
+        datePicker.datePicker.maxDate = minDate
+
+        datePicker.show()
     }
 
     private fun initObservers() {

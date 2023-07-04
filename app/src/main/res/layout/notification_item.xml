@@ -9,18 +9,37 @@
     android:elevation="2dp"
     android:padding="8dp">
 
-    <ImageView
-        android:id="@+id/profile_image"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        app:srcCompat="@mipmap/ic_launcher_round"
-        android:scaleType="centerCrop" />
+        android:paddingTop="8dp"
+        android:background="@drawable/circle_button_background"
+        app:cardCornerRadius="150dp"
+        android:scaleType="centerInside"
+        app:cardBackgroundColor="@color/white">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="150dp"
+            android:layout_margin="4dp">
+
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/contact_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/profile_image"
+        android:layout_toEndOf="@id/cardView"
         android:layout_marginStart="8dp"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -31,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/contact_name"
-        android:layout_toEndOf="@id/profile_image"
+        android:layout_toEndOf="@id/cardView"
         android:text="@string/notification_message_default"
         android:layout_marginStart="8dp"
         android:textSize="14sp"

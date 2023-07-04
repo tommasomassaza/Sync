@@ -12,10 +12,15 @@ import it.ter.sync.databinding.PostItemBinding
 import com.bumptech.glide.Glide
 import it.ter.sync.viewmodel.NotificationViewModel
 
-class PostAdapter(private var postList: List<UserData>, private var currentUser: UserData, private var notificationViewModel: NotificationViewModel) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+class PostAdapter(private var postList: List<UserData>, private var likeList: List<String>, private var currentUser: UserData, private var notificationViewModel: NotificationViewModel) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     fun setPostList(users: List<UserData>) {
         postList = users
+
+        notifyDataSetChanged() // Aggiorna la RecyclerView
+    }
+    fun setLikeList(likes: List<String>) {
+        likeList = likes
 
         notifyDataSetChanged() // Aggiorna la RecyclerView
     }
@@ -47,12 +52,19 @@ class PostAdapter(private var postList: List<UserData>, private var currentUser:
                 bundle.putString("messengerId", postList[position].uid)
                 bundle.putString("messengerName", postList[position].name)
                 bundle.putString("currentUserName", currentUser.name)
-                bundle.putString("imageUrl", currentUser.image)
+                bundle.putString("userImageUrl", currentUser.image)
+                bundle.putString("messengerImageUrl", postList[position].image)
                 navController.navigate(R.id.action_homeFragment_to_messageFragment, bundle)
             }
 
             holder.binding.like.setOnClickListener {
-                notificationViewModel.addLikeNotification(postList[position].uid,currentUser.name,currentUser.image)
+                if (likeList.contains(postList[position].uid)) {
+                    notificationViewModel.deleteLikeNotification(postList[position].uid)
+                    it.setBackgroundResource(R.drawable.round_button)
+                } else {
+                    notificationViewModel.addLikeNotification(postList[position].uid, currentUser.name, currentUser.image)
+                    it.setBackgroundResource(R.drawable.round_button_selected)
+                }
             }
 
 
@@ -61,11 +73,10 @@ class PostAdapter(private var postList: List<UserData>, private var currentUser:
                 agePost.text = postList[position].age
                 locationPost.text = postList[position].location
 
-                if(postList[position].image != "") {
-                    Glide.with(root)
-                        .load(postList[position].image)
-                        .into(imagePost)
-                }
+                Glide.with(root)
+                    .load(postList[position].image)
+                    .error(R.mipmap.ic_launcher)
+                    .into(imagePost)
             }
         }
 }

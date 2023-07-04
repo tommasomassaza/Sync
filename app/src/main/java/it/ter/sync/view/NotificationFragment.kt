@@ -72,9 +72,8 @@ class NotificationFragment : Fragment() {
                 val deletedNotification: NotificationData =
                     notificationListInFragment[position]
 
-                // this method is called when item is swiped.
-                // below line is to remove item from our array list.
-                notificationListInFragment.removeAt(position)
+
+                notificationViewModel.remove(deletedNotification)
 
                 // below line is to notify our item is removed from adapter.
                 notificationAdapter.notifyItemRemoved(position)
@@ -95,6 +94,8 @@ class NotificationFragment : Fragment() {
                         // below line is to notify item is
                         // added to our adapter class.
                         notificationAdapter.notifyItemInserted(position)
+
+                        notificationViewModel.add(deletedNotification)
                     }.show()
             }
             // at last we are adding this
@@ -122,7 +123,7 @@ class NotificationFragment : Fragment() {
 
     private fun initObservers() {
         notificationViewModel.notificationList.observe(viewLifecycleOwner) {
-            notificationListInFragment = it as ArrayList<NotificationData>
+            if(it.isNotEmpty()) notificationListInFragment = it as ArrayList<NotificationData>
             notificationAdapter.setNotificationList(it)
         }
         userViewModel.currentUser.observe(viewLifecycleOwner) {

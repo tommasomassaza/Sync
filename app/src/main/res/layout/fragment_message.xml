@@ -6,22 +6,54 @@
     android:layout_height="match_parent"
     android:background="@drawable/background3"
     tools:context=".view.MessageFragment">
-
-    <!-- TextView per l'utente con cui si sta parlando -->
-    <TextView
-        android:id="@+id/textViewMessenger"
+    <!-- LinearLayout per la barra con foto e nome -->
+    <LinearLayout
+        android:id="@+id/userBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textSize="30sp"
-        android:textColor="@color/black"
-        android:text="Sender"
-        android:fontFamily="cursive"
-        android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:paddingTop="8dp"
+            android:background="@drawable/circle_button_background"
+            app:cardCornerRadius="150dp"
+            android:scaleType="centerInside"
+            app:cardBackgroundColor="@color/white">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="150dp"
+                android:layout_margin="4dp">
+
+                <ImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_launcher"
+                    android:scaleType="centerCrop"/>
+            </androidx.cardview.widget.CardView>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- TextView per l'utente con cui si sta parlando -->
+        <TextView
+            android:id="@+id/textViewMessenger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/black"
+            android:text="Sender"
+            android:fontFamily="cursive" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_message"
@@ -33,7 +65,7 @@
         app:layout_constraintBottom_toTopOf="@+id/messageInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewMessenger"
+        app:layout_constraintTop_toBottomOf="@+id/userBar"
         tools:listitem="@layout/message_item" />
 
     <EditText

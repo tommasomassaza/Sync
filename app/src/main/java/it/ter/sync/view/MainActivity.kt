@@ -23,6 +23,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import it.ter.sync.viewmodel.MessageViewModel
 import it.ter.sync.viewmodel.NotificationViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var notificationViewModel: NotificationViewModel
+    private lateinit var messageViewModel: MessageViewModel
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         notificationViewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
+        messageViewModel = ViewModelProvider(this).get(MessageViewModel::class.java)
 
         // Prendo le notifiche non ancora visualizzate
         notificationViewModel.retrieveNotificationsNotDisplayed()
@@ -82,8 +85,14 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.loginFragment || destination.id == R.id.signUpFragment) {
                 binding.appBarMain.badgeLayout.visibility = View.INVISIBLE
-            } else  {
+            } else {
                 binding.appBarMain.badgeLayout.visibility = View.VISIBLE
+            }
+
+            if(destination.id == R.id.notificationFragment){
+                binding.appBarMain.notifyMenu.visibility = View.INVISIBLE
+            } else {
+                binding.appBarMain.notifyMenu.visibility = View.VISIBLE
             }
         }
 
@@ -119,6 +128,7 @@ class MainActivity : AppCompatActivity() {
         notificationViewModel.retrieveNotificationsNotDisplayed()
 
         userViewModel.getUserInfo()
+        userViewModel.getUserImage()
     }
 
     private fun initObservers() {
@@ -133,8 +143,11 @@ class MainActivity : AppCompatActivity() {
         }
         userViewModel.currentUser.observe(this) {
             nameUser.text = it?.name
+        }
+        userViewModel.userImage.observe(this) {
             Glide.with(this)
-                .load(it?.image)
+                .load(it)
+                .error(R.mipmap.ic_launcher)
                 .into(imageUser)
         }
     }

@@ -12,6 +12,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.message.MessageData
+import it.ter.sync.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

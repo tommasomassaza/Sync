@@ -11,4 +11,19 @@
     <string name="menu_notification">Notifications</string>
     <string name="save">Save</string>
     <string name="notification_message_default">Ha messo mi piace al tuo post</string>
+    <string name="sync">Sync</string>
+    <string name="accedi">Accedi</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="non_sei_registrato">Non sei registrato?</string>
+    <string name="registrati">Registrati</string>
+    <string name="sign_up">Sign up</string>
+    <string name="name">Name</string>
+    <string name="enter_email_address">Enter email address</string>
+    <string name="enter_age">Enter age</string>
+    <string name="enter_location">Enter location</string>
+    <string name="passwordSignUp">Password</string>
+    <string name="check_password">Check password</string>
+    <string name="sign_up_button">SIGN UP</string>
 </resources>

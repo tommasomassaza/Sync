@@ -38,22 +38,6 @@
         </androidx.cardview.widget.CardView>
     </androidx.cardview.widget.CardView>
 
-    <ImageView
-        android:id="@+id/modifyProfilepic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="100dp"
-        android:src="@drawable/outline_insert_photo_24"
-
-
-        app:layout_constraintLeft_toRightOf="@id/image_account_cardView"
-        app:layout_constraintStart_toEndOf="@id/image_account_cardView"
-
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
-
 
 
     <EditText

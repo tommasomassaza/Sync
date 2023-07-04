@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
+import it.ter.sync.R
 import it.ter.sync.databinding.FragmentAccountBinding
 import it.ter.sync.viewmodel.UserViewModel
 import java.util.*
@@ -26,8 +27,6 @@ class AccountFragment : Fragment()  {
     private var _binding: FragmentAccountBinding? = null
 
     private var saveButtonClicked: Boolean = false
-
-    private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -65,11 +64,7 @@ class AccountFragment : Fragment()  {
         super.onViewCreated(view, savedInstanceState)
 
         userViewModel.getUserInfo()
-
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri ->
-            // Codice per visualizzare l'immagine nell'ImageView
-            binding.imageAccount.setImageURI(imageUri)
-        }
+        userViewModel.getUserImage()
 
         binding.imageAccount.setOnClickListener {
             pickImageFromGallery()
@@ -93,8 +88,10 @@ class AccountFragment : Fragment()  {
             binding.age.setText(selectedDate)
         }, year, month, day)
 
-        // Imposta la data massima selezionabile come la data odierna
-        datePicker.datePicker.maxDate = calendar.timeInMillis
+        // Imposta la data massima selezionabile la minima per avere 18 anni
+        calendar.add(Calendar.YEAR, -18)
+        val minDate = calendar.timeInMillis
+        datePicker.datePicker.maxDate = minDate
 
         datePicker.show()
     }
@@ -130,13 +127,13 @@ class AccountFragment : Fragment()  {
             binding.tag1.hint = it?.tag
             binding.tag2.hint = it?.tag2
             binding.tag3.hint = it?.tag3
+        }
 
-            it?.let{
-                Log.i(TAG, "${it.image}")
-                Glide.with(this)
-                    .load(it.image)
-                    .into(binding.imageAccount)
-            }
+        userViewModel.userImage.observe(viewLifecycleOwner) {
+            Glide.with(this)
+                .load(it)
+                .error(R.mipmap.ic_launcher)
+                .into(binding.imageAccount)
         }
 
         userViewModel.userUpdated.observe(viewLifecycleOwner) { result ->

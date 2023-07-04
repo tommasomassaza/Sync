@@ -29,4 +29,6 @@ interface MessageDataDAO {
 
 
     ///////////////////// Deletion queries /////////////////////
+    @Query("DELETE FROM messages WHERE uid = :messageId")
+    suspend fun deleteMessageById(messageId: String)
 }

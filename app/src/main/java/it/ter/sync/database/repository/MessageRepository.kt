@@ -25,4 +25,8 @@ class MessageRepository (application: Context?) : ViewModel() {
     fun getLastMessage(userId: String, messengerId: String): MessageData? {
         return dBMessageDao.getLastMessage(userId, messengerId)
     }
+
+    suspend fun deleteMessageById(messageId: String){
+        dBMessageDao.deleteMessageById(messageId)
+    }
 }

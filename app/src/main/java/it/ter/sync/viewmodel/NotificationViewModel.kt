@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import it.ter.sync.database.like.LikeData
 import it.ter.sync.database.notify.NotificationData
 import it.ter.sync.database.notify.NotificationType
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,8 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
     // List of uid
     var notificationList: MutableLiveData<List<NotificationData>> = MutableLiveData()
     var notificationListNotDisplayed: MutableLiveData<List<NotificationData>> = MutableLiveData()
+
+    var likeList: MutableLiveData<List<String>> = MutableLiveData()
 
 
     private val valueEventListenerNotDisplayed = object : ValueEventListener {
@@ -98,6 +101,32 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    private val valueEventListenerLike = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val likes: MutableList<String> = mutableListOf()
+            for (userSnapshot in snapshot.children) {
+                for (likeSnapshot in userSnapshot.children) {
+                    val like = likeSnapshot.getValue(String::class.java)
+                    like?.let {
+                        likes.add(like)
+                    }
+                }
+            }
+            likeList.postValue(likes)
+        }
+        override fun onCancelled(error: DatabaseError) {
+            // Gestisci l'errore di recupero dei messaggi
+            Log.i(TAG, error.message)
+        }
+    }
+    fun retrieveLikes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+
+            val likeRef = database.getReference("likes/${user?.uid}")
+            likeRef.addValueEventListener(valueEventListenerLike)
+        }
+    }
 
     fun addLikeNotification(userId: String, notifierName: String, image: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -116,6 +145,9 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
             ref.setValue(notification)
                 .addOnSuccessListener {
                     Log.i(TAG, "Notifica inviata con successo")
+
+                    val likeRef = database.getReference("likes/${user?.uid}/${userId}")
+                    likeRef.child(userId).setValue(userId)
                 }
                 .addOnFailureListener { error ->
                     Log.e(TAG, "${error.message}")
@@ -163,6 +195,46 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
             ref.removeValue()
                 .addOnSuccessListener {
                     Log.i(TAG, "Notifica rimossa con successo")
+                }
+                .addOnFailureListener { error ->
+                    Log.e(TAG, "${error.message}")
+                }
+        }
+    }
+
+    fun add(notification: NotificationData) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            val ref = database.getReference("notifications/${user?.uid}/${notification.notifierId}/${notification.type.toString().lowercase()}")
+
+            ref.setValue(notification)
+                .addOnSuccessListener {
+                    Log.i(TAG, "Notifica aggiunta con successo")
+                }
+                .addOnFailureListener { error ->
+                    Log.e(TAG, "${error.message}")
+                }
+        }
+    }
+
+    fun deleteLikeNotification(userId: String) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            val ref = database.getReference("notifications/${userId}/${user?.uid}/like")
+
+            ref.removeValue()
+                .addOnSuccessListener {
+                    Log.i(TAG, "Notifica eliminata con successo")
+
+                    val likeRef = database.getReference("likes/${user?.uid}/${userId}")
+                    likeRef.removeValue()
+                        .addOnSuccessListener {
+                            Log.i(TAG, "Like eliminato con successo")
+                        }
+                        .addOnFailureListener { error ->
+                            Log.e(TAG, "${error.message}")
+                        }
                 }
                 .addOnFailureListener { error ->
                     Log.e(TAG, "${error.message}")

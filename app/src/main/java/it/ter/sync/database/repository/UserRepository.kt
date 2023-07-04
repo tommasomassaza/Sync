@@ -27,6 +27,10 @@ class UserRepository (application: Context?) : ViewModel() {
         return dBUserDao.getUserByUid(uid)
     }
 
+    suspend fun getUserImage(uid: String): String? {
+        return dBUserDao.getUserImage(uid)
+    }
+
     suspend fun updateUserInfo(userId: String, name: String, age: String, tag: String, tag2: String, tag3: String) {
         dBUserDao.updateUserName(userId, name)
         dBUserDao.updateUserAge(userId, age)

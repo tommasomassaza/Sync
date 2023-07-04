@@ -96,35 +96,60 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                         // Update in local
                         messageRepository.insertMessage(it)
                     }
+
                 }
             }
         }
         // Se sono entrato nel'if del for
         if(lastTimestamp < lastMessage.timestampMillis.toLong()) {
             lastTimestamp = lastMessage.timestampMillis.toLong()
-
-            updateChat(lastMessage)
-            if(lastMessage.receiverId == messengerId) {
-                addMessageNotification(lastMessage)
-            }
         }
 
         return messages
     }
 
-    private fun updateChat(lastMessage: MessageData) {
+    fun sendMessage(text: String, messengerId: String?, userImageUrl: String, messengerImageUrl: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val chatRef = database.getReference("chats/${user?.uid}/${messengerId}")
+            val user = firebaseAuth.currentUser
+            val chatId = Utils.generateChatId(user?.uid ?: "",messengerId ?: "")
+            val messagesRef = database.getReference("messages/${chatId}")
 
-            val chat = ChatData(messengerId!!, lastMessage.image, lastMessage.text, lastMessage.timeStamp, lastMessage.timestampMillis.toLong(), messengerName)
+            val messageId = messagesRef.push().key
+            if (messageId != null) {
+                val timestampMillis = System.currentTimeMillis()
 
-            chatRef.setValue(chat)
-                .addOnSuccessListener {
-                    Log.i(TAG, "Chat update with ${lastMessage.text}")
-                }
-                .addOnFailureListener { error ->
-                    Log.e(TAG, "${error.message}")
-                }
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                dateFormat.timeZone = TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
+                val dateString = dateFormat.format(Date(timestampMillis))
+
+                val message = MessageData(messageId, userImageUrl, text, timestampMillis.toString(), dateString, user?.uid, messengerId)
+
+                // Salva il messaggio nella Firebase Realtime Database
+                messagesRef.child(messageId).setValue(message)
+                    .addOnSuccessListener {
+                        Log.i(TAG, "Messaggio inviato con successo")
+
+                        updateChat(message, messengerImageUrl)
+                        addMessageNotification(message)
+                    }
+                    .addOnFailureListener { error ->
+                        Log.e(TAG, "${error.message}")
+                    }
+            } else {
+                Log.e(TAG, "Error")
+            }
+        }
+    }
+
+    private fun updateChat(message: MessageData, messengerImageUrl: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val chatUserRef = database.getReference("chats/${user?.uid}/${messengerId}")
+            val chatUser = ChatData(messengerId!!, messengerImageUrl, message.text, message.timeStamp, message.timestampMillis.toLong(), messengerName)
+            chatUserRef.setValue(chatUser)
+
+            val chatMessengerRef = database.getReference("chats/${messengerId}/${user?.uid}")
+            val chatMessenger = ChatData(user?.uid!!, message.image, message.text, message.timeStamp, message.timestampMillis.toLong(), currentUserName)
+            chatMessengerRef.setValue(chatMessenger)
         }
     }
 
@@ -161,34 +186,68 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 }
         }
     }
+    private fun removeMessageNotification(message: MessageData) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val ref = database.getReference("notifications/${message.receiverId}/${message.senderId}/message")
+            ref.removeValue()
+                .addOnSuccessListener {
+                    Log.i(TAG, "Notifica eliminata con successo")
+                }
+                .addOnFailureListener { error ->
+                    Log.e(TAG, "${error.message}")
+                }
+        }
+    }
 
-    fun sendMessage(text: String, messengerId: String?, imageUrl: String) {
+    fun remove(message: MessageData) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
-            val chatId = Utils.generateChatId(user?.uid ?: "",messengerId ?: "")
-            val messagesRef = database.getReference("messages/${chatId}")
+            val chatId = Utils.generateChatId(message.senderId ?: "",message.receiverId ?: "")
+            val messageRef = database.getReference("messages/${chatId}")
 
-            val messageId = messagesRef.push().key
-            if (messageId != null) {
-                val timestampMillis = System.currentTimeMillis()
-
-                val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                dateFormat.timeZone = TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
-                val dateString = dateFormat.format(Date(timestampMillis))
-
-                val message = MessageData(messageId, imageUrl, text, timestampMillis.toString(), dateString, user?.uid, messengerId)
-
-                // Salva il messaggio nella Firebase Realtime Database
-                messagesRef.child(messageId).setValue(message)
+            if(message.senderId == user?.uid) {
+                messageRef.child(message.uid).removeValue()
                     .addOnSuccessListener {
-                        Log.i(TAG, "Messaggio inviato con successo")
+                        viewModelScope.launch(Dispatchers.IO) {
+                            messageRepository.deleteMessageById(message.uid)
+                        }
+                        Log.i(TAG, "Messaggio eliminato con successo")
+                        removeMessageNotification(message)
                     }
                     .addOnFailureListener { error ->
                         Log.e(TAG, "${error.message}")
                     }
             } else {
-                Log.e(TAG, "Error")
+                messageRef.child(message.uid).setValue(message)
+                    .addOnSuccessListener {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            messageRepository.deleteMessageById(message.uid)
+                        }
+                        Log.i(TAG, "Messaggio eliminato con successo")
+                    }
+                    .addOnFailureListener { error ->
+                        Log.e(TAG, "${error.message}")
+                    }
             }
+        }
+    }
+
+    fun add(message: MessageData) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val chatId = Utils.generateChatId(message.senderId ?: "",message.receiverId ?: "")
+            val messageRef = database.getReference("messages/${chatId}")
+            messageRef.child(message.uid).setValue(message)
+                .addOnSuccessListener {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        // Update in local
+                        messageRepository.insertMessage(message)
+                    }
+                    Log.i(TAG, "Messaggio aggiunto con successo")
+                    addMessageNotification(message)
+                }
+                .addOnFailureListener { error ->
+                    Log.e(TAG, "${error.message}")
+                }
         }
     }
 }

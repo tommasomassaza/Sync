@@ -86,4 +86,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:20.2.2'
     // Storage Database
     implementation 'com.google.firebase:firebase-storage-ktx'
+
+    // Places
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
 }

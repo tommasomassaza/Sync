@@ -8,8 +8,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
+import it.ter.sync.R
+import it.ter.sync.database.message.MessageData
 import it.ter.sync.databinding.FragmentMessageBinding
 import it.ter.sync.view.adapter.MessageAdapter
 import it.ter.sync.viewmodel.MessageViewModel
@@ -44,9 +49,15 @@ class MessageFragment : Fragment() {
         messengerId = arguments?.getString("messengerId") ?: ""
         messengerName = arguments?.getString("messengerName") ?: ""
         currentUserName = arguments?.getString("currentUserName") ?: ""
-        val imageUrl = arguments?.getString("imageUrl") ?: ""
+        val userImageUrl = arguments?.getString("userImageUrl") ?: ""
+        val messengerImageUrl = arguments?.getString("messengerImageUrl") ?: ""
 
         binding.textViewMessenger.text = messengerName
+
+        Glide.with(root)
+            .load(messengerImageUrl)
+            .error(R.mipmap.ic_launcher)
+            .into(binding.profileImage)
 
         recyclerView = binding.recyclerMessage
         val layoutManager = LinearLayoutManager(requireContext()).apply {
@@ -54,7 +65,7 @@ class MessageFragment : Fragment() {
         }
         recyclerView.layoutManager = layoutManager
 
-        messageAdapter = MessageAdapter(emptyList(), messengerId!!, messengerName)
+        messageAdapter = MessageAdapter(emptyList(), messengerId, messengerName)
         recyclerView.adapter = messageAdapter
 
 
@@ -63,7 +74,7 @@ class MessageFragment : Fragment() {
         sendButton.setOnClickListener {
             val messageInput = binding.messageInput.text.toString()
             if (messageInput.isNotEmpty()) {
-                messageViewModel.sendMessage(messageInput,messengerId,imageUrl)
+                messageViewModel.sendMessage(messageInput,messengerId,userImageUrl,messengerImageUrl)
                 binding.messageInput.text.clear()
                 binding.messageInput.clearFocus()
 

@@ -40,7 +40,8 @@ class ChatAdapter (private var chatList: List<ChatData>, private var currentUser
                 bundle.putString("messengerId", chatList[position].uid)
                 bundle.putString("messengerName", chatList[position].messengerName)
                 bundle.putString("currentUserName", currentUser.name)
-                bundle.putString("imageUrl", currentUser.image)
+                bundle.putString("userImageUrl", currentUser.image)
+                bundle.putString("messengerImageUrl", chatList[position].image)
                 navController.navigate(R.id.action_chatFragment_to_messageFragment, bundle)
             }
 

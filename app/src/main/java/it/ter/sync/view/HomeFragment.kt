@@ -55,7 +55,7 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        postAdapter = PostAdapter(emptyList(),UserData(),notificationViewModel)
+        postAdapter = PostAdapter(emptyList(), emptyList(), UserData(),notificationViewModel)
         recyclerView.adapter = postAdapter
 
         fusedLocationClient =
@@ -76,6 +76,7 @@ class HomeFragment : Fragment() {
         }
 
         userViewModel.getUserInfo()
+        notificationViewModel.retrieveLikes()
 
         val editTextSearch: EditText = view.findViewById(R.id.search_view)
         val buttonSearch: Button = view.findViewById(R.id.btn_search)
@@ -209,6 +210,9 @@ class HomeFragment : Fragment() {
         }
         userViewModel.currentUser.observe(viewLifecycleOwner) {
             postAdapter.setCurrentUser(it)
+        }
+        notificationViewModel.likeList.observe(viewLifecycleOwner) {
+            postAdapter.setLikeList(it)
         }
     }
 
