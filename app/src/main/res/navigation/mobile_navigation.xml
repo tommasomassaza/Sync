@@ -18,6 +18,10 @@
         <action
             android:id="@+id/action_homeFragment_to_messageFragment"
             app:destination="@id/messageFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_accountFriendFragment"
+
+            app:destination="@id/accountFriendFragment" />
     </fragment>
 
     <fragment
@@ -78,4 +82,8 @@
             android:id="@+id/action_notificationFragment_to_messageFragment"
             app:destination="@id/messageFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/accountFriendFragment"
+        android:name="it.ter.sync.view.AccountFriendFragment"
+        android:label="Account" />
 </navigation>

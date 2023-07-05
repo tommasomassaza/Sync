@@ -31,6 +31,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/black"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@id/imageProfile_post"
         app:layout_constraintStart_toEndOf="@id/imageProfile_post"
         app:layout_constraintTop_toTopOf="@id/imageProfile_post" />
