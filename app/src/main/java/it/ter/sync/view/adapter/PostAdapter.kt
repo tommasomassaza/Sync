@@ -3,7 +3,9 @@ package it.ter.sync.view.adapter
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import it.ter.sync.R
@@ -74,7 +76,12 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
                 usernamePost.text = postList[position].name
                 agePost.text = postList[position].age
                 locationPost.text = postList[position].location
-                tagsView.setText("#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3)
+
+                if(postList[position].tag.isEmpty() || postList[position].tag2.isEmpty() || postList[position].tag3.isEmpty()) {
+                    sad.visibility = View.VISIBLE
+                    tagsView.setText("\n"+ postList[position].name+" non ha inserito interessi")
+                }else{
+                    tagsView.setText("#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3)}
 
 
 
