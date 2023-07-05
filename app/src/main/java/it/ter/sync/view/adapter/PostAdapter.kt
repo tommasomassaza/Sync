@@ -81,6 +81,7 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
                     sad.visibility = View.VISIBLE
                     tagsView.setText("\n"+ postList[position].name+" non ha inserito interessi")
                 }else{
+                    sad.visibility = View.INVISIBLE
                     tagsView.setText("#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3)}
 
 
