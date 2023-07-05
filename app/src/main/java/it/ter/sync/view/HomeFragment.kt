@@ -18,6 +18,10 @@ import it.ter.sync.databinding.FragmentHomeBinding
 import it.ter.sync.view.adapter.PostAdapter
 import it.ter.sync.viewmodel.UserViewModel
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.transition.Slide
+import android.transition.TransitionManager
+import android.view.animation.TranslateAnimation
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -71,6 +75,8 @@ class HomeFragment : Fragment() {
     }
 
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -82,7 +88,7 @@ class HomeFragment : Fragment() {
         userViewModel.getUserInfo()
         notificationViewModel.retrieveLikes()
 
-        var kms = arrayOf("5 Km", "20 Km", "50 Km")
+        var kms = arrayOf("5 Km", "20 Km", "50 Km", "200 Km")
         val spinner = binding.spinnerSplitter
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, kms)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -109,6 +115,8 @@ class HomeFragment : Fragment() {
             val visibleButton = findFirstVisibleButton(binding.btnTag1, binding.btnTag2, binding.btnTag3)
 
             if(visibleButton != null) {
+                translationGone()
+
                 visibleButton.visibility = View.VISIBLE
                 visibleButton.text = searchString
             }
@@ -119,6 +127,7 @@ class HomeFragment : Fragment() {
             // Rendere invisibili i bottoni
             binding.btnTag1.visibility = View.INVISIBLE
             binding.btnTag1.text = ""
+            translationReturn()
         }
 
         binding.btnTag2.setOnClickListener {
@@ -126,6 +135,7 @@ class HomeFragment : Fragment() {
             // Rendere invisibili i bottoni
             binding.btnTag2.visibility = View.INVISIBLE
             binding.btnTag2.text = ""
+            translationReturn()
         }
 
         binding.btnTag3.setOnClickListener {
@@ -133,6 +143,7 @@ class HomeFragment : Fragment() {
             // Rendere invisibili i bottoni
             binding.btnTag3.visibility = View.INVISIBLE
             binding.btnTag3.text = ""
+            translationReturn()
         }
 
 
@@ -143,6 +154,36 @@ class HomeFragment : Fragment() {
         requestLocationUpdates()
     }
 
+    private fun translationGone(){
+        if(areAllInvisible(binding.btnTag1, binding.btnTag2, binding.btnTag3)) {
+            // Calcola l'altezza del LinearLayout
+            val layoutTagsHeight = binding.layoutTags.height
+            // Calcola la posizione corrente della RecyclerView
+            val currentTranslationY = binding.recyclerPost.translationY
+            // Calcola la destinazione finale della RecyclerView
+            val targetTranslationY = currentTranslationY + layoutTagsHeight
+            // Crea un ObjectAnimator per l'animazione di scorrimento verso il basso
+            val slideDownAnimator = ObjectAnimator.ofFloat(binding.recyclerPost,"translationY",currentTranslationY,targetTranslationY)
+            slideDownAnimator.duration = 300
+            slideDownAnimator.start()
+        }
+    }
+
+    private fun translationReturn(){
+        if(areAllInvisible(binding.btnTag1, binding.btnTag2, binding.btnTag3)) {
+            // Calcola l'altezza del LinearLayout
+            val layoutTagsHeight = binding.layoutTags.height
+            // Calcola la posizione corrente della RecyclerView
+            val currentTranslationY = binding.recyclerPost.translationY
+            // Calcola la destinazione finale della RecyclerView
+            val targetTranslationY = currentTranslationY - layoutTagsHeight
+            // Crea un ObjectAnimator per l'animazione di scorrimento verso l'alto
+            val slideDownAnimator = ObjectAnimator.ofFloat(binding.recyclerPost,"translationY",currentTranslationY,targetTranslationY)
+            slideDownAnimator.duration = 300
+            slideDownAnimator.start()
+        }
+    }
+
     private fun findFirstVisibleButton(vararg buttons: Button): Button? {
         for (button in buttons) {
             if (button.visibility == View.INVISIBLE) {
@@ -150,6 +191,15 @@ class HomeFragment : Fragment() {
             }
         }
         return null
+    }
+
+    private fun areAllInvisible(vararg buttons: Button): Boolean {
+        for (button in buttons) {
+            if (button.visibility == View.VISIBLE) {
+                return false
+            }
+        }
+        return true
     }
 
     override fun onDestroyView() {
