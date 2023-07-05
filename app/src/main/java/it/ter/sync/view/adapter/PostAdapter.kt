@@ -24,7 +24,6 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
     }
     fun setLikeList(likes: List<String>) {
         likeList = likes
-
         notifyDataSetChanged() // Aggiorna la RecyclerView
     }
 
