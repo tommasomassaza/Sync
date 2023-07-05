@@ -81,7 +81,10 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                                 val location = documentSnapshot.getString("location") ?: ""
                                 val image = documentSnapshot.getString("image") ?: ""
                                 val email = user.email ?: ""
-                                val userData = UserData(user.uid, name, email, location, age, image)
+                                val tag = documentSnapshot.getString("tag") ?: ""
+                                val tag2 = documentSnapshot.getString("tag2") ?: ""
+                                val tag3 = documentSnapshot.getString("tag3") ?: ""
+                                val userData = UserData(user.uid, name, email, location, age, image,tag,tag2,tag3)
 
                                 currentUser.postValue(userData)
 
