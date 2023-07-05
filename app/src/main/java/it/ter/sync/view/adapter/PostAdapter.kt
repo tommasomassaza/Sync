@@ -71,6 +71,20 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
                 }
             }
 
+        holder.binding.usernamePost.setOnClickListener {
+            val navController = Navigation.findNavController(it)
+            val bundle = Bundle()
+            bundle.putString("messengerId", postList[position].uid)
+            bundle.putString("FriendName", postList[position].name)
+            bundle.putString("FriendImage", postList[position].image)
+            bundle.putString("FriendAge", postList[position].age)
+            bundle.putString("FriendLocation", postList[position].location)
+            bundle.putString("FriendTag", postList[position].tag)
+            bundle.putString("FriendTag2", postList[position].tag2)
+            bundle.putString("FriendTag3", postList[position].tag3)
+            navController.navigate(R.id.action_homeFragment_to_accountFriendFragment, bundle)
+        }
+
 
             holder.binding.apply {
                 usernamePost.text = postList[position].name
