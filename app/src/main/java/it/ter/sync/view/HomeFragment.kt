@@ -18,6 +18,7 @@ import it.ter.sync.databinding.FragmentHomeBinding
 import it.ter.sync.view.adapter.PostAdapter
 import it.ter.sync.viewmodel.UserViewModel
 import android.Manifest
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -80,83 +81,72 @@ class HomeFragment : Fragment() {
 
         userViewModel.getUserInfo()
         notificationViewModel.retrieveLikes()
-        var languages = arrayOf("5 Km", "20 Km", "50 Km", "100 Km")
+
+        var kms = arrayOf("5 Km", "20 Km", "50 Km")
         val spinner = binding.spinnerSplitter
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languages)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, kms)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
+        // Seleziono 5 Km come default
+        spinner.setSelection(0)
 
-
-        val editTextSearch: EditText = view.findViewById(R.id.search_view)
-        val buttonSearch: Button = view.findViewById(R.id.btn_search)
-        val searchView: EditText = view.findViewById(R.id.search_view)
-
-        // Ottenere il riferimento ai bottoni
-        val btnTag1 = view?.findViewById<Button>(R.id.btn_tag_1)
-        val btnTag2 = view?.findViewById<Button>(R.id.btn_tag_2)
-        val btnTag3 = view.findViewById<Button>(R.id.btn_tag_3)
-
-
-        buttonSearch.setOnClickListener {
-            searchString = editTextSearch.text.toString().trim()
-
-
-            // Verificare se i bottoni sono visibili
-            val isBtnTag1Visible = btnTag1?.visibility == View.VISIBLE
-            val isBtnTag2Visible = btnTag2?.visibility == View.VISIBLE
-            val isBtnTag3Visible = btnTag3?.visibility == View.VISIBLE
-
-            if(!isBtnTag1Visible) {
-                // Impostare la visibilità dei bottoni
-                btnTag1?.visibility = View.VISIBLE
-                // Impostare il testo del bottone
-                btnTag1?.text = searchString
-
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = kms[position] // Ottieni l'elemento selezionato dallo Spinner
+                // Estraggo solo il numero dalla stringa
+                val kmNumber = selectedItem.replace(Regex("[^0-9.]"), "").toDouble()
+                userViewModel.updateMaxDistance(kmNumber)
             }
-            if(!isBtnTag2Visible && isBtnTag1Visible) {
-                btnTag2?.visibility = View.VISIBLE
-                btnTag2?.text = searchString
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
 
 
+        binding.btnSearch.setOnClickListener {
+            searchString = binding.searchView.text.toString().trim()
+            binding.searchView.text.clear()
+            binding.searchView.clearFocus()
+
+            val visibleButton = findFirstVisibleButton(binding.btnTag1, binding.btnTag2, binding.btnTag3)
+
+            if(visibleButton != null) {
+                visibleButton.visibility = View.VISIBLE
+                visibleButton.text = searchString
             }
-            if(!isBtnTag3Visible && isBtnTag1Visible && isBtnTag2Visible) {
-                btnTag3?.visibility = View.VISIBLE
-                btnTag3?.text = searchString
-
-            }
-
         }
 
-
-        btnTag1?.setOnClickListener {
+        binding.btnTag1.setOnClickListener {
             searchString = ""
-            searchView.setText("")
             // Rendere invisibili i bottoni
-            btnTag1?.visibility = View.INVISIBLE
+            binding.btnTag1.visibility = View.INVISIBLE
         }
 
-        btnTag2?.setOnClickListener {
+        binding.btnTag2.setOnClickListener {
             searchString = ""
-            searchView.setText("")
             // Rendere invisibili i bottoni
-            btnTag2?.visibility = View.INVISIBLE
+            binding.btnTag2.visibility = View.INVISIBLE
         }
 
-        btnTag3?.setOnClickListener {
+        binding.btnTag3.setOnClickListener {
             searchString = ""
-            searchView.setText("")
             // Rendere invisibili i bottoni
-            btnTag3?.visibility = View.INVISIBLE
+            binding.btnTag3.visibility = View.INVISIBLE
         }
+
+
+        // Prendo gli utenti
+        userViewModel.retrieveUsers()
 
         // L'utente è autenticato, verifica le autorizzazioni della posizione
         requestLocationUpdates()
     }
 
-    fun setMargins(view: View, left: Int, top: Int, right: Int, bottom: Int) {
-        val params = view.layoutParams as? ViewGroup.MarginLayoutParams
-        params?.setMargins(left, top, right, bottom)
-        view.requestLayout()
+    private fun findFirstVisibleButton(vararg buttons: Button): Button? {
+        for (button in buttons) {
+            if (button.visibility == View.INVISIBLE) {
+                return button
+            }
+        }
+        return null
     }
 
     override fun onDestroyView() {
@@ -165,25 +155,24 @@ class HomeFragment : Fragment() {
     }
 
     private fun requestLocationUpdates() {
-        val locationRequest = LocationRequest.create().apply {
-            interval = 5000 // Intervallo di aggiornamento in millisecondi
-            fastestInterval = 5000 // Intervallo minimo di aggiornamento in millisecondi
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY // Precisione richiesta
-        }
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY, 10000L)
+            .apply {
+                setMinUpdateDistanceMeters(10f)
+                setGranularity(Granularity.GRANULARITY_FINE)
+                setWaitForAccurateLocation(true)
+            }.build()
 
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val lastLocation = locationResult.lastLocation
-                // Usa lastLocation per le tue operazioni
+
                 val latitude = lastLocation?.latitude!!
                 val longitude = lastLocation?.longitude!!
 
-                // Update home
-                userViewModel.updateHome(latitude, longitude, searchString)
+                userViewModel.updateUserPosition(latitude, longitude)
 
-                // Stampa le coordinate nel log
                 Log.d("HomeFragment", "Coordinate: Latitude = $latitude, Longitude = $longitude")
-
             }
         }
 

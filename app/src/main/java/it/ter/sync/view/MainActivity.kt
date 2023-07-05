@@ -89,11 +89,7 @@ class MainActivity : AppCompatActivity() {
                 binding.appBarMain.badgeLayout.visibility = View.VISIBLE
             }
 
-            if(destination.id == R.id.notificationFragment){
-                binding.appBarMain.notifyMenu.visibility = View.INVISIBLE
-            } else {
-                binding.appBarMain.notifyMenu.visibility = View.VISIBLE
-            }
+            binding.appBarMain.notifyMenu.isClickable = destination.id != R.id.notificationFragment
         }
 
         binding.appBarMain.notifyMenu.setOnClickListener {
@@ -103,6 +99,9 @@ class MainActivity : AppCompatActivity() {
         val headerView = navView.getHeaderView(0)
         imageUser = headerView.findViewById(R.id.imageUser)
         nameUser = headerView.findViewById(R.id.textNameUser)
+
+        userViewModel.getUserInfo()
+        userViewModel.getUserImage()
     }
 
     override fun onSupportNavigateUp(): Boolean {

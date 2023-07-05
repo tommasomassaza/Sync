@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import it.ter.sync.database.repository.UserRepository
 import it.ter.sync.database.user.UserData
@@ -32,6 +33,12 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     var userUpdated: MutableLiveData<Boolean> = MutableLiveData()
     var users: MutableLiveData<List<UserData>> = MutableLiveData()
     var userImage: MutableLiveData<String?> = MutableLiveData()
+
+    // Distanza di default
+    private var maxDistance: Double = 50.0
+    private var currentLatitude: Double = 0.0
+    private var currentLongitude: Double = 0.0
+    var searchString: String = ""
 
 
     fun login(email: String, password: String) {
@@ -244,7 +251,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     }
 
     private fun getNearestCity(latitude: Double, longitude: Double): String? {
-        val geocoder = Geocoder(application.baseContext, Locale.getDefault())
+        val geocoder = Geocoder(application.applicationContext, Locale.getDefault())
         val addresses = geocoder.getFromLocation(latitude, longitude, 1)
         if (!addresses.isNullOrEmpty()) {
             val address = addresses[0]
@@ -253,8 +260,13 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
         return null
     }
 
-    private fun updateUserPosition(latitude: Double, longitude: Double) {
+    fun updateUserPosition(latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
+            currentLatitude = latitude
+            currentLongitude = longitude
+
+            refreshRetrieveUser()
+
             val user = firebaseAuth.currentUser
             val nearestCity = getNearestCity(latitude,longitude)
             user?.let {
@@ -270,63 +282,91 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
             }
         }
     }
-
-    fun updateHome(currentLatitude: Double, currentLongitude: Double, tag: String) {
+    private fun updateUser(querySnapshot: QuerySnapshot) {
         viewModelScope.launch(Dispatchers.IO) {
-            updateUserPosition(currentLatitude, currentLongitude)
-
             val user = firebaseAuth.currentUser
+            val userList = mutableListOf<UserData>()
+
+            for (document in querySnapshot) {
+                val uid = document.id
+                // se si tratta dell'utente loggato non mi interessa
+                if (uid != user?.uid) {
+                    val userData = document.toObject(UserData::class.java)
+                    val latitude = document.getDouble("latitude") ?: 0.0
+                    val longitude = document.getDouble("longitude") ?: 0.0
+
+                    val distance = Utils.calculateDistance(
+                        latitude,
+                        longitude,
+                        currentLatitude,
+                        currentLongitude
+                    )
+
+                    // Stampa la distanza nel log
+                    Log.d("TAG", "Distanza = $distance")
+
+                    val lowercaseSearchString = searchString.toLowerCase()
+
+                    val lowercaseTag = userData.tag.toLowerCase()
+                    val lowercaseTag2 = userData.tag2.toLowerCase()
+                    val lowercaseTag3 = userData.tag3.toLowerCase()
+
+                    if (distance <= maxDistance && (lowercaseTag == lowercaseSearchString || lowercaseSearchString.isEmpty() || lowercaseTag2 == lowercaseSearchString
+                                || lowercaseTag3 == lowercaseSearchString || userData.name == lowercaseSearchString)
+                    ) {
+
+                        // Crea un oggetto User utilizzando i dati ottenuti dal documento
+                        val user = UserData(
+                            uid = uid,
+                            name = userData.name,
+                            location = userData.location,
+                            age = Utils.calculateAge(userData.age).toString(),
+                            image = userData.image,
+                            tag = userData.tag,
+                            tag2 = userData.tag2,
+                            tag3 = userData.tag3
+                        )
+                        userList.add(user)
+                    }
+                }
+            }
+
+            users.postValue(userList)
+            Log.i(TAG, "GetAllUsers Success")
+        }
+    }
+    private fun refreshRetrieveUser(){
+        viewModelScope.launch(Dispatchers.IO) {
             fireStore.collection("users")
                 .get()
                 .addOnSuccessListener { querySnapshot ->
-                    val userList = mutableListOf<UserData>()
-
-                    for (document in querySnapshot) {
-                        val uid = document.id
-                        // se si tratta dell'utente loggato non mi interessa
-                        if (uid != user?.uid) {
-                            val userData = document.toObject(UserData::class.java)
-                            val latitude = document.getDouble("latitude") ?: 0.0
-                            val longitude = document.getDouble("longitude") ?: 0.0
-
-                            val MAX_DISTANCE = 1000000000000000000.0 // in chilometri
-
-                            val distance = Utils.calculateDistance(latitude,longitude,currentLatitude,currentLongitude)
-
-                            // Stampa la distanza nel log
-                            Log.d("TAG", "Distanza = $distance")
-
-                            val lowercaseSearchString = tag.toLowerCase()
-
-                            val lowercaseTag = userData.tag.toLowerCase()
-                            val lowercaseTag2 = userData.tag2.toLowerCase()
-                            val lowercaseTag3 = userData.tag3.toLowerCase()
-
-                            if (distance <= MAX_DISTANCE && (lowercaseTag == lowercaseSearchString || lowercaseSearchString.isEmpty() ||lowercaseTag2 == lowercaseSearchString
-                                        || lowercaseTag3 == lowercaseSearchString || userData.name == lowercaseSearchString)) {
-
-                                // Crea un oggetto User utilizzando i dati ottenuti dal documento
-                                val user = UserData(
-                                    uid = uid,
-                                    name = userData.name,
-                                    location = userData.location,
-                                    age = Utils.calculateAge(userData.age).toString(),
-                                    image = userData.image,
-                                    tag = userData.tag,
-                                    tag2 = userData.tag2,
-                                    tag3 = userData.tag3
-                                )
-                                userList.add(user)
-                            }
-                        }
-                    }
-
-                    users.postValue(userList)
-                    Log.i(TAG, "GetAllUsers Success")
+                    updateUser(querySnapshot)
                 }
                 .addOnFailureListener { exception ->
                     Log.i(TAG, exception.message.toString())
                 }
+        }
+    }
+    fun retrieveUsers() {
+        viewModelScope.launch(Dispatchers.IO) {
+            fireStore.collection("users")
+                .addSnapshotListener { querySnapshot, exception ->
+                    if (exception != null) {
+                        // Gestisci l'errore
+                        Log.i(TAG, exception.message.toString())
+                        return@addSnapshotListener
+                    }
+                    if (querySnapshot != null) {
+                        updateUser(querySnapshot)
+                    }
+                }
+        }
+    }
+
+    fun updateMaxDistance(kmNumber: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            maxDistance = kmNumber
+            refreshRetrieveUser()
         }
     }
 }
