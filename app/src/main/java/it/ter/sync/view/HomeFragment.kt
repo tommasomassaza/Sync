@@ -19,9 +19,6 @@ import it.ter.sync.view.adapter.PostAdapter
 import it.ter.sync.viewmodel.UserViewModel
 import android.Manifest
 import android.animation.ObjectAnimator
-import android.transition.Slide
-import android.transition.TransitionManager
-import android.view.animation.TranslateAnimation
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
