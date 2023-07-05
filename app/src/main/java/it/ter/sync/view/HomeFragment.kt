@@ -118,18 +118,21 @@ class HomeFragment : Fragment() {
             searchString = ""
             // Rendere invisibili i bottoni
             binding.btnTag1.visibility = View.INVISIBLE
+            binding.btnTag1.text = ""
         }
 
         binding.btnTag2.setOnClickListener {
             searchString = ""
             // Rendere invisibili i bottoni
             binding.btnTag2.visibility = View.INVISIBLE
+            binding.btnTag2.text = ""
         }
 
         binding.btnTag3.setOnClickListener {
             searchString = ""
             // Rendere invisibili i bottoni
             binding.btnTag3.visibility = View.INVISIBLE
+            binding.btnTag3.text = ""
         }
 
 

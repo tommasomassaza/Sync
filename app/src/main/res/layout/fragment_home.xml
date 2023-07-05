@@ -110,7 +110,7 @@
         android:id="@+id/recycler_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/search_view"
+        android:layout_below="@id/layout_tags"
         android:padding="10dp"
         tools:listitem="@layout/post_item"
         />
