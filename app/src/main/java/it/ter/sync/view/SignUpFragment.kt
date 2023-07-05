@@ -46,17 +46,15 @@ class SignUpFragment : Fragment() {
             val name = binding.nameSignUp.text.toString()
             val email = binding.emailSignUp.text.toString()
             val age = binding.ageSignUp.text.toString()
-            val location = binding.locationSignUp.text.toString()
             val password1 = binding.password1.text.toString()
             val password2 = binding.password2.text.toString()
 
-            if( name.isEmpty() || email.isEmpty() || age.isEmpty() ||
-                location.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
+            if( name.isEmpty() || email.isEmpty() || age.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
                 Toast.makeText(activity,"Inserire i campi mancanti",Toast.LENGTH_SHORT).show()
             } else if(password1 != password2) {
                 Toast.makeText(activity,"Le password non corrispondono",Toast.LENGTH_SHORT).show()
             } else {
-                userViewModel.register(name,age,location,email,password1)
+                userViewModel.register(name,age,email,password1)
             }
         }
 

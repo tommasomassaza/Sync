@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,22 +13,24 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textAlignment="center"
-        android:textSize="40dp"
+        android:textSize="40sp"
         android:textColor="@color/black"
-        android:text="Persone nelle vicinanze"
+        android:text="@string/persone_nelle_vicinanze"
         android:fontFamily="cursive"
         />
 
-    <Button
-        android:id="@+id/btn_clean"
+    <Spinner
+        android:id="@+id/spinner_splitter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_home"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
-        android:text="-"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:textSize="24sp"
         android:textColor="@color/white"
+        android:spinnerMode="dialog"
         android:backgroundTint="@android:color/black"
         />
 
@@ -40,10 +41,12 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="Search TAG or User"
+        android:hint="Interessi"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         android:layout_below="@id/text_home"
         android:layout_toStartOf="@+id/btn_search"
-        android:layout_toEndOf="@+id/btn_clean"
+        android:layout_toEndOf="@+id/spinner_splitter"
         />
 
     <Button
@@ -52,8 +55,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text_home"
         android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Search"
+        android:text="@string/cerca"
         android:textSize="16sp"
         android:textColor="@color/white"
         android:backgroundTint="@android:color/black"

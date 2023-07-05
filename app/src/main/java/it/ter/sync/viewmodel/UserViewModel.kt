@@ -122,14 +122,14 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     }
 
 
-    fun register(name: String, age: String, location: String, email: String, password: String) {
+    fun register(name: String, age: String, email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         registrationResult.postValue("Success")
                         task.result.user?.let {
-                            val userData = UserData(it.uid,name,email,location,age)
+                            val userData = UserData(uid=it.uid,name=name,email=email,age=age)
 
                             // Salva le informazioni su fireStore
                             addUserToFireStore(userData)

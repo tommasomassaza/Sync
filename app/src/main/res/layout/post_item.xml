@@ -45,26 +45,26 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="70dp"
-        android:drawableStart="@drawable/map_marker_svgrepo_com"
         android:drawablePadding="10dp"
         android:textColor="@color/black"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintEnd_toStartOf="@id/age_post"
         app:layout_constraintStart_toEndOf="@id/username_post"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:drawableStartCompat="@drawable/map_marker_svgrepo_com" />
 
     <TextView
         android:id="@+id/age_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/calendar_days_svgrepo_com"
         android:drawablePadding="10dp"
         android:textColor="@color/black"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintBaseline_toBaselineOf="@id/location_post"
         app:layout_constraintStart_toEndOf="@id/location_post"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:drawableStartCompat="@drawable/calendar_days_svgrepo_com" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/image_cardView"
@@ -101,9 +101,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Interessi:"
+        android:text="@string/interessi"
         android:fontFamily="cursive"
-        android:textSize="20dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@id/image_cardView"
         app:layout_constraintStart_toStartOf="parent"
@@ -113,11 +114,12 @@
     <TextView
         android:id="@+id/tags_view"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/bubbler_one"
         android:textAlignment="center"
-
+        android:textSize="20sp"
+        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/interessi"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

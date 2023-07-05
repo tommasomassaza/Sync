@@ -18,8 +18,10 @@ import it.ter.sync.databinding.FragmentHomeBinding
 import it.ter.sync.view.adapter.PostAdapter
 import it.ter.sync.viewmodel.UserViewModel
 import android.Manifest
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import androidx.core.view.marginTop
 import com.google.android.gms.location.*
 import it.ter.sync.database.user.UserData
@@ -78,16 +80,21 @@ class HomeFragment : Fragment() {
 
         userViewModel.getUserInfo()
         notificationViewModel.retrieveLikes()
+        var languages = arrayOf("5 Km", "20 Km", "50 Km", "100 Km")
+        val spinner = binding.spinnerSplitter
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languages)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
 
         val editTextSearch: EditText = view.findViewById(R.id.search_view)
         val buttonSearch: Button = view.findViewById(R.id.btn_search)
-        val buttonClean: Button = view.findViewById(R.id.btn_clean)
         val searchView: EditText = view.findViewById(R.id.search_view)
 
         // Ottenere il riferimento ai bottoni
         val btnTag1 = view?.findViewById<Button>(R.id.btn_tag_1)
         val btnTag2 = view?.findViewById<Button>(R.id.btn_tag_2)
-        val btnTag3 = view?.findViewById<Button>(R.id.btn_tag_3)
+        val btnTag3 = view.findViewById<Button>(R.id.btn_tag_3)
 
 
         buttonSearch.setOnClickListener {
@@ -142,17 +149,14 @@ class HomeFragment : Fragment() {
             btnTag3?.visibility = View.INVISIBLE
         }
 
-        buttonClean.setOnClickListener {
-            searchString = ""
-            searchView.setText("")
-            btnTag1?.visibility = View.INVISIBLE
-            btnTag2?.visibility = View.INVISIBLE
-            btnTag3?.visibility = View.INVISIBLE
-
-        }
-
         // L'utente è autenticato, verifica le autorizzazioni della posizione
         requestLocationUpdates()
+    }
+
+    fun setMargins(view: View, left: Int, top: Int, right: Int, bottom: Int) {
+        val params = view.layoutParams as? ViewGroup.MarginLayoutParams
+        params?.setMargins(left, top, right, bottom)
+        view.requestLayout()
     }
 
     override fun onDestroyView() {

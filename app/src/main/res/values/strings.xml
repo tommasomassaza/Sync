@@ -26,4 +26,9 @@
     <string name="passwordSignUp">Password</string>
     <string name="check_password">Check password</string>
     <string name="sign_up_button">SIGN UP</string>
+    <string name="interessi">Interessi:</string>
+    <string name="persone_nelle_vicinanze">Persone nelle vicinanze</string>
+    <string name="cerca">Cerca</string>
+    <string name="inserisci_un_messaggio">Inserisci un messaggio</string>
+    <string name="invia">Invia</string>
 </resources>
