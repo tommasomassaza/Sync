@@ -7,33 +7,21 @@
     android:background="@drawable/background3"
     tools:context=".view.HomeFragment">
 
-    <TextView
-        android:id="@+id/text_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textAlignment="center"
-        android:textSize="40sp"
-        android:textColor="@color/black"
-        android:text="@string/persone_nelle_vicinanze"
-        android:fontFamily="cursive"
-        />
-
+    <!-- Rimuovi il layout_below del Spinner -->
     <Spinner
         android:id="@+id/spinner_splitter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_home"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:textSize="24sp"
-        android:textColor="@color/white"
         android:spinnerMode="dialog"
         android:backgroundTint="@android:color/black"
         />
 
+    <!-- Rimuovi il layout_below del EditText -->
     <EditText
         android:id="@+id/search_view"
         android:layout_width="match_parent"
@@ -44,7 +32,6 @@
         android:hint="Interessi"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
-        android:layout_below="@id/text_home"
         android:layout_toStartOf="@+id/btn_search"
         android:layout_toEndOf="@+id/spinner_splitter"
         />
@@ -53,7 +40,6 @@
         android:id="@+id/btn_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_home"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -83,15 +69,17 @@
 
         </Button>
 
+
         <Button
             android:id="@+id/btn_tag_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/darker_gray"
             android:layout_marginEnd="8dp"
-            android:visibility="invisible"
-           >
+            android:visibility="invisible" >
+
         </Button>
+
 
         <Button
             android:id="@+id/btn_tag_3"
@@ -99,8 +87,6 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/darker_gray"
             android:visibility="invisible">
-
-
 
         </Button>
 
@@ -110,9 +96,10 @@
         android:id="@+id/recycler_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_tags"
+        android:layout_below="@id/search_view"
+        android:layout_marginTop="8dp"
         android:padding="10dp"
         tools:listitem="@layout/post_item"
-        />
+    />
 
 </RelativeLayout>
