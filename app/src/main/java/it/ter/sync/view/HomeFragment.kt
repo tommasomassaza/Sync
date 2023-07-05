@@ -85,7 +85,7 @@ class HomeFragment : Fragment() {
         userViewModel.getUserInfo()
         notificationViewModel.retrieveLikes()
 
-        var kms = arrayOf("5 Km", "20 Km", "50 Km", "200 Km")
+        val kms = arrayOf("5 Km", "20 Km", "50 Km", "200 Km")
         val spinner = binding.spinnerSplitter
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, kms)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -105,17 +105,20 @@ class HomeFragment : Fragment() {
 
 
         binding.btnSearch.setOnClickListener {
-            searchString = binding.searchView.text.toString().trim()
-            binding.searchView.text.clear()
-            binding.searchView.clearFocus()
+            if(binding.searchView.text.isNotEmpty()) {
+                searchString = binding.searchView.text.toString().trim()
+                binding.searchView.text.clear()
+                binding.searchView.clearFocus()
 
-            val visibleButton = findFirstVisibleButton(binding.btnTag1, binding.btnTag2, binding.btnTag3)
+                val visibleButton =
+                    findFirstVisibleButton(binding.btnTag1, binding.btnTag2, binding.btnTag3)
 
-            if(visibleButton != null) {
-                translationGone()
+                if (visibleButton != null) {
+                    translationGone()
 
-                visibleButton.visibility = View.VISIBLE
-                visibleButton.text = searchString
+                    visibleButton.visibility = View.VISIBLE
+                    visibleButton.text = searchString
+                }
             }
         }
 
@@ -142,7 +145,6 @@ class HomeFragment : Fragment() {
             binding.btnTag3.text = ""
             translationReturn()
         }
-
 
         // Prendo gli utenti
         userViewModel.retrieveUsers()

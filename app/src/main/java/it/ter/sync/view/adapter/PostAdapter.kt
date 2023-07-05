@@ -60,6 +60,7 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
                 navController.navigate(R.id.action_homeFragment_to_messageFragment, bundle)
             }
 
+
             holder.binding.like.setOnClickListener {
                 if (likeList.contains(postList[position].uid)) {
                     notificationViewModel.deleteLikeNotification(postList[position].uid)
@@ -78,13 +79,18 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
 
                 if(postList[position].tag.isEmpty() || postList[position].tag2.isEmpty() || postList[position].tag3.isEmpty()) {
                     sad.visibility = View.VISIBLE
-                    tagsView.setText("\n"+ postList[position].name+" non ha inserito interessi")
-                }else{
+                    tagsView.text = "\n"+ postList[position].name+" non ha inserito interessi"
+                } else{
                     sad.visibility = View.INVISIBLE
-                    tagsView.setText("#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3)}
+                    tagsView.text = "#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3
+                }
 
 
-
+                if (likeList.contains(postList[position].uid)) {
+                    like.setBackgroundResource(R.drawable.round_button_selected)
+                } else {
+                    like.setBackgroundResource(R.drawable.round_button)
+                }
 
 
                 Glide.with(root)

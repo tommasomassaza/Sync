@@ -29,8 +29,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="Interessi"
+        android:hint="@string/interessi_string"
         android:textColor="@color/black"
+        android:singleLine="true"
         android:textColorHint="@color/black"
         android:layout_toStartOf="@+id/btn_search"
         android:layout_toEndOf="@+id/spinner_splitter"
@@ -62,33 +63,28 @@
         <Button
             android:id="@+id/btn_tag_1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:backgroundTint="@android:color/darker_gray"
             android:layout_marginEnd="8dp"
-            android:visibility="invisible">
-
-        </Button>
-
+            android:visibility="invisible"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/btn_tag_2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:backgroundTint="@android:color/darker_gray"
             android:layout_marginEnd="8dp"
-            android:visibility="invisible" >
-
-        </Button>
-
+            android:visibility="invisible"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/btn_tag_3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:backgroundTint="@android:color/darker_gray"
-            android:visibility="invisible">
-
-        </Button>
+            android:visibility="invisible"
+            android:textSize="16sp" />
 
     </LinearLayout>
 
