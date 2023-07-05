@@ -39,8 +39,6 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var postAdapter: PostAdapter
 
-    private var searchString: String = ""
-
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -106,7 +104,7 @@ class HomeFragment : Fragment() {
 
         binding.btnSearch.setOnClickListener {
             if(binding.searchView.text.isNotEmpty()) {
-                searchString = binding.searchView.text.toString().trim()
+                val searchString = binding.searchView.text.toString().replace(" ", "")
                 binding.searchView.text.clear()
                 binding.searchView.clearFocus()
 
@@ -118,30 +116,32 @@ class HomeFragment : Fragment() {
 
                     visibleButton.visibility = View.VISIBLE
                     visibleButton.text = searchString
+
+                    userViewModel.addTag(searchString)
                 }
             }
         }
 
         binding.btnTag1.setOnClickListener {
-            searchString = ""
             // Rendere invisibili i bottoni
             binding.btnTag1.visibility = View.INVISIBLE
+            userViewModel.removeTag(binding.btnTag1.text.toString())
             binding.btnTag1.text = ""
             translationReturn()
         }
 
         binding.btnTag2.setOnClickListener {
-            searchString = ""
             // Rendere invisibili i bottoni
             binding.btnTag2.visibility = View.INVISIBLE
+            userViewModel.removeTag(binding.btnTag2.text.toString())
             binding.btnTag2.text = ""
             translationReturn()
         }
 
         binding.btnTag3.setOnClickListener {
-            searchString = ""
             // Rendere invisibili i bottoni
             binding.btnTag3.visibility = View.INVISIBLE
+            userViewModel.removeTag(binding.btnTag3.text.toString())
             binding.btnTag3.text = ""
             translationReturn()
         }

@@ -38,8 +38,8 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     private var maxDistance: Double = 50.0
     private var currentLatitude: Double = 0.0
     private var currentLongitude: Double = 0.0
-    var searchString: String = ""
 
+    private var searchStrings: ArrayList<String> = ArrayList()
 
     fun login(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -285,52 +285,55 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
             }
         }
     }
-    private fun updateUser(querySnapshot: QuerySnapshot) {
+    private fun update(querySnapshot: QuerySnapshot) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
-            val userList = mutableListOf<UserData>()
 
-            for (document in querySnapshot) {
+            val filteredUsers = querySnapshot.documents.filter { document ->
                 val uid = document.id
-                // se si tratta dell'utente loggato non mi interessa
-                if (uid != user?.uid) {
-                    val userData = document.toObject(UserData::class.java)
-                    val latitude = document.getDouble("latitude") ?: 0.0
-                    val longitude = document.getDouble("longitude") ?: 0.0
+                val latitude = document.getDouble("latitude") ?: 0.0
+                val longitude = document.getDouble("longitude") ?: 0.0
+                val tag = document.getString("tag") ?: ""
+                val tag2 = document.getString("tag2") ?: ""
+                val tag3 = document.getString("tag3") ?: ""
 
-                    val distance = Utils.calculateDistance(
-                        latitude,
-                        longitude,
-                        currentLatitude,
-                        currentLongitude
-                    )
+                val distance = Utils.calculateDistance(
+                    latitude,
+                    longitude,
+                    currentLatitude,
+                    currentLongitude
+                )
 
-                    // Stampa la distanza nel log
-                    Log.d("TAG", "Distanza = $distance")
-
-                    val lowercaseSearchString = searchString.toLowerCase()
-
-                    val lowercaseTag = userData.tag.toLowerCase()
-                    val lowercaseTag2 = userData.tag2.toLowerCase()
-                    val lowercaseTag3 = userData.tag3.toLowerCase()
-
-                    if (distance <= maxDistance && (lowercaseTag == lowercaseSearchString || lowercaseSearchString.isEmpty() || lowercaseTag2 == lowercaseSearchString
-                                || lowercaseTag3 == lowercaseSearchString || userData.name == lowercaseSearchString)
-                    ) {
-
-                        // Crea un oggetto User utilizzando i dati ottenuti dal documento
-                        val user = UserData(
-                            uid = uid,
-                            name = userData.name,
-                            location = userData.location,
-                            age = Utils.calculateAge(userData.age).toString(),
-                            image = userData.image,
-                            tag = userData.tag,
-                            tag2 = userData.tag2,
-                            tag3 = userData.tag3
-                        )
-                        userList.add(user)
+                val hasMatchingTags = if (searchStrings.isNotEmpty()) {
+                    val userTags = listOf(tag, tag2, tag3)
+                    searchStrings.any { searchString ->
+                        userTags.any { userTag ->
+                            userTag.contains(searchString, ignoreCase = true)
+                        }
                     }
+                } else {
+                    true
+                }
+
+                distance <= maxDistance && uid != user?.uid && hasMatchingTags
+            }
+
+            val userList = filteredUsers.mapNotNull { document ->
+                val uid = document.id
+                val userData = document.toObject(UserData::class.java)
+
+                // Crea un oggetto UserData utilizzando i dati ottenuti dal documento
+                userData?.let {
+                    UserData(
+                        uid = uid,
+                        name = it.name,
+                        location = it.location,
+                        age = Utils.calculateAge(it.age).toString(),
+                        image = it.image,
+                        tag = it.tag,
+                        tag2 = it.tag2,
+                        tag3 = it.tag3
+                    )
                 }
             }
 
@@ -343,7 +346,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
             fireStore.collection("users")
                 .get()
                 .addOnSuccessListener { querySnapshot ->
-                    updateUser(querySnapshot)
+                    update(querySnapshot)
                 }
                 .addOnFailureListener { exception ->
                     Log.i(TAG, exception.message.toString())
@@ -360,7 +363,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                         return@addSnapshotListener
                     }
                     if (querySnapshot != null) {
-                        updateUser(querySnapshot)
+                        update(querySnapshot)
                     }
                 }
         }
@@ -371,5 +374,15 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
             maxDistance = kmNumber
             refreshRetrieveUser()
         }
+    }
+
+    fun addTag(tag: String) {
+        searchStrings.add(tag.lowercase(Locale.getDefault()))
+        refreshRetrieveUser()
+    }
+
+    fun removeTag(tag: String) {
+        searchStrings.remove(tag.lowercase(Locale.getDefault()))
+        refreshRetrieveUser()
     }
 }

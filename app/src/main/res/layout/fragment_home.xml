@@ -67,7 +67,7 @@
             android:backgroundTint="@android:color/darker_gray"
             android:layout_marginEnd="8dp"
             android:visibility="invisible"
-            android:textSize="16sp" />
+            android:textSize="13sp" />
 
         <Button
             android:id="@+id/btn_tag_2"
@@ -76,7 +76,7 @@
             android:backgroundTint="@android:color/darker_gray"
             android:layout_marginEnd="8dp"
             android:visibility="invisible"
-            android:textSize="16sp" />
+            android:textSize="13sp" />
 
         <Button
             android:id="@+id/btn_tag_3"
@@ -84,7 +84,7 @@
             android:layout_height="40dp"
             android:backgroundTint="@android:color/darker_gray"
             android:visibility="invisible"
-            android:textSize="16sp" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 

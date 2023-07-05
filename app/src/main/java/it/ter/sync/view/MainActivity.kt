@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             ), drawerLayout
         )
 
-        // Nascondi la tastiera quando si fa clic al di fuori della tastiera
+        // Nascondi la tastiera quando si fa clic al di fuori di essa
         binding.root.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
