@@ -33,6 +33,7 @@
         android:hint="@string/interessi_string"
         android:textColor="@color/black"
         android:singleLine="true"
+        android:maxLength="@string/max_length_tag"
         android:textColorHint="@color/black"
         android:layout_toStartOf="@+id/btn_search"
         android:layout_toEndOf="@+id/spinner_splitter"

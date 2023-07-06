@@ -46,8 +46,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    private var previousChildCount: Int = 1
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

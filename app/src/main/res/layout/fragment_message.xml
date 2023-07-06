@@ -79,6 +79,7 @@
         android:padding="8dp"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="8dp"
+        android:maxLength="@string/max_length_message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendButton"
         app:layout_constraintStart_toStartOf="parent"

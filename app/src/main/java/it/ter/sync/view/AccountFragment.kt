@@ -7,10 +7,9 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -54,6 +53,22 @@ class AccountFragment : Fragment()  {
 
             saveButtonClicked = true
             userViewModel.updateUserInfo(name,age,tag1.replace(" ", ""), tag2.replace(" ", ""), tag3.replace(" ", ""))
+        }
+
+        binding.tag1.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.tag1.hint = ""
+            }
+        }
+        binding.tag2.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.tag2.hint = ""
+            }
+        }
+        binding.tag3.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.tag3.hint = ""
+            }
         }
 
 
