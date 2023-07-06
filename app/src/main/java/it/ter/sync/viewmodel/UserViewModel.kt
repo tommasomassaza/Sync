@@ -30,6 +30,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     var loginResult: MutableLiveData<Boolean> = MutableLiveData()
     var registrationResult: MutableLiveData<String> = MutableLiveData()
     var currentUser: MutableLiveData<UserData?> = MutableLiveData()
+    val accountFriend: MutableLiveData<UserData?> = MutableLiveData()
     var userUpdated: MutableLiveData<Boolean> = MutableLiveData()
     var users: MutableLiveData<List<UserData>> = MutableLiveData()
     var userImage: MutableLiveData<String?> = MutableLiveData()
@@ -99,6 +100,32 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                         }
                 }
             }
+        }
+    }
+    fun getUserInfo(userId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            fireStore.collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val name = documentSnapshot.getString("name") ?: ""
+                        val age = documentSnapshot.getString("age") ?: ""
+                        val location = documentSnapshot.getString("location") ?: ""
+                        val image = documentSnapshot.getString("image") ?: ""
+                        val tag = documentSnapshot.getString("tag") ?: ""
+                        val tag2 = documentSnapshot.getString("tag2") ?: ""
+                        val tag3 = documentSnapshot.getString("tag3") ?: ""
+                        val userData = UserData(uid=userId,name=name,location=location,age=age,image=image,tag=tag,tag2=tag2,tag3=tag3)
+
+                        accountFriend.postValue(userData)
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e(TAG, "Errore durante il recupero delle informazioni dell'utente da Firestore: ${exception.message}")
+                }
+
+
         }
     }
     fun getUserImage() {
