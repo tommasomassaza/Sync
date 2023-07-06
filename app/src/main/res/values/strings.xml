@@ -31,4 +31,7 @@
     <string name="cerca">Cerca</string>
     <string name="inserisci_un_messaggio">Inserisci un messaggio</string>
     <string name="invia">Invia</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="interessi_string">Interessi</string>
 </resources>

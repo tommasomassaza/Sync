@@ -78,10 +78,7 @@ class MessageFragment : Fragment() {
                 binding.messageInput.text.clear()
                 binding.messageInput.clearFocus()
 
-                // Tiro giù la keyboard
-                val inputMethodManager =
-                    requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(root.windowToken, 0)
+                (activity as MainActivity).hideKeyboard()
             }
         }
 

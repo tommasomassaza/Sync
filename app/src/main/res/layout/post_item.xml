@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:background="#20C4E198"
     android:id="@+id/post_item"
-    android:layout_marginTop="20dp"
-    android:layout_marginBottom="20dp"
+    android:layout_marginBottom="30dp"
     android:backgroundTint="@android:color/white"
     >
 
@@ -32,6 +31,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/black"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@id/imageProfile_post"
         app:layout_constraintStart_toEndOf="@id/imageProfile_post"
         app:layout_constraintTop_toTopOf="@id/imageProfile_post" />
@@ -122,6 +122,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
     </TextView>
+    <ImageView
+        android:id="@+id/sad"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/baseline_sentiment_very_dissatisfied_24"
+        app:layout_constraintTop_toBottomOf="@id/interessi"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="invisible"></ImageView>
 
 
 

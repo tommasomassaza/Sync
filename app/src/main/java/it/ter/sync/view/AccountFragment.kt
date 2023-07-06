@@ -53,7 +53,7 @@ class AccountFragment : Fragment()  {
             val tag3 = binding.tag3.text.toString().ifEmpty { binding.tag3.hint.toString()}
 
             saveButtonClicked = true
-            userViewModel.updateUserInfo(name,age,tag1, tag2, tag3)
+            userViewModel.updateUserInfo(name,age,tag1.replace(" ", ""), tag2.replace(" ", ""), tag3.replace(" ", ""))
         }
 
 

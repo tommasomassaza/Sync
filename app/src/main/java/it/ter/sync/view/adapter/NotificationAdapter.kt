@@ -35,17 +35,30 @@ class NotificationAdapter (private var notificationList: List<NotificationData>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-        holder.binding.root.setOnClickListener {
-            val navController = Navigation.findNavController(it)
-            val bundle = Bundle()
-            bundle.putString("messengerId", notificationList[position].notifierId)
-            bundle.putString("messengerName", notificationList[position].notifierName)
-            bundle.putString("currentUserName", currentUser.name)
-            bundle.putString("userImageUrl", currentUser.image)
-            bundle.putString("messengerImageUrl", notificationList[position].image)
-            navController.navigate(R.id.action_notificationFragment_to_messageFragment, bundle)
+        if(notificationList[position].type == NotificationType.MESSAGE) {
+            holder.binding.root.setOnClickListener {
+                val navController = Navigation.findNavController(it)
+                val bundle = Bundle()
+                bundle.putString("messengerId", notificationList[position].notifierId)
+                bundle.putString("messengerName", notificationList[position].notifierName)
+                bundle.putString("currentUserName", currentUser.name)
+                bundle.putString("userImageUrl", currentUser.image)
+                bundle.putString("messengerImageUrl", notificationList[position].image)
+                navController.navigate(R.id.action_notificationFragment_to_messageFragment, bundle)
+            }
+        } else {
+            holder.binding.root.setOnClickListener {
+                val navController = Navigation.findNavController(it)
+                val bundle = Bundle()
+                bundle.putString("userId", notificationList[position].notifierId)
+                bundle.putString("userName", notificationList[position].notifierName)
+                bundle.putString("userImageUrl", notificationList[position].image)
+                bundle.putString("currentUserName", currentUser.name)
+                bundle.putString("currentUserImageUrl", currentUser.image)
+                navController.navigate(R.id.action_notificationFragment_to_accountFriendFragment, bundle)
+            }
         }
+
 
         holder.binding.apply {
             if(notificationList[position].type == NotificationType.MESSAGE){

@@ -3,7 +3,9 @@ package it.ter.sync.view.adapter
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import it.ter.sync.R
@@ -22,7 +24,6 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
     }
     fun setLikeList(likes: List<String>) {
         likeList = likes
-
         notifyDataSetChanged() // Aggiorna la RecyclerView
     }
 
@@ -59,6 +60,7 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
                 navController.navigate(R.id.action_homeFragment_to_messageFragment, bundle)
             }
 
+
             holder.binding.like.setOnClickListener {
                 if (likeList.contains(postList[position].uid)) {
                     notificationViewModel.deleteLikeNotification(postList[position].uid)
@@ -69,15 +71,48 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
                 }
             }
 
+            holder.binding.usernamePost.setOnClickListener {
+                val navController = Navigation.findNavController(it)
+                val bundle = Bundle()
+                bundle.putString("userId", postList[position].uid)
+                bundle.putString("userName", postList[position].name)
+                bundle.putString("userImageUrl", postList[position].image)
+                bundle.putString("currentUserName", currentUser.name)
+                bundle.putString("currentUserImageUrl", currentUser.image)
+                navController.navigate(R.id.action_homeFragment_to_accountFriendFragment, bundle)
+            }
+
+            holder.binding.imageCardView.setOnClickListener {
+                val navController = Navigation.findNavController(it)
+                val bundle = Bundle()
+                bundle.putString("userId", postList[position].uid)
+                bundle.putString("userName", postList[position].name)
+                bundle.putString("userImageUrl", postList[position].image)
+                bundle.putString("currentUserName", currentUser.name)
+                bundle.putString("currentUserImageUrl", currentUser.image)
+                navController.navigate(R.id.action_homeFragment_to_accountFriendFragment, bundle)
+            }
+
 
             holder.binding.apply {
                 usernamePost.text = postList[position].name
                 agePost.text = postList[position].age
                 locationPost.text = postList[position].location
-                tagsView.setText("#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3)
+
+                if(postList[position].tag.isEmpty() || postList[position].tag2.isEmpty() || postList[position].tag3.isEmpty()) {
+                    sad.visibility = View.VISIBLE
+                    tagsView.text = "\n"+ postList[position].name+" non ha inserito interessi"
+                } else{
+                    sad.visibility = View.INVISIBLE
+                    tagsView.text = "#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3
+                }
 
 
-
+                if (likeList.contains(postList[position].uid)) {
+                    like.setBackgroundResource(R.drawable.round_button_selected)
+                } else {
+                    like.setBackgroundResource(R.drawable.round_button)
+                }
 
 
                 Glide.with(root)
