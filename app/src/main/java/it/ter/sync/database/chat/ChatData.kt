@@ -6,6 +6,6 @@ class ChatData (
     var image: String = "",
     var lastMessage: String = "",
     var timeStamp: String = "",
-    val timestampMillis: Long = 0,
+    val timestampMillis: String = "0",
     var messengerName: String? = ""
 ){}

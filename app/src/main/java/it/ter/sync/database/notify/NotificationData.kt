@@ -5,7 +5,7 @@ class NotificationData (
     var image: String = "",
     var text: String = "",
     var timeStamp: String = "",
-    val timestampMillis: Long = 0,
+    val timestampMillis: String = "0",
     var displayed: Boolean = false,
     var notifierId: String? = "",
     var notifierName: String? = ""

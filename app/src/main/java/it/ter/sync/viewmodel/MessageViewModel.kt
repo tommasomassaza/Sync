@@ -144,11 +144,11 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     private fun updateChat(message: MessageData, messengerImageUrl: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val chatUserRef = database.getReference("chats/${user?.uid}/${messengerId}")
-            val chatUser = ChatData(messengerId!!, messengerImageUrl, message.text, message.timeStamp, message.timestampMillis.toLong(), messengerName)
+            val chatUser = ChatData(messengerId!!, messengerImageUrl, message.text, message.timeStamp, message.timestampMillis, messengerName)
             chatUserRef.setValue(chatUser)
 
             val chatMessengerRef = database.getReference("chats/${messengerId}/${user?.uid}")
-            val chatMessenger = ChatData(user?.uid!!, message.image, message.text, message.timeStamp, message.timestampMillis.toLong(), currentUserName)
+            val chatMessenger = ChatData(user?.uid!!, message.image, message.text, message.timeStamp, message.timestampMillis, currentUserName)
             chatMessengerRef.setValue(chatMessenger)
         }
     }
@@ -170,7 +170,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 lastMessage.image,
                 lastMessage.text,
                 dateString,
-                timestampMillis,
+                timestampMillis.toString(),
                 false,
                 user?.uid,
                 currentUserName

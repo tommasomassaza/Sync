@@ -33,7 +33,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
             val chatsRef = database.getReference("chats/${user?.uid}")
 
             // Listener per chat da user ai vari messenger
-            chatsRef.addValueEventListener(object : ValueEventListener {
+            chatsRef.orderByChild("timestampMillis").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val chats: MutableList<ChatData> = mutableListOf()
 
