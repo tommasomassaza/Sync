@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import it.ter.sync.database.like.LikeData
 import it.ter.sync.database.message.MessageData
 import it.ter.sync.database.message.MessageDataDAO
 import it.ter.sync.database.user.UserData
@@ -12,7 +11,7 @@ import it.ter.sync.database.user.UserDataDAO
 
 @Database(
     entities = [UserData::class, MessageData::class],
-    version = 20,
+    version = 21,
     exportSchema = true
 )
 abstract class MyRoomDatabase : RoomDatabase() {

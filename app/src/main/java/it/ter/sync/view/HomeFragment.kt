@@ -64,7 +64,7 @@ class HomeFragment : Fragment() {
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        val kms = arrayOf("5 Km", "20 Km", "50 Km", "200 Km")
+        val kms = arrayOf("5 Km", "20 Km", "50 Km", "100 Km")
         val spinner = binding.spinnerSplitter
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, kms)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -84,8 +84,6 @@ class HomeFragment : Fragment() {
 
         // Ottieni i parametri di layout correnti
         val layoutParams = recyclerView.layoutParams as RelativeLayout.LayoutParams
-        // Imposta la regola di posizionamento della recyclerView
-        layoutParams.addRule(RelativeLayout.BELOW, R.id.search_view)
 
         binding.btnSearch.setOnClickListener {
             if(binding.searchView.text.isNotEmpty()) {
@@ -153,7 +151,6 @@ class HomeFragment : Fragment() {
 
         userViewModel.getUserInfo()
         notificationViewModel.retrieveLikes()
-
 
         // Prendo gli utenti
         userViewModel.retrieveUsers()

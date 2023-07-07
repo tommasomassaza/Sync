@@ -16,5 +16,6 @@ open class UserData(
     var image: String = "",
     var tag: String = "",
     var tag2: String = "",
-    var tag3: String = ""
+    var tag3: String = "",
+    val timestampMillis: Long = 0
 ) {}

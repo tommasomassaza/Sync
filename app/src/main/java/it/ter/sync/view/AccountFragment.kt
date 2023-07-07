@@ -71,6 +71,13 @@ class AccountFragment : Fragment()  {
             }
         }
 
+        binding.imageAccount.setOnClickListener {
+            pickImageFromGallery()
+        }
+
+        binding.age.setOnClickListener {
+            showDatePicker()
+        }
 
         return root
     }
@@ -79,15 +86,6 @@ class AccountFragment : Fragment()  {
         super.onViewCreated(view, savedInstanceState)
 
         userViewModel.getUserInfo()
-        userViewModel.getUserImage()
-
-        binding.imageAccount.setOnClickListener {
-            pickImageFromGallery()
-        }
-
-        binding.age.setOnClickListener {
-            showDatePicker()
-        }
     }
 
     private fun showDatePicker() {
@@ -142,11 +140,10 @@ class AccountFragment : Fragment()  {
             binding.tag1.hint = it?.tag
             binding.tag2.hint = it?.tag2
             binding.tag3.hint = it?.tag3
-        }
 
-        userViewModel.userImage.observe(viewLifecycleOwner) {
+
             Glide.with(this)
-                .load(it)
+                .load(it?.image)
                 .error(R.mipmap.ic_launcher)
                 .into(binding.imageAccount)
         }

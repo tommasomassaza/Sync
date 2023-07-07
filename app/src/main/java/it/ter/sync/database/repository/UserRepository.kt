@@ -22,24 +22,29 @@ class UserRepository (application: Context?) : ViewModel() {
         dBUserDao.insert(user)
     }
 
-
     suspend fun getUserByUid(uid: String): UserData? {
         return dBUserDao.getUserByUid(uid)
     }
 
-    suspend fun getUserImage(uid: String): String? {
-        return dBUserDao.getUserImage(uid)
-    }
-
-    suspend fun updateUserInfo(userId: String, name: String, age: String, tag: String, tag2: String, tag3: String) {
+    suspend fun updateUserInfo(
+        userId: String,
+        name: String,
+        age: String,
+        tag: String,
+        tag2: String,
+        tag3: String,
+        timestampMillis: Long
+    ) {
         dBUserDao.updateUserName(userId, name)
         dBUserDao.updateUserAge(userId, age)
         dBUserDao.updateUserTag(userId, tag)
         dBUserDao.updateUserTag2(userId, tag2)
         dBUserDao.updateUserTag3(userId, tag3)
+        dBUserDao.updateUserTimestamp(userId, timestampMillis)
     }
 
-    suspend fun updateUserImage(userId: String, imageUrl: String) {
+    suspend fun updateUserImage(userId: String, imageUrl: String, timestampMillis: Long) {
         dBUserDao.updateUserImage(userId, imageUrl)
+        dBUserDao.updateUserTimestamp(userId, timestampMillis)
     }
 }

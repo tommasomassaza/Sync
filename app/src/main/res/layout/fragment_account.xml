@@ -3,156 +3,155 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background3"
+        tools:context=".view.SignUpFragment">
 
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/background3"
-    tools:context=".view.SignUpFragment">
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/image_account_cardView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:src="@mipmap/ic_launcher"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:cardCornerRadius="150dp"
-        android:scaleType="centerInside">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/image_account_cardView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:cardCornerRadius="150dp"
-            android:layout_margin="4dp"
-            android:src="@mipmap/ic_launcher">
+            android:scaleType="centerInside">
 
-            <ImageView
-                android:id="@+id/image_account"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/baseline_account_circle_24"
-                android:scaleType="centerCrop" />
+                app:cardCornerRadius="150dp"
+                android:layout_margin="4dp"
+                android:src="@mipmap/ic_launcher">
 
+                <ImageView
+                    android:id="@+id/image_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/baseline_account_circle_24"
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
         </androidx.cardview.widget.CardView>
-    </androidx.cardview.widget.CardView>
 
 
 
-    <EditText
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:background="#50ffffff"
-        android:textColor="@color/black"
-        android:textColorHint="#403737"
-        android:drawableStart="@drawable/baseline_person_outline_24"
-        android:drawablePadding="20dp"
-        android:inputType="textCapSentences"
-        app:layout_constraintTop_toBottomOf="@+id/image_account_cardView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#50ffffff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/baseline_person_outline_24"
+            android:drawablePadding="20dp"
+            android:inputType="textCapSentences"
+            app:layout_constraintTop_toBottomOf="@+id/image_account_cardView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:background="#50ffffff"
-        android:textColor="@color/black"
-        android:textColorHint="#403737"
-        android:drawableStart="@drawable/baseline_alternate_email_24"
-        android:drawablePadding="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#50ffffff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/baseline_alternate_email_24"
+            android:drawablePadding="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/age"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:background="#50ffffff"
-        android:textColor="@color/black"
-        android:textColorHint="#403737"
-        android:drawableStart="@drawable/android_age_24"
-        android:drawablePadding="20dp"
-        android:inputType="none"
-        android:focusableInTouchMode="false"
-        app:layout_constraintTop_toBottomOf="@+id/email"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <EditText
+            android:id="@+id/age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#50ffffff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/android_age_24"
+            android:drawablePadding="20dp"
+            android:inputType="none"
+            android:focusableInTouchMode="false"
+            app:layout_constraintTop_toBottomOf="@+id/email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/tag1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:background="#50ffffff"
-        android:textColor="@color/black"
-        android:textColorHint="#403737"
-        android:drawableStart="@drawable/baseline_auto_awesome_24"
-        android:drawablePadding="20dp"
-        android:singleLine="true"
-        android:maxLength="@string/max_length_tag"
-        app:layout_constraintTop_toBottomOf="@+id/age"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <EditText
-        android:id="@+id/tag2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:background="#50ffffff"
-        android:textColor="@color/black"
-        android:textColorHint="#403737"
-        android:drawableStart="@drawable/baseline_auto_awesome_24"
-        android:drawablePadding="20dp"
-        android:singleLine="true"
-        android:maxLength="@string/max_length_tag"
-        app:layout_constraintTop_toBottomOf="@+id/tag1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <EditText
-        android:id="@+id/tag3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:background="#50ffffff"
-        android:textColor="@color/black"
-        android:textColorHint="#403737"
-        android:drawableStart="@drawable/baseline_auto_awesome_24"
-        android:drawablePadding="20dp"
-        android:singleLine="true"
-        android:maxLength="@string/max_length_tag"
-        app:layout_constraintTop_toBottomOf="@+id/tag2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <EditText
+            android:id="@+id/tag1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#50ffffff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/baseline_auto_awesome_24"
+            android:drawablePadding="20dp"
+            android:singleLine="true"
+            android:maxLength="@string/max_length_tag"
+            app:layout_constraintTop_toBottomOf="@+id/age"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+        <EditText
+            android:id="@+id/tag2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#50ffffff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/baseline_auto_awesome_24"
+            android:drawablePadding="20dp"
+            android:singleLine="true"
+            android:maxLength="@string/max_length_tag"
+            app:layout_constraintTop_toBottomOf="@+id/tag1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+        <EditText
+            android:id="@+id/tag3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#50ffffff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/baseline_auto_awesome_24"
+            android:drawablePadding="20dp"
+            android:singleLine="true"
+            android:maxLength="@string/max_length_tag"
+            app:layout_constraintTop_toBottomOf="@+id/tag2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/saveBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        android:textColor="@color/black"
-        app:backgroundTint="#DCB6AB"
-        app:layout_constraintTop_toBottomOf="@+id/tag3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:textColor="@color/black"
+            app:backgroundTint="#DCB6AB"
+            app:layout_constraintTop_toBottomOf="@+id/tag3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

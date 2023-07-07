@@ -4,13 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/background3"
         tools:context=".view.SignUpFragment">
 
@@ -39,8 +38,9 @@
             android:background="#50ffffff"
             android:textColor="@color/black"
             android:textColorHint="#403737"
-            android:drawableLeft="@drawable/baseline_person_outline_24"
+            android:drawableStart="@drawable/baseline_person_outline_24"
             android:drawablePadding="20dp"
+            android:inputType="textCapSentences"
             app:layout_constraintTop_toBottomOf="@+id/signUpTxt"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -57,6 +57,9 @@
             android:textColorHint="#403737"
             android:drawableStart="@drawable/baseline_alternate_email_24"
             android:drawablePadding="20dp"
+            android:singleLine="true"
+            android:inputType="textEmailAddress"
+            android:maxLength="@string/max_length_email"
             app:layout_constraintTop_toBottomOf="@+id/nameSignUp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -93,6 +96,7 @@
             android:drawableStart="@drawable/baseline_key_24"
             android:drawablePadding="20dp"
             android:inputType="textPassword"
+            android:maxLength="@string/max_length_password"
             app:layout_constraintTop_toBottomOf="@+id/ageSignUp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -110,6 +114,7 @@
             android:drawableStart="@drawable/baseline_key_24"
             android:drawablePadding="20dp"
             android:inputType="textPassword"
+            android:maxLength="@string/max_length_password"
             android:padding="20dp"
             android:textColor="@color/black"
             android:textColorHint="#403737"

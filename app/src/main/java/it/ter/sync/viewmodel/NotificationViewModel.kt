@@ -11,7 +11,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import it.ter.sync.database.like.LikeData
 import it.ter.sync.database.notify.NotificationData
 import it.ter.sync.database.notify.NotificationType
 import kotlinx.coroutines.Dispatchers

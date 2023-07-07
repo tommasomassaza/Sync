@@ -30,7 +30,6 @@
         android:fontFamily="cursive"
         android:textColor="@color/black"
         android:textSize="35sp"
-
         android:layout_margin="20dp"
         android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +40,7 @@
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/username"
+        android:hint="@string/email"
         android:layout_margin="20dp"
         android:padding="20dp"
         android:background="#50ffffff"
@@ -49,6 +48,9 @@
         android:textColorHint="#403737"
         android:drawableStart="@drawable/baseline_person_outline_24"
         android:drawablePadding="20dp"
+        android:singleLine="true"
+        android:inputType="textEmailAddress"
+        android:maxLength="@string/max_length_email"
         app:layout_constraintTop_toBottomOf="@id/signIn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -66,6 +68,8 @@
         android:drawableStart="@drawable/baseline_key_24"
         android:drawablePadding="20dp"
         android:inputType="textPassword"
+        android:singleLine="true"
+        android:maxLength="@string/max_length_password"
         app:layout_constraintTop_toBottomOf="@id/email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

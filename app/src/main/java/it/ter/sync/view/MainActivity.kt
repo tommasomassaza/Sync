@@ -2,6 +2,7 @@ package it.ter.sync.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import com.google.android.material.navigation.NavigationView
@@ -54,9 +55,6 @@ class MainActivity : AppCompatActivity() {
         notificationViewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
         messageViewModel = ViewModelProvider(this).get(MessageViewModel::class.java)
 
-        // Prendo le notifiche non ancora visualizzate
-        notificationViewModel.retrieveNotificationsNotDisplayed()
-
         initObservers()
 
         setSupportActionBar(binding.appBarMain.toolbar)
@@ -94,10 +92,12 @@ class MainActivity : AppCompatActivity() {
         imageUser = headerView.findViewById(R.id.imageUser)
         nameUser = headerView.findViewById(R.id.textNameUser)
 
-        userViewModel.getUserInfo()
-        userViewModel.getUserImage()
-    }
 
+        // Prendo le notifiche non ancora visualizzate
+        notificationViewModel.retrieveNotificationsNotDisplayed()
+
+        userViewModel.getUserInfo()
+    }
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         // Se mi trovo nel loginFragment non posso accedere al menù
@@ -142,7 +142,6 @@ class MainActivity : AppCompatActivity() {
         notificationViewModel.retrieveNotificationsNotDisplayed()
 
         userViewModel.getUserInfo()
-        userViewModel.getUserImage()
     }
 
     private fun initObservers() {
@@ -157,10 +156,9 @@ class MainActivity : AppCompatActivity() {
         }
         userViewModel.currentUser.observe(this) {
             nameUser.text = it?.name
-        }
-        userViewModel.userImage.observe(this) {
+
             Glide.with(this)
-                .load(it)
+                .load(it?.image)
                 .error(R.mipmap.ic_launcher)
                 .into(imageUser)
         }

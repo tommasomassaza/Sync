@@ -17,7 +17,6 @@ import it.ter.sync.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
-import kotlin.math.*
 
 class UserViewModel(private val application: Application) : AndroidViewModel(application) {
     private var TAG = this::class.simpleName
@@ -44,6 +43,10 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
 
     fun login(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            if(email.isNullOrEmpty() || password.isNullOrEmpty()) {
+                loginResult.postValue(false)
+                return@launch
+            }
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -71,12 +74,18 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                 val userData = userRepository.getUserByUid(user.uid)
                 if (userData != null) { // è presente in locale
                     currentUser.postValue(userData)
-                } else {
-                    fireStore.collection("users")
-                        .document(user.uid)
-                        .get()
-                        .addOnSuccessListener { documentSnapshot ->
-                            if (documentSnapshot.exists()) {
+                }
+                // Controllo anche su firestore se l'utente è stato modificato
+                fireStore.collection("users")
+                    .document(user.uid)
+                    .addSnapshotListener { documentSnapshot, exception ->
+                        if (exception != null) {
+                            Log.e(TAG, "Errore durante il recupero delle informazioni dell'utente da Firestore: ${exception.message}")
+                            return@addSnapshotListener
+                        }
+                        if (documentSnapshot != null) {
+                            val timestampLastModified = documentSnapshot.getLong("timestampMillis") ?: 0
+                            if(timestampLastModified > (userData?.timestampMillis ?: 0)) {
                                 val name = documentSnapshot.getString("name") ?: ""
                                 val age = documentSnapshot.getString("age") ?: ""
                                 val location = documentSnapshot.getString("location") ?: ""
@@ -85,23 +94,21 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                                 val tag = documentSnapshot.getString("tag") ?: ""
                                 val tag2 = documentSnapshot.getString("tag2") ?: ""
                                 val tag3 = documentSnapshot.getString("tag3") ?: ""
-                                val userData = UserData(user.uid, name, email, location, age, image,tag,tag2,tag3)
+                                val userDataFireStore = UserData(user.uid,name,email,location,age,image,tag,tag2,tag3,timestampLastModified)
 
-                                currentUser.postValue(userData)
+                                currentUser.postValue(userDataFireStore)
 
                                 // Salva le informazioni dell'utente anche nel Database locale
                                 viewModelScope.launch(Dispatchers.IO) {
-                                    userRepository.insertUser(userData)
+                                    userRepository.insertUser(userDataFireStore)
                                 }
                             }
                         }
-                        .addOnFailureListener { exception ->
-                            Log.e(TAG, "Errore durante il recupero delle informazioni dell'utente da Firestore: ${exception.message}")
-                        }
-                }
+                    }
             }
         }
     }
+
     fun getUserInfo(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             fireStore.collection("users")
@@ -124,37 +131,6 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                 .addOnFailureListener { exception ->
                     Log.e(TAG, "Errore durante il recupero delle informazioni dell'utente da Firestore: ${exception.message}")
                 }
-
-
-        }
-    }
-    fun getUserImage() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = firebaseAuth.currentUser
-            user?.let {
-                val imageUrl = userRepository.getUserImage(user.uid)
-                if(imageUrl.isNullOrEmpty()){
-                    fireStore.collection("users")
-                        .document(user.uid)
-                        .get()
-                        .addOnSuccessListener { documentSnapshot ->
-                            if (documentSnapshot.exists()) {
-                                val imageUrl = documentSnapshot.getString("image") ?: ""
-                                userImage.postValue(imageUrl)
-
-                                // Salva le informazioni dell'utente anche nel Database locale
-                                viewModelScope.launch(Dispatchers.IO) {
-                                    userRepository.updateUserImage(user.uid,imageUrl)
-                                }
-                            }
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e(TAG, "Errore durante il recupero delle informazioni dell'utente da Firestore: ${exception.message}")
-                        }
-                } else {
-                    userImage.postValue(imageUrl)
-                }
-            }
         }
     }
 
@@ -163,19 +139,16 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        registrationResult.postValue("Success")
-                        task.result.user?.let {
-                            val userData = UserData(uid=it.uid,name=name,email=email,age=age)
+                    registrationResult.postValue("Success")
+                    task.result.user?.let {
+                        val userData = UserData(uid=it.uid,name=name,email=email,age=age)
 
-                            // Salva le informazioni su fireStore
-                            addUserToFireStore(userData)
-                        }
-                    } else {
-                        // Si è verificato un errore durante la registrazione dell'utente
-                        val exception = task.exception
-                        registrationResult.postValue(exception?.message.toString())
+                        // Salva le informazioni su fireStore
+                        addUserToFireStore(userData)
                     }
+                }
+                .addOnFailureListener {
+                    Log.i(TAG, it.message.toString())
                 }
         }
     }
@@ -183,11 +156,14 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     private fun addUserToFireStore(userData: UserData) {
         viewModelScope.launch(Dispatchers.IO) {
 
+            val timestampMillis = System.currentTimeMillis()
+
             // Aggiungi le informazioni aggiuntive dell'utente nel database firestore
             val userAdditionalData = hashMapOf(
                 "name" to userData.name,
                 "age" to userData.age,
                 "location" to userData.location,
+                "timestampMillis" to timestampMillis,
                 "latitude" to 0.0,
                 "longitude" to 0.0
             )
@@ -198,8 +174,8 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                 .addOnSuccessListener {
                     Log.i(TAG, "User add to fireStore")
                 }
-                .addOnFailureListener { exception ->
-                    Log.i(TAG, exception.message.toString())
+                .addOnFailureListener {
+                    Log.i(TAG, it.message.toString())
                 }
         }
     }
@@ -213,11 +189,13 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
 
     fun updateUserInfo(name: String, age: String, tag: String, tag2: String, tag3: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            val timestampMillis = System.currentTimeMillis()
             val user = firebaseAuth.currentUser
             user?.let {
                 val userAdditionalData = hashMapOf<String, Any>(
                     "name" to name,
                     "age" to age,
+                    "timestampMillis" to timestampMillis,
                     "tag" to tag,
                     "tag2" to tag2,
                     "tag3" to tag3
@@ -226,13 +204,10 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                     .document(user.uid)
                     .update(userAdditionalData)
                     .addOnSuccessListener {
-                        val email = user.email ?: ""
-                        val userData = UserData(uid=user.uid,name=name,email=email,age=age,tag=tag,tag2=tag2,tag3=tag3)
-                        currentUser.postValue(userData)
                         userUpdated.postValue(true)
 
                         viewModelScope.launch(Dispatchers.IO) {
-                            userRepository.updateUserInfo(user.uid, name, age, tag, tag2, tag3)
+                            userRepository.updateUserInfo(user.uid, name, age, tag, tag2, tag3, timestampMillis)
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -245,6 +220,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
 
     fun updateUserImage(imageUri: Uri?) {
         viewModelScope.launch(Dispatchers.IO) {
+            val timestampMillis = System.currentTimeMillis()
             val user = firebaseAuth.currentUser
             user?.let {
                 val storageRef = storage.reference.child("images/${user.uid}.jpg")
@@ -255,6 +231,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                     storageRef.downloadUrl.addOnSuccessListener {
                         val userAdditionalData = hashMapOf<String, Any>(
                             "image" to it.toString(),
+                            "timestampMillis" to timestampMillis
                         )
                         val imageUrl = it
                         fireStore.collection("users")
@@ -262,9 +239,8 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                             .update(userAdditionalData)
                             .addOnSuccessListener {
                                 Log.e(TAG, "URL immagine aggiunto in firestore.")
-                                userImage.postValue(imageUrl.toString())
                                 viewModelScope.launch(Dispatchers.IO) {
-                                    userRepository.updateUserImage(user.uid, imageUrl.toString())
+                                    userRepository.updateUserImage(user.uid, imageUrl.toString(), timestampMillis)
                                 }
                             }
                             .addOnFailureListener { exception ->
@@ -274,7 +250,6 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                 }.addOnFailureListener { exception ->
                     Log.e(TAG, "Error uploading image to Firebase Storage: ${exception.message}")
                 }
-
             }
         }
 
