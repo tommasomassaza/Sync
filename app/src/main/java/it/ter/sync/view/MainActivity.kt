@@ -1,9 +1,14 @@
 package it.ter.sync.view
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -26,6 +31,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.Glide
 import it.ter.sync.viewmodel.MessageViewModel
 import it.ter.sync.viewmodel.NotificationViewModel
@@ -43,6 +51,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var notificationViewModel: NotificationViewModel
     private lateinit var messageViewModel: MessageViewModel
+    private val CHANNEL_ID = "channel_id_01"
+    private val notification_id = 101
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,6 +153,39 @@ class MainActivity : AppCompatActivity() {
 
         userViewModel.getUserInfo()
     }
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val title = "title"
+            val description_text = "description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, title, importance).apply {
+                description = description_text
+            }
+            val notificationManager: NotificationManager =
+                this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun sendNotification(DescriptionText:String,Sender: String){
+        val builder= NotificationCompat.Builder(this,CHANNEL_ID)
+            .setSmallIcon(R.drawable.baseline_emoji_people_24)
+            .setContentTitle(Sender)
+            .setContentText(DescriptionText)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        with(NotificationManagerCompat.from(this)){
+            if (ActivityCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+            notify(notification_id,builder.build())
+        }
+
+    }
 
     private fun initObservers() {
         Log.i(TAG, "Registering Observers: ViewModel? $notificationViewModel")
@@ -153,6 +196,11 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.appBarMain.badgeNotification.visibility = View.INVISIBLE
             }
+            for(item in it){
+                createNotificationChannel()
+                item.notifierName?.let { it1 -> sendNotification(item.text, it1) }
+            }
+
         }
         userViewModel.currentUser.observe(this) {
             nameUser.text = it?.name
@@ -162,6 +210,8 @@ class MainActivity : AppCompatActivity() {
                 .error(R.mipmap.ic_launcher)
                 .into(imageUser)
         }
+
+
     }
 }
 
