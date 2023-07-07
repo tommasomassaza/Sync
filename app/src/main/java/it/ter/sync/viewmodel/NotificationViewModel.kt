@@ -139,7 +139,7 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
                 TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
             val dateString = dateFormat.format(Date(timestampMillis))
 
-            val notification = NotificationData(NotificationType.LIKE,image,"",dateString,timestampMillis.toString(),false,user?.uid,notifierName)
+            val notification = NotificationData(NotificationType.LIKE,image,"Ti ha Syncato",dateString,timestampMillis.toString(),false,user?.uid,notifierName)
 
             ref.setValue(notification)
                 .addOnSuccessListener {

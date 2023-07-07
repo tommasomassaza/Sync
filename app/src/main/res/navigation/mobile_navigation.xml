@@ -87,6 +87,7 @@
     <fragment
         android:id="@+id/accountFriendFragment"
         android:name="it.ter.sync.view.AccountFriendFragment"
+        tools:layout="@layout/fragment_account_friend"
         android:label="Account" />
     <action
         android:id="@+id/action_accountFriendFragment_to_messageFragment"

@@ -1,6 +1,5 @@
 import it.ter.sync.utils.Utils
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 class UtilsTest {

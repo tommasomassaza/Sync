@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
 
+
 class UserViewModel(private val application: Application) : AndroidViewModel(application) {
     private var TAG = this::class.simpleName
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -32,7 +33,6 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     val accountFriend: MutableLiveData<UserData?> = MutableLiveData()
     var userUpdated: MutableLiveData<Boolean> = MutableLiveData()
     var users: MutableLiveData<List<UserData>> = MutableLiveData()
-    var userImage: MutableLiveData<String?> = MutableLiveData()
 
     // Distanza di default
     private var maxDistance: Double = 50.0
