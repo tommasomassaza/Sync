@@ -47,4 +47,8 @@ class UserRepository (application: Context?) : ViewModel() {
         dBUserDao.updateUserImage(userId, imageUrl)
         dBUserDao.updateUserTimestamp(userId, timestampMillis)
     }
+
+    suspend fun deleteUser(userId: String) {
+        dBUserDao.deleteUser(userId)
+    }
 }

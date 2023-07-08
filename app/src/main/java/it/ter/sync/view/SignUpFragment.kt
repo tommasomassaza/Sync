@@ -99,8 +99,8 @@ class SignUpFragment : Fragment() {
                     Log.i(TAG, "Sign Up Success")
                     findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
                 } else {
-                    Toast.makeText(activity, "$registrationResult", Toast.LENGTH_SHORT).show()
-                    Log.i(TAG, "$registrationResult")
+                    Toast.makeText(activity, registrationResult, Toast.LENGTH_SHORT).show()
+                    Log.i(TAG, registrationResult)
                 }
             }
         }

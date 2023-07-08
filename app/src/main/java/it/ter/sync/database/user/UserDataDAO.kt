@@ -47,10 +47,6 @@ interface UserDataDAO {
     abstract fun updateUserTimestamp(userId: String, timestampMillis: Long)
 
     ///////////////////// Deletion queries /////////////////////
-    @Delete
-    suspend fun delete(userData: UserData?)
-
-    @Delete
-    suspend fun deleteAll(vararg usersData: UserData?)
-
+    @Query("DELETE FROM users WHERE uid = :userId")
+    suspend fun deleteUser(userId: String)
 }

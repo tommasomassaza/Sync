@@ -255,6 +255,33 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
 
     }
 
+    fun deleteAccount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            user?.let {
+                user.delete()
+                    .addOnSuccessListener {
+                        fireStore.collection("users")
+                            .document(user.uid)
+                            .delete()
+                            .addOnSuccessListener {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    // Rimuovi l'utente dal Database locale
+                                    userRepository.deleteUser(user.uid)
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.e(TAG,"Errore durante l'eliminazione dell'utente da Firestore: ${exception.message}")
+                            }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.e(TAG,"Errore durante l'eliminazione dell'utente: ${exception.message}")
+                    }
+
+            }
+        }
+    }
+
     private fun getNearestCity(latitude: Double, longitude: Double): String? {
         val geocoder = Geocoder(application.applicationContext, Locale.getDefault())
         val addresses = geocoder.getFromLocation(latitude, longitude, 1)

@@ -17,6 +17,8 @@ import com.bumptech.glide.Glide
 import it.ter.sync.R
 import it.ter.sync.databinding.FragmentAccountBinding
 import it.ter.sync.viewmodel.UserViewModel
+import androidx.appcompat.app.AlertDialog
+
 import java.util.*
 
 
