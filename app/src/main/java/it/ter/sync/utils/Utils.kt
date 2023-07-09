@@ -44,19 +44,6 @@ class Utils {
             return minString + maxString
         }
 
-        fun base64ToBitmap(base64String: String): Bitmap? {
-            try {
-                val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-                val options = BitmapFactory.Options()
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888
-
-                return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size, options)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return null
-        }
-
         fun calculateAge(dateOfBirth: String): Int {
             val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
             val birthDate = LocalDate.parse(dateOfBirth, formatter)

@@ -102,7 +102,6 @@ class MainActivity : AppCompatActivity() {
         imageUser = headerView.findViewById(R.id.imageUser)
         nameUser = headerView.findViewById(R.id.textNameUser)
 
-
         // Prendo le notifiche non ancora visualizzate
         notificationViewModel.retrieveNotificationsNotDisplayed()
 
@@ -210,8 +209,6 @@ class MainActivity : AppCompatActivity() {
                 .error(R.mipmap.ic_launcher)
                 .into(imageUser)
         }
-
-
     }
 }
 

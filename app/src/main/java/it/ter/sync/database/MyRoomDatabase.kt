@@ -11,7 +11,7 @@ import it.ter.sync.database.user.UserDataDAO
 
 @Database(
     entities = [UserData::class, MessageData::class],
-    version = 21,
+    version = 22,
     exportSchema = true
 )
 abstract class MyRoomDatabase : RoomDatabase() {
@@ -20,7 +20,6 @@ abstract class MyRoomDatabase : RoomDatabase() {
 
 
     companion object {
-        // marking the instance as volatile to ensure atomic access to the variable
         @Volatile
         private var INSTANCE: MyRoomDatabase? = null
 

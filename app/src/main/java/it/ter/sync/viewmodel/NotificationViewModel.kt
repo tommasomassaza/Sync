@@ -80,7 +80,7 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
                     }
                 }
             }
-            notificationList.postValue(notifications)
+            notificationList.postValue(notifications.reversed())
         }
         override fun onCancelled(error: DatabaseError) {
             // Gestisci l'errore di recupero dei messaggi
@@ -139,7 +139,7 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
                 TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
             val dateString = dateFormat.format(Date(timestampMillis))
 
-            val notification = NotificationData(NotificationType.LIKE,image,"",dateString,timestampMillis.toString(),false,user?.uid,notifierName)
+            val notification = NotificationData(NotificationType.LIKE,image,"Ti ha Syncato",dateString,timestampMillis.toString(),false,user?.uid,notifierName)
 
             ref.setValue(notification)
                 .addOnSuccessListener {
@@ -194,21 +194,6 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
             ref.removeValue()
                 .addOnSuccessListener {
                     Log.i(TAG, "Notifica rimossa con successo")
-                }
-                .addOnFailureListener { error ->
-                    Log.e(TAG, "${error.message}")
-                }
-        }
-    }
-
-    fun add(notification: NotificationData) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = firebaseAuth.currentUser
-            val ref = database.getReference("notifications/${user?.uid}/${notification.notifierId}/${notification.type.toString().lowercase()}")
-
-            ref.setValue(notification)
-                .addOnSuccessListener {
-                    Log.i(TAG, "Notifica aggiunta con successo")
                 }
                 .addOnFailureListener { error ->
                     Log.e(TAG, "${error.message}")

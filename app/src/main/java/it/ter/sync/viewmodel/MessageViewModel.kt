@@ -39,9 +39,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     private var currentUserName: String? = ""
     private var lastTimestamp: Long = 0
 
-    var messageList: MutableLiveData<List<MessageData>> = MutableLiveData<List<MessageData>>().apply {
-        value = emptyList()
-    }
+    var messageList: MutableLiveData<List<MessageData>> = MutableLiveData()
 
     private var messageRef: DatabaseReference? = null
 
@@ -180,6 +178,26 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             ref.setValue(notification)
                 .addOnSuccessListener {
                     Log.i(TAG, "Notifica inviata con successo")
+                }
+                .addOnFailureListener { error ->
+                    Log.e(TAG, "${error.message}")
+                }
+        }
+    }
+
+    fun deleteMessage(messageId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+            val chatId = Utils.generateChatId(user?.uid ?: "", messengerId ?: "")
+            val messagesRef = database.getReference("messages/${chatId}/$messageId")
+
+            // Rimuovi il messaggio dalla Firebase Realtime Database
+            messagesRef.removeValue()
+                .addOnSuccessListener {
+                    Log.i(TAG, "Messaggio eliminato con successo da firestore")
+                    viewModelScope.launch(Dispatchers.IO) {
+                        messageRepository.deleteMessageById(messageId)
+                    }
                 }
                 .addOnFailureListener { error ->
                     Log.e(TAG, "${error.message}")

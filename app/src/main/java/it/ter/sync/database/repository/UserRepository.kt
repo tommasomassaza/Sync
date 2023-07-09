@@ -14,10 +14,6 @@ class UserRepository (application: Context?) : ViewModel() {
         dBUserDao = db.myUserDataDao()!!
     }
 
-    /**
-     * Se rowsInserted è diverso da null, viene restituito il suo valore.
-     * Altrimenti, viene restituito il valore di fallback 0.
-     */
     suspend fun insertUser(user: UserData) {
         dBUserDao.insert(user)
     }

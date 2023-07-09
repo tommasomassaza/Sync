@@ -29,55 +29,58 @@ class NotificationAdapter (private var notificationList: List<NotificationData>,
 
     class ViewHolder(val binding: NotificationItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = NotificationItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
-    }
+        fun getNotificationAtPosition(position: Int): NotificationData {
+            return notificationList[position]
+        }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val binding = NotificationItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ViewHolder(binding)
+        }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(notificationList[position].type == NotificationType.MESSAGE) {
-            holder.binding.root.setOnClickListener {
-                val navController = Navigation.findNavController(it)
-                val bundle = Bundle()
-                bundle.putString("messengerId", notificationList[position].notifierId)
-                bundle.putString("messengerName", notificationList[position].notifierName)
-                bundle.putString("currentUserName", currentUser.name)
-                bundle.putString("userImageUrl", currentUser.image)
-                bundle.putString("messengerImageUrl", notificationList[position].image)
-                navController.navigate(R.id.action_notificationFragment_to_messageFragment, bundle)
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            if(notificationList[position].type == NotificationType.MESSAGE) {
+                holder.binding.root.setOnClickListener {
+                    val navController = Navigation.findNavController(it)
+                    val bundle = Bundle()
+                    bundle.putString("messengerId", notificationList[position].notifierId)
+                    bundle.putString("messengerName", notificationList[position].notifierName)
+                    bundle.putString("currentUserName", currentUser.name)
+                    bundle.putString("userImageUrl", currentUser.image)
+                    bundle.putString("messengerImageUrl", notificationList[position].image)
+                    navController.navigate(R.id.action_notificationFragment_to_messageFragment, bundle)
+                }
+            } else {
+                holder.binding.root.setOnClickListener {
+                    val navController = Navigation.findNavController(it)
+                    val bundle = Bundle()
+                    bundle.putString("userId", notificationList[position].notifierId)
+                    bundle.putString("userName", notificationList[position].notifierName)
+                    bundle.putString("userImageUrl", notificationList[position].image)
+                    bundle.putString("currentUserName", currentUser.name)
+                    bundle.putString("currentUserImageUrl", currentUser.image)
+                    navController.navigate(R.id.action_notificationFragment_to_accountFriendFragment, bundle)
+                }
             }
-        } else {
-            holder.binding.root.setOnClickListener {
-                val navController = Navigation.findNavController(it)
-                val bundle = Bundle()
-                bundle.putString("userId", notificationList[position].notifierId)
-                bundle.putString("userName", notificationList[position].notifierName)
-                bundle.putString("userImageUrl", notificationList[position].image)
-                bundle.putString("currentUserName", currentUser.name)
-                bundle.putString("currentUserImageUrl", currentUser.image)
-                navController.navigate(R.id.action_notificationFragment_to_accountFriendFragment, bundle)
+
+
+            holder.binding.apply {
+                if(notificationList[position].type == NotificationType.MESSAGE){
+                    notificationMessage.text = notificationList[position].text
+                }
+
+                notificationTime.text = notificationList[position].timeStamp
+                contactName.text = notificationList[position].notifierName
+
+                if(notificationList[position].image != "") {
+                    Glide.with(root)
+                        .load(notificationList[position].image)
+                        .error(R.mipmap.ic_launcher)
+                        .into(profileImage)
+                }
             }
         }
 
-
-        holder.binding.apply {
-            if(notificationList[position].type == NotificationType.MESSAGE){
-                notificationMessage.text = notificationList[position].text
-            }
-
-            notificationTime.text = notificationList[position].timeStamp
-            contactName.text = notificationList[position].notifierName
-
-            if(notificationList[position].image != "") {
-                Glide.with(root)
-                    .load(notificationList[position].image)
-                    .error(R.mipmap.ic_launcher)
-                    .into(profileImage)
-            }
+        override fun getItemCount(): Int {
+            return notificationList.size
         }
-    }
-
-    override fun getItemCount(): Int {
-        return notificationList.size
-    }
 }

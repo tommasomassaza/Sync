@@ -43,9 +43,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
                             chats.add(it)
                         }
                     }
-
-                    val sortedChats = chats.sortedByDescending { it.timestampMillis }
-                    chatList.postValue(sortedChats)
+                    chatList.postValue(chats.reversed())
                 }
 
                 override fun onCancelled(error: DatabaseError) {

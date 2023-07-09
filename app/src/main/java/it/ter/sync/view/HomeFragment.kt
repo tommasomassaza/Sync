@@ -69,8 +69,10 @@ class HomeFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, kms)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
-        // Seleziono 5 Km come default
-        spinner.setSelection(0)
+
+        val sharedPreferences = requireContext().getSharedPreferences("PrefDistance", Context.MODE_PRIVATE)
+        val selectedItemPosition = sharedPreferences.getInt("selectedItemPosition", 0)
+        spinner.setSelection(selectedItemPosition)
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -78,6 +80,12 @@ class HomeFragment : Fragment() {
                 // Estraggo solo il numero dalla stringa
                 val kmNumber = selectedItem.replace(Regex("[^0-9.]"), "").toDouble()
                 userViewModel.updateMaxDistance(kmNumber)
+
+                // Salva la selezione nello SharedPreferences
+                val sharedPreferences = requireContext().getSharedPreferences("PrefDistance", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putInt("selectedItemPosition", position)
+                editor.apply()
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }

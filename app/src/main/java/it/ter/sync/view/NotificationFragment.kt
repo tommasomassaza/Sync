@@ -40,7 +40,6 @@ class NotificationFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var notificationAdapter: NotificationAdapter
 
-    lateinit var notificationListInFragment: ArrayList<NotificationData>
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -81,38 +80,15 @@ class NotificationFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
 
                 // this method is called when we swipe our item to right direction.
-                // on below line we are getting the item at a particular position.
-                val deletedNotification: NotificationData =
-                    notificationListInFragment[position]
+                val position = viewHolder.adapterPosition
 
+                // Ottenere l'oggetto deletedNotification dall'adapter.
+                val deletedNotification: NotificationData = notificationAdapter.getNotificationAtPosition(position)
 
                 notificationViewModel.remove(deletedNotification)
-
-                // below line is to notify our item is removed from adapter.
                 notificationAdapter.notifyItemRemoved(position)
-
-                notificationViewModel.remove(deletedNotification)
-
-                // below line is to display our snackbar with action.
-                Snackbar.make(recyclerView, "Deleted", Snackbar.LENGTH_LONG)
-                    .setAction(
-                        "Undo"
-                    ) {
-                        // adding on click listener to our action of snack bar.
-                        // below line is to add our item to array list with a position.
-                        notificationListInFragment.add(
-                            position,
-                            deletedNotification
-                        )
-                        // below line is to notify item is
-                        // added to our adapter class.
-                        notificationAdapter.notifyItemInserted(position)
-
-                        notificationViewModel.add(deletedNotification)
-                    }.show()
             }
             // at last we are adding this
             // to our recycler view.
@@ -131,8 +107,6 @@ class NotificationFragment : Fragment() {
 
         notificationViewModel.notificationsDisplayed()
         notificationViewModel.retrieveNotifications()
-
-
     }
 
     override fun onDestroyView() {
@@ -142,9 +116,7 @@ class NotificationFragment : Fragment() {
 
     private fun initObservers() {
         notificationViewModel.notificationList.observe(viewLifecycleOwner) {
-            if(it.isNotEmpty()) notificationListInFragment = it as ArrayList<NotificationData>
             notificationAdapter.setNotificationList(it)
-
         }
         userViewModel.currentUser.observe(viewLifecycleOwner) {
             notificationAdapter.setCurrentUser(it)
