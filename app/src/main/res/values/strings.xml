@@ -32,6 +32,7 @@
     <string name="invia">Invia</string>
 
     <string name="interessi_string">Interessi</string>
+    <string name="filtri_string">Filtra:</string>
 
     <string name="max_length_tag">20</string>
     <string name="max_length_message">200</string>

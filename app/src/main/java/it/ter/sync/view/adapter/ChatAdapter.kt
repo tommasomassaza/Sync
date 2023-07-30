@@ -11,7 +11,6 @@ import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.message.MessageData
 import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.ChatItemBinding
-import it.ter.sync.databinding.MessageItemBinding
 
 class ChatAdapter (private var chatList: List<ChatData>, private var currentUser: UserData) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 

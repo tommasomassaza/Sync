@@ -3,21 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#20C4E198"
+    android:background="@drawable/rounded_edittext_background"
     android:id="@+id/post_item"
     android:layout_marginBottom="30dp"
-    android:backgroundTint="@android:color/white"
+    android:backgroundTint="#00c3ff"
+    android:layout_margin="8dp"
     >
 
 
 
     <ImageView
         android:id="@+id/imageProfile_post"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
-        android:src="@drawable/baseline_emoji_people_24"
+        android:src="@drawable/baseline_account_circle_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -100,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="@string/interessi"
-        android:fontFamily="cursive"
+
         android:textSize="20sp"
         android:textColor="@color/black"
         android:textAlignment="center"
@@ -114,10 +115,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:fontFamily="@font/bubbler_one"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:textColor="@color/black"
+        android:textColor="#00c3ff"
         app:layout_constraintTop_toBottomOf="@id/interessi"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
