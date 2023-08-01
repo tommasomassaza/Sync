@@ -12,4 +12,8 @@
 - Filtri di ricerca per Età (o altro)
 - Messaggi Destra e Sinistra
 - Pallino di notifica sui messaggi nuovi nella Home
+- Cancellazione dei messaggi
+- Cancellazione del profilo
+- Gestione dei permessi (Immagini, Posizione, Altro)
+- Squash Bugs
 - Redesign (Finale)
