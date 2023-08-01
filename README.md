@@ -2,7 +2,8 @@
 
 - Gruppi 
 - Barra di ricerca nella chat 
-- Tag Privati 
+- Tag Privati
+- Stato Utente
 - Login Facebook/Google 
 - Risolvo Bug Password 
 - Invio Immagini 
