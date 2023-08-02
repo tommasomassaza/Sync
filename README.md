@@ -1,7 +1,7 @@
 # Funzionalità Mancanti
 
 - Gruppi 
-- Barra di ricerca nella chat 
+- Barra di ricerca nella chat
 [x] Tag Privati
 [x] Stato Utente 
 - Login Facebook/Google 
