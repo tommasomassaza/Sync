@@ -44,6 +44,29 @@
         </androidx.cardview.widget.CardView>
 
 
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/Btn1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:textColor="@color/white"
+            app:backgroundTint="#00c3ff"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_account_cardView"
+            app:layout_constraintEnd_toStartOf="@+id/Btn2"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/Btn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tags"
+            android:textColor="@color/white"
+            app:backgroundTint="#a0a0a0"
+            app:layout_constraintStart_toEndOf="@+id/Btn1"
+            app:layout_constraintTop_toBottomOf="@id/image_account_cardView"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <EditText
             android:id="@+id/name"
             android:layout_width="match_parent"
@@ -57,7 +80,7 @@
             android:drawableStart="@drawable/baseline_person_outline_24"
             android:drawablePadding="20dp"
             android:inputType="textCapSentences"
-            app:layout_constraintTop_toBottomOf="@+id/image_account_cardView"
+            app:layout_constraintTop_toBottomOf="@+id/Btn1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -129,6 +152,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tag1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
         <EditText
             android:id="@+id/tag3"
             android:layout_width="match_parent"
@@ -147,6 +171,62 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <EditText
+            android:id="@+id/privatetag1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#20C4E198"
+            android:backgroundTint="#00c3ff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/private2"
+            android:drawablePadding="20dp"
+            android:singleLine="true"
+            android:maxLength="@string/max_length_tag"
+            app:layout_constraintTop_toBottomOf="@+id/tag3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/privatetag2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#20C4E198"
+            android:backgroundTint="#00c3ff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/private2"
+            android:drawablePadding="20dp"
+            android:singleLine="true"
+            android:maxLength="@string/max_length_tag"
+            app:layout_constraintTop_toBottomOf="@+id/privatetag1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/privatetag3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#20C4E198"
+            android:backgroundTint="#00c3ff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/private2"
+            android:drawablePadding="20dp"
+            android:singleLine="true"
+            android:maxLength="@string/max_length_tag"
+            app:layout_constraintTop_toBottomOf="@+id/privatetag2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/saveBtn"
@@ -155,7 +235,7 @@
             android:text="@string/save"
             android:textColor="@color/white"
             app:backgroundTint="#00c3ff"
-            app:layout_constraintTop_toBottomOf="@+id/tag3"
+            app:layout_constraintTop_toBottomOf="@+id/privatetag3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
