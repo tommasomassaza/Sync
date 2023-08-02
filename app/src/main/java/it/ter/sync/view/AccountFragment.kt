@@ -59,10 +59,16 @@ class AccountFragment : Fragment()  {
 
             saveButtonClicked = true
             userViewModel.updateUserInfo(name,age,tag1.replace(" ", ""), tag2.replace(" ", ""), tag3.replace(" ", "")
-                    ,stato.replace(" ", ""), privatetag1.replace(" ", ""), privatetag2.replace(" ", ""),
+                    ,stato, privatetag1.replace(" ", ""), privatetag2.replace(" ", ""),
                     privatetag3.replace(" ", ""))
         }
 
+
+        binding.name.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.name.hint = ""
+            }
+        }
         binding.tag1.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 binding.tag1.hint = ""
@@ -76,6 +82,11 @@ class AccountFragment : Fragment()  {
         binding.tag3.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 binding.tag3.hint = ""
+            }
+        }
+        binding.stato.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.stato.hint = ""
             }
         }
         binding.privatetag1.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
