@@ -2,7 +2,7 @@
 
 - Gruppi 
 - Barra di ricerca nella chat 
-- Tag Privati
+[x] Tag Privati
 [x] Stato Utente 
 - Login Facebook/Google 
 - Risolvo Bug Password 
