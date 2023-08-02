@@ -11,7 +11,8 @@
 - Crittografia End to End 
 - Ricerca dell'utente (oltre che dell'interesse) 
 - Filtri di ricerca per Età (o altro) 
-- Messaggi Destra e Sinistra 
+- Messaggi Destra e Sinistra
+- Recupero Password/Mail
 - Pallino di notifica sui messaggi nuovi nella Home 
 - Cancellazione dei messaggi 
 - Cancellazione del profilo 
