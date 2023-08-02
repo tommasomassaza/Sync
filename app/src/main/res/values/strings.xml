@@ -8,6 +8,7 @@
     <string name="menu_logout">Logout</string>
     <string name="menu_message">Message</string>
     <string name="menu_chat">Chats</string>
+    <string name="menu_groups">New Chat</string>
     <string name="menu_notification">Notifications</string>
     <string name="save">Salva</string>
     <string name="notification_message_default">Ti ha Syncato</string>
@@ -25,13 +26,13 @@
     <string name="passwordSignUp">Password</string>
     <string name="check_password">Reinserisci password</string>
     <string name="sign_up_button">REGISTRATI</string>
-    <string name="interessi">Interessi:</string>
+    <string name="interessi">Topics:</string>
     <string name="persone_nelle_vicinanze">Persone nelle vicinanze</string>
-    <string name="cerca">Cerca</string>
+    <string name="cerca">Search</string>
     <string name="inserisci_un_messaggio">Inserisci un messaggio</string>
     <string name="invia">Invia</string>
 
-    <string name="interessi_string">Interessi</string>
+    <string name="interessi_string">Topics</string>
     <string name="filtri_string">Filtra:</string>
 
     <string name="max_length_tag">20</string>

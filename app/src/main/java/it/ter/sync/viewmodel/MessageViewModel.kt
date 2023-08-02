@@ -106,7 +106,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         return messages
     }
 
-    fun sendMessage(text: String, messengerId: String?, userImageUrl: String, messengerImageUrl: String) {
+    fun sendMessage(text: String, messengerId: String?, userImageUrl: String, messengerImageUrl: String, groupIDs: ArrayList<String>) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             val chatId = Utils.generateChatId(user?.uid ?: "",messengerId ?: "")
@@ -120,7 +120,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 dateFormat.timeZone = TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
                 val dateString = dateFormat.format(Date(timestampMillis))
 
-                val message = MessageData(messageId, userImageUrl, text, timestampMillis.toString(), dateString, user?.uid, messengerId)
+                val message = MessageData(messageId, userImageUrl, text, timestampMillis.toString(), dateString, user?.uid, messengerId, groupIDs)
 
                 // Salva il messaggio nella Firebase Realtime Database
                 messagesRef.child(messageId).setValue(message)

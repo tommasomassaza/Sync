@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background3"
+    android:background="@color/white"
     tools:context=".view.LoginFragment">
 
 
@@ -43,7 +43,8 @@
         android:hint="@string/email"
         android:layout_margin="20dp"
         android:padding="20dp"
-        android:background="#50ffffff"
+        android:backgroundTint="#00c3ff"
+        android:background="@drawable/rounded_edittext_background"
         android:textColor="@color/black"
         android:textColorHint="#403737"
         android:drawableStart="@drawable/baseline_person_outline_24"
@@ -62,7 +63,8 @@
         android:hint="@string/password"
         android:layout_margin="20dp"
         android:padding="20dp"
-        android:background="#50ffffff"
+        android:backgroundTint="#00c3ff"
+        android:background="@drawable/rounded_edittext_background"
         android:textColor="@color/black"
         android:textColorHint="#403737"
         android:drawableStart="@drawable/baseline_key_24"
@@ -81,7 +83,7 @@
         android:layout_margin="20dp"
         android:text="@string/login"
         android:textColor="@color/white"
-        app:backgroundTint="#18639F"
+        app:backgroundTint="#00c3ff"
         app:layout_constraintTop_toBottomOf="@id/password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

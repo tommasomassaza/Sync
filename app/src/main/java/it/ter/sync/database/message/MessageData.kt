@@ -2,8 +2,10 @@ package it.ter.sync.database.message
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 
 @Entity(tableName = "messages")
+@TypeConverters(RoomTypeConverters::class)
 class MessageData(
     @PrimaryKey()
     var uid: String = "",
@@ -13,5 +15,8 @@ class MessageData(
     val timestampMillis: String = "0",
     var timeStamp: String = "",
     var senderId: String? = "",
-    var receiverId: String? = ""
+    var receiverId: String? = "",
+
+    // Lista di stringhe
+    var groupIDs: List<String> = emptyList()
 ){}

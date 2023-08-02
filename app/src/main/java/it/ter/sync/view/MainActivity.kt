@@ -92,10 +92,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.appBarMain.notifyMenu.isClickable = destination.id != R.id.notificationFragment
+            binding.appBarMain.plusIcon.isClickable = destination.id != R.id.groupFragment
         }
 
         binding.appBarMain.notifyMenu.setOnClickListener {
             navController.navigate(R.id.notificationFragment)
+        }
+
+        binding.appBarMain.plusIcon.setOnClickListener {
+            navController.navigate(R.id.groupFragment)
         }
 
         val headerView = navView.getHeaderView(0)

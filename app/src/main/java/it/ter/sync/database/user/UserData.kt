@@ -17,5 +17,9 @@ open class UserData(
     var tag: String = "",
     var tag2: String = "",
     var tag3: String = "",
+    var stato: String = "",
+    var privatetag1: String = "",
+    var privatetag2: String = "",
+    var privatetag3: String = "",
     val timestampMillis: Long = 0
 ) {}

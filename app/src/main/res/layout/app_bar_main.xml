@@ -22,35 +22,58 @@
                 android:id="@+id/badge_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/badge_layout"
-                android:layout_marginEnd="10dp"
                 android:layout_gravity="end">
 
-                <RelativeLayout
-                    android:id="@+id/relative_layout_item_count"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/buttonLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
+                    <!-- ImageButton a sinistra di notifyMenu -->
+                    <ImageButton
+                        android:id="@+id/plusIcon"
+                        android:src="@drawable/white_plus"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/notifyMenu"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="22dp"
+                    />
+
+                    <!-- notifyMenu -->
                     <ImageButton
                         android:id="@+id/notifyMenu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:src="@drawable/baseline_notifications_24"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        />
-                </RelativeLayout>
+                        app:layout_constraintStart_toEndOf="@id/plusIcon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginStart="22dp"
+                    />
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- TextView with badge_notification -->
                 <TextView
                     android:id="@+id/badge_notification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignRight="@id/relative_layout_item_count"
+                    android:layout_toRightOf="@id/buttonLayout"
+                    android:layout_alignTop="@id/buttonLayout"
                     android:background="@android:drawable/ic_notification_overlay"
                     android:textColor="#FFF"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible"
+                    />
+
             </RelativeLayout>
+
 
         </androidx.appcompat.widget.Toolbar>
 

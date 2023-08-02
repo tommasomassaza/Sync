@@ -94,7 +94,11 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                                 val tag = documentSnapshot.getString("tag") ?: ""
                                 val tag2 = documentSnapshot.getString("tag2") ?: ""
                                 val tag3 = documentSnapshot.getString("tag3") ?: ""
-                                val userDataFireStore = UserData(user.uid,name,email,location,age,image,tag,tag2,tag3,timestampLastModified)
+                                val stato = documentSnapshot.getString("stato") ?: ""
+                                val privatetag1 = documentSnapshot.getString("privatetag1") ?: ""
+                                val privatetag2 = documentSnapshot.getString("privatetag2") ?: ""
+                                val privatetag3 = documentSnapshot.getString("privatetag3") ?: ""
+                                val userDataFireStore = UserData(user.uid,name,email,location,age,image,tag,tag2,tag3,stato, privatetag1, privatetag2, privatetag3, timestampLastModified)
 
                                 currentUser.postValue(userDataFireStore)
 

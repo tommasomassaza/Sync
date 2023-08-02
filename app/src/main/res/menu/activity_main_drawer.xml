@@ -19,6 +19,11 @@
             android:icon="@drawable/baseline_chat_bubble_outline_24"
             android:title="@string/menu_chat"/>
         <item
+            android:id="@+id/GroupFragment"
+            android:icon="@drawable/baseline_chat_bubble_outline_24"
+            android:title="@string/menu_groups"/>
+
+        <item
             android:id="@+id/loginFragment"
             android:icon="@drawable/ic_menu_logout"
             android:title="@string/menu_logout"/>
