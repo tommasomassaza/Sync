@@ -3,7 +3,7 @@
 - Gruppi 
 - Barra di ricerca nella chat 
 - Tag Privati
-- Stato Utente
+- [x] Stato Utente 
 - Login Facebook/Google 
 - Risolvo Bug Password 
 - Invio Immagini 
