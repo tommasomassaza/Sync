@@ -119,6 +119,23 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <EditText
+            android:id="@+id/stato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="#20C4E198"
+            android:backgroundTint="#00c3ff"
+            android:textColor="@color/black"
+            android:textColorHint="#403737"
+            android:drawableStart="@drawable/baseline_key_24"
+            android:drawablePadding="20dp"
+            android:inputType="textCapSentences"
+            app:layout_constraintTop_toBottomOf="@+id/age"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <EditText
             android:id="@+id/tag1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -132,7 +149,7 @@
             android:drawablePadding="20dp"
             android:singleLine="true"
             android:maxLength="@string/max_length_tag"
-            app:layout_constraintTop_toBottomOf="@+id/age"
+            app:layout_constraintTop_toBottomOf="@+id/stato"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
         <EditText
@@ -181,7 +198,7 @@
             android:backgroundTint="#00c3ff"
             android:textColor="@color/black"
             android:textColorHint="#403737"
-            android:drawableStart="@drawable/private2"
+            android:drawableStart="@drawable/baseline_auto_awesome_24"
             android:drawablePadding="20dp"
             android:singleLine="true"
             android:maxLength="@string/max_length_tag"
@@ -199,7 +216,7 @@
             android:backgroundTint="#00c3ff"
             android:textColor="@color/black"
             android:textColorHint="#403737"
-            android:drawableStart="@drawable/private2"
+            android:drawableStart="@drawable/baseline_auto_awesome_24"
             android:drawablePadding="20dp"
             android:singleLine="true"
             android:maxLength="@string/max_length_tag"
@@ -217,7 +234,7 @@
             android:backgroundTint="#00c3ff"
             android:textColor="@color/black"
             android:textColorHint="#403737"
-            android:drawableStart="@drawable/private2"
+            android:drawableStart="@drawable/baseline_auto_awesome_24"
             android:drawablePadding="20dp"
             android:singleLine="true"
             android:maxLength="@string/max_length_tag"

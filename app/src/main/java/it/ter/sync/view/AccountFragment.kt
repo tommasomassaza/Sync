@@ -52,9 +52,15 @@ class AccountFragment : Fragment()  {
             val tag1 = binding.tag1.text.toString().ifEmpty { binding.tag1.hint.toString()}
             val tag2 = binding.tag2.text.toString().ifEmpty { binding.tag2.hint.toString()}
             val tag3 = binding.tag3.text.toString().ifEmpty { binding.tag3.hint.toString()}
+            val stato = binding.stato.text.toString().ifEmpty { binding.stato.hint.toString()}
+            val privatetag1 = binding.privatetag1.text.toString().ifEmpty { binding.privatetag1.hint.toString()}
+            val privatetag2 = binding.privatetag2.text.toString().ifEmpty { binding.privatetag2.hint.toString()}
+            val privatetag3 = binding.privatetag3.text.toString().ifEmpty { binding.privatetag3.hint.toString()}
 
             saveButtonClicked = true
-            userViewModel.updateUserInfo(name,age,tag1.replace(" ", ""), tag2.replace(" ", ""), tag3.replace(" ", ""))
+            userViewModel.updateUserInfo(name,age,tag1.replace(" ", ""), tag2.replace(" ", ""), tag3.replace(" ", "")
+                    ,stato.replace(" ", ""), privatetag1.replace(" ", ""), privatetag2.replace(" ", ""),
+                    privatetag3.replace(" ", ""))
         }
 
         binding.tag1.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
@@ -72,7 +78,21 @@ class AccountFragment : Fragment()  {
                 binding.tag3.hint = ""
             }
         }
-
+        binding.privatetag1.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.privatetag1.hint = ""
+            }
+        }
+        binding.privatetag2.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.privatetag2.hint = ""
+            }
+        }
+        binding.privatetag3.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.privatetag3.hint = ""
+            }
+        }
         binding.imageAccount.setOnClickListener {
             pickImageFromGallery()
         }
@@ -135,6 +155,10 @@ class AccountFragment : Fragment()  {
             binding.tag1.text.clear()
             binding.tag2.text.clear()
             binding.tag3.text.clear()
+            binding.stato.text.clear()
+            binding.privatetag1.text.clear()
+            binding.privatetag2.text.clear()
+            binding.privatetag3.text.clear()
 
             binding.name.hint = it?.name
             binding.email.hint = it?.email
@@ -142,7 +166,10 @@ class AccountFragment : Fragment()  {
             binding.tag1.hint = it?.tag
             binding.tag2.hint = it?.tag2
             binding.tag3.hint = it?.tag3
-
+            binding.stato.hint = it?.stato
+            binding.privatetag1.hint = it?.privatetag1
+            binding.privatetag2.hint = it?.privatetag2
+            binding.privatetag3.hint = it?.privatetag3
 
             Glide.with(this)
                 .load(it?.image)

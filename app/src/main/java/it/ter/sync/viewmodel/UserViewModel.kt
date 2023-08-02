@@ -127,7 +127,11 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                         val tag = documentSnapshot.getString("tag") ?: ""
                         val tag2 = documentSnapshot.getString("tag2") ?: ""
                         val tag3 = documentSnapshot.getString("tag3") ?: ""
-                        val userData = UserData(uid=userId,name=name,location=location,age=age,image=image,tag=tag,tag2=tag2,tag3=tag3)
+                        val stato = documentSnapshot.getString("stato") ?: ""
+                        val privatetag1 = documentSnapshot.getString("privatetag1") ?: ""
+                        val privatetag2 = documentSnapshot.getString("privatetag2") ?: ""
+                        val privatetag3 = documentSnapshot.getString("privatetag3") ?: ""
+                        val userData = UserData(uid=userId,name=name,location=location,age=age,image=image,tag=tag,tag2=tag2,tag3=tag3, stato=stato,privatetag1=privatetag1,privatetag2=privatetag2,privatetag3=privatetag3)
 
                         accountFriend.postValue(userData)
                     }
@@ -191,7 +195,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
         }
     }
 
-    fun updateUserInfo(name: String, age: String, tag: String, tag2: String, tag3: String) {
+    fun updateUserInfo(name: String, age: String, tag: String, tag2: String, tag3: String, stato: String, privatetag1: String, privatetag2: String, privatetag3: String ) {
         viewModelScope.launch(Dispatchers.IO) {
             val timestampMillis = System.currentTimeMillis()
             val user = firebaseAuth.currentUser
@@ -202,7 +206,11 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                     "timestampMillis" to timestampMillis,
                     "tag" to tag,
                     "tag2" to tag2,
-                    "tag3" to tag3
+                    "tag3" to tag3,
+                    "stato" to stato,
+                    "privatetag1" to privatetag1,
+                    "privatetag2" to privatetag1,
+                    "privatetag3" to privatetag1
                 )
                 fireStore.collection("users")
                     .document(user.uid)
@@ -211,7 +219,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                         userUpdated.postValue(true)
 
                         viewModelScope.launch(Dispatchers.IO) {
-                            userRepository.updateUserInfo(user.uid, name, age, tag, tag2, tag3, timestampMillis)
+                            userRepository.updateUserInfo(user.uid, name, age, tag, tag2, tag3, stato, privatetag1, privatetag2, privatetag3, timestampMillis)
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -329,6 +337,9 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                 val tag = document.getString("tag") ?: ""
                 val tag2 = document.getString("tag2") ?: ""
                 val tag3 = document.getString("tag3") ?: ""
+                val privatetag1 = document.getString("privatetag1") ?: ""
+                val privatetag2 = document.getString("privatetag2") ?: ""
+                val privatetag3 = document.getString("privatetag3") ?: ""
 
                 val distance = Utils.calculateDistance(
                     latitude,
@@ -338,7 +349,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
                 )
 
                 val hasMatchingTags = if (searchStrings.isNotEmpty()) {
-                    val userTags = listOf(tag, tag2, tag3)
+                    val userTags = listOf(tag, tag2, tag3, privatetag1, privatetag2, privatetag3)
                     searchStrings.any { searchString ->
                         userTags.any { userTag ->
                             userTag.contains(searchString, ignoreCase = true)

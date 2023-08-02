@@ -29,6 +29,10 @@ class UserRepository (application: Context?) : ViewModel() {
         tag: String,
         tag2: String,
         tag3: String,
+        stato: String,
+        privatetag1: String,
+        privatetag2: String,
+        privatetag3: String,
         timestampMillis: Long
     ) {
         dBUserDao.updateUserName(userId, name)
@@ -36,6 +40,10 @@ class UserRepository (application: Context?) : ViewModel() {
         dBUserDao.updateUserTag(userId, tag)
         dBUserDao.updateUserTag2(userId, tag2)
         dBUserDao.updateUserTag3(userId, tag3)
+        dBUserDao.updateUserStato(userId, stato)
+        dBUserDao.updateUserPrivateTag1(userId, privatetag1)
+        dBUserDao.updateUserPrivateTag2(userId, privatetag2)
+        dBUserDao.updateUserPrivateTag3(userId, privatetag3)
         dBUserDao.updateUserTimestamp(userId, timestampMillis)
     }
 

@@ -43,6 +43,18 @@ interface UserDataDAO {
     @Query("UPDATE users SET tag3 = :tag3 WHERE uid = :userId")
     suspend fun updateUserTag3(userId: String, tag3: String)
 
+    @Query("UPDATE users SET stato = :stato WHERE uid = :userId")
+    suspend fun updateUserStato(userId: String, stato: String)
+
+    @Query("UPDATE users SET privatetag1 = :privatetag1 WHERE uid = :userId")
+    suspend fun updateUserPrivateTag1(userId: String, privatetag1: String)
+
+    @Query("UPDATE users SET privatetag2 = :privatetag2 WHERE uid = :userId")
+    suspend fun updateUserPrivateTag2(userId: String, privatetag2: String)
+
+    @Query("UPDATE users SET privatetag3 = :privatetag3 WHERE uid = :userId")
+    suspend fun updateUserPrivateTag3(userId: String, privatetag3: String)
+
     @Query("UPDATE users SET timestampMillis = :timestampMillis WHERE uid = :userId")
     abstract fun updateUserTimestamp(userId: String, timestampMillis: Long)
 
