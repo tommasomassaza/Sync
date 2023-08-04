@@ -1,9 +1,9 @@
 # Funzionalità Mancanti
 
 - Gruppi 
-- Barra di ricerca nella chat 
-- Tag Privati
-- Stato Utente
+- Barra di ricerca nella chat
+- [x] Tag Privati
+- [x] Stato Utente 
 - Login Facebook/Google 
 - Risolvo Bug Password 
 - Invio Immagini 
@@ -11,7 +11,8 @@
 - Crittografia End to End 
 - Ricerca dell'utente (oltre che dell'interesse) 
 - Filtri di ricerca per Età (o altro) 
-- Messaggi Destra e Sinistra 
+- Messaggi Destra e Sinistra
+- Recupero Password/Mail
 - Pallino di notifica sui messaggi nuovi nella Home 
 - Cancellazione dei messaggi 
 - Cancellazione del profilo 
