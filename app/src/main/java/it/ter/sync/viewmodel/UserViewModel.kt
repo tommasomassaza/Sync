@@ -8,9 +8,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
+import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.repository.UserRepository
 import it.ter.sync.database.user.UserData
 import it.ter.sync.utils.Utils
@@ -24,6 +29,7 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val storage: FirebaseStorage = FirebaseStorage.getInstance()
+    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     private val userRepository: UserRepository = UserRepository(application)
 
@@ -33,6 +39,9 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     val accountFriend: MutableLiveData<UserData?> = MutableLiveData()
     var userUpdated: MutableLiveData<Boolean> = MutableLiveData()
     var users: MutableLiveData<List<UserData>> = MutableLiveData()
+
+
+    var chatList: MutableLiveData<List<ChatData>> = MutableLiveData()
 
     // Distanza di default
     private var maxDistance: Double = 50.0
@@ -429,4 +438,10 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
         searchStrings.remove(tag.lowercase(Locale.getDefault()))
         refreshRetrieveUser()
     }
+
+    fun retrieveUsersWhoiHadAChatWith() {
+        }
+
+
+
 }

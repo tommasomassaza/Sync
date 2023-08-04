@@ -1,8 +1,10 @@
 package it.ter.sync.view.adapter
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -11,6 +13,7 @@ import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.message.MessageData
 import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.ChatItemBinding
+import it.ter.sync.databinding.GroupItemBinding
 
 class GroupAdapter (private var chatList: List<ChatData>, private var currentUser: UserData) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
 
@@ -18,8 +21,8 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
 
         // Aggiungi questa variabile per memorizzare lo stato del colore
         private var selectedPosition = -1
-        private val defaultColor = R.color.black // Imposta il colore predefinito qui
-        private val selectedColor = R.color.purple_200
+        private val selectedColor = 0xFF00C3FF.toInt()  // Colore selezionato #00c3ff
+        private val defaultColor = 0xFFECECEC.toInt()
 
 
         fun setChatList(chats: List<ChatData>) {
@@ -33,10 +36,10 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
         }
     }
 
-    class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: GroupItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = GroupItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -48,8 +51,8 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
             val isItemSelected = selectedPosition == position
 
             // Cambia il colore del layout quando viene fatto clic sopra l'elemento
-            val newColor = if (isItemSelected) context.resources.getColor(defaultColor)
-            else context.resources.getColor(selectedColor)
+            val newColor = if (isItemSelected) selectedColor
+            else defaultColor
 
             holder.binding.root.setBackgroundColor(newColor)
 
@@ -61,16 +64,13 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
                 selectedPosition = position // Memorizza la posizione dell'elemento selezionato
             }
 
-            // Imposta il colore del layout in base allo stato dell'elemento selezionato
-            holder.binding.root.setBackgroundColor(
-                if (selectedPosition == position) context.resources.getColor(selectedColor)
-                else context.resources.getColor(defaultColor)
-            )
+            // Aggiorna la RecyclerView dopo il clic
+            notifyDataSetChanged()
         }
 
         // Resto del codice per il binding dei dati nell'elemento RecyclerView
         holder.binding.apply {
-            lastMessage.text = currentUser.stato
+            //lastMessage.text = currentUser.stato
             //messageTime.text = chatList[position].timeStamp
             contactName.text = chatList[position].messengerName
 

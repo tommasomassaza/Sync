@@ -43,17 +43,7 @@
         android:layout_marginStart="8dp"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:layout_centerVertical="true"
         android:textColor="@color/black"/>
-
-    <TextView
-        android:id="@+id/stato"
-        android:text="prova"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/contact_name"
-        android:layout_toEndOf="@id/cardView"
-        android:layout_marginStart="8dp"
-        android:textSize="14sp"
-        android:textColor="@color/black" />
 
 </RelativeLayout>

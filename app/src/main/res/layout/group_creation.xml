@@ -31,8 +31,6 @@
         app:layout_constraintBottom_toBottomOf="@id/imageViewGroupIcon"
          />
 
-
-
     <!-- RecyclerView per mostrare gli utenti esistenti (lascio invariato il tuo codice) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_group"
