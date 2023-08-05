@@ -27,11 +27,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
 
 
     var chatList: MutableLiveData<List<ChatData>> = MutableLiveData()
-    private var user: FirebaseUser? = null
-    private var messengerId: String? = "group"
 
-
-    private var groupIDs: ArrayList<String> = ArrayList()
 
 
     fun retrieveChats() {
@@ -62,25 +58,5 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
         }
     }
 
-    fun addUserToGroup(messangerId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            groupIDs.add(messangerId)
-        }
-    }
-
-
-    fun createGroupWithUsers(messengerImageUrl: String) {
-
-        //WORK IN PROGRESS
-        viewModelScope.launch(Dispatchers.IO) {
-            val chatUserRef = database.getReference("chats/${user?.uid}/${messengerId}")
-            val chatUser = ChatData(messengerId!!, messengerImageUrl, "", "", "", "","group")
-            chatUserRef.setValue(chatUser)
-
-            val chatMessengerRef = database.getReference("chats/${messengerId}/${user?.uid}")
-            val chatMessenger = ChatData(user?.uid!!, messengerImageUrl, "", "", "", "currentUserName","group")
-            chatMessengerRef.setValue(chatMessenger)
-        }
-    }
 
 }

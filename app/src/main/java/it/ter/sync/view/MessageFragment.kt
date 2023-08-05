@@ -80,7 +80,7 @@ class MessageFragment : Fragment() {
         sendButton.setOnClickListener {
             val messageInput = binding.messageInput.text.toString()
             if (messageInput.isNotEmpty()) {
-                messageViewModel.sendMessage(messageInput,messengerId,userImageUrl,messengerImageUrl,groupIDs)
+                messageViewModel.sendMessage(messageInput,messengerId,userImageUrl,messengerImageUrl)
                 binding.messageInput.text.clear()
                 binding.messageInput.clearFocus()
 

@@ -14,12 +14,14 @@ import it.ter.sync.databinding.GroupCreationBinding
 import it.ter.sync.view.adapter.ChatAdapter
 import it.ter.sync.view.adapter.GroupAdapter
 import it.ter.sync.viewmodel.ChatViewModel
+import it.ter.sync.viewmodel.MessageViewModel
 import it.ter.sync.viewmodel.UserViewModel
 
 class GroupFragment : Fragment() {
     private val TAG: String = javaClass.simpleName
     private val userViewModel: UserViewModel by activityViewModels()
     private val chatViewModel: ChatViewModel by activityViewModels()
+    private val messageViewModel: MessageViewModel by activityViewModels()
     private var _binding: GroupCreationBinding? = null
 
     private lateinit var recyclerView: RecyclerView
@@ -41,13 +43,13 @@ class GroupFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        groupAdapter = GroupAdapter(emptyList(), UserData(),chatViewModel)
+        groupAdapter = GroupAdapter(emptyList(), UserData(),messageViewModel)
         recyclerView.adapter = groupAdapter
 
         initObservers()
 
         binding.saveBtn.setOnClickListener {
-        chatViewModel.createGroupWithUsers("")
+            messageViewModel.createGroupWithUsers("","Nome del Gruppo")
         }
 
         return root

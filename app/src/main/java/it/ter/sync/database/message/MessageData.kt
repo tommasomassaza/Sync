@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
+//@TypeConverters(RoomTypeConverters::class)
 @Entity(tableName = "messages")
-@TypeConverters(RoomTypeConverters::class)
 class MessageData(
     @PrimaryKey()
     var uid: String = "",
@@ -18,5 +18,5 @@ class MessageData(
     var receiverId: String? = "",
 
     // Lista di stringhe
-    var groupIDs: List<String> = emptyList()
+    //var groupIDs: List<String> = emptyList()
 ){}

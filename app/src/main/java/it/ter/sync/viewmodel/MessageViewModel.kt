@@ -41,6 +41,9 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
     var messageList: MutableLiveData<List<MessageData>> = MutableLiveData()
 
+
+    private var groupMembers: ArrayList<String> = ArrayList()
+
     private var messageRef: DatabaseReference? = null
 
     fun retrieveMessages(messengerId: String?, messengerName: String, currentUserName: String){
@@ -106,7 +109,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         return messages
     }
 
-    fun sendMessage(text: String, messengerId: String?, userImageUrl: String, messengerImageUrl: String, groupIDs: ArrayList<String>) {
+    fun sendMessage(text: String, messengerId: String?, userImageUrl: String, messengerImageUrl: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
             val chatId = Utils.generateChatId(user?.uid ?: "",messengerId ?: "")
@@ -120,7 +123,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 dateFormat.timeZone = TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
                 val dateString = dateFormat.format(Date(timestampMillis))
 
-                val message = MessageData(messageId, userImageUrl, text, timestampMillis.toString(), dateString, user?.uid, messengerId, groupIDs)
+                val message = MessageData(messageId, userImageUrl, text, timestampMillis.toString(), dateString, user?.uid)
 
                 // Salva il messaggio nella Firebase Realtime Database
                 messagesRef.child(messageId).setValue(message)
@@ -142,14 +145,81 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     private fun updateChat(message: MessageData, messengerImageUrl: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val chatUserRef = database.getReference("chats/${user?.uid}/${messengerId}")
-            val chatUser = ChatData(messengerId!!, messengerImageUrl, message.text, message.timeStamp, message.timestampMillis, messengerName,messengerId)
+            val chatUser = ChatData(messengerId!!, messengerImageUrl, message.text, message.timeStamp, message.timestampMillis, messengerName)
             chatUserRef.setValue(chatUser)
 
             val chatMessengerRef = database.getReference("chats/${messengerId}/${user?.uid}")
-            val chatMessenger = ChatData(user?.uid!!, message.image, message.text, message.timeStamp, message.timestampMillis, currentUserName,messengerId)
+            val chatMessenger = ChatData(user?.uid!!, message.image, message.text, message.timeStamp, message.timestampMillis, currentUserName)
             chatMessengerRef.setValue(chatMessenger)
         }
     }
+
+    fun addUserToGroup(messangerId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            groupMembers.add(messangerId)
+        }
+    }
+
+    fun createGroupWithUsers(groupImageUrl: String, groupName: String) {
+        //WORK IN PROGRESS
+        // Verifica che ci siano utenti nel gruppo
+        if (groupMembers.isNotEmpty()) {
+            // Invia un messaggio di benvenuto a ciascun utente nel gruppo
+            for (groupId in groupMembers) {
+                sendMessageGroup("Benvenuto!", groupId, groupImageUrl, groupName)
+            }
+        } else {
+            Log.e(TAG, "Il gruppo non contiene utenti.")
+        }
+
+        //metto groupIDs nell'entità chat
+        //cancello groupIDs (la lista fissa) dopo aver cliccato su create, nel groupfragment
+    }
+
+    private fun sendMessageGroup(text: String, groupId: String?, groupImageUrl: String, groupName: String) {
+        if (groupId != null) {
+            val messagesRef = database.getReference("messages/$groupId")
+
+            val messageId = messagesRef.push().key
+            if (messageId != null) {
+                val timestampMillis = System.currentTimeMillis()
+                val dateString = getDateString(timestampMillis)
+
+                val message = MessageData(messageId, groupImageUrl, text, timestampMillis.toString(), dateString, user?.uid, groupId)
+
+                // Salva il messaggio nella Firebase Realtime Database
+                messagesRef.child(messageId).setValue(message)
+                    .addOnSuccessListener {
+                        Log.i(TAG, "Messaggio inviato con successo al gruppo")
+
+                        // Dopo aver inviato il messaggio, crea la chat del gruppo
+                        updateChatGroup(groupId, message, groupImageUrl, groupName)
+                    }
+                    .addOnFailureListener { error ->
+                        Log.e(TAG, "${error.message}")
+                    }
+            }
+        } else {
+            Log.e(TAG, "L'ID del gruppo è nullo")
+        }
+    }
+
+
+    private fun getDateString(timestampMillis: Long): String {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        dateFormat.timeZone = TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
+        return dateFormat.format(Date(timestampMillis))
+    }
+
+    private fun updateChatGroup(groupId: String, message: MessageData, groupImageUrl: String, groupName: String) {
+        val chatUserRef = database.getReference("chats/${user?.uid}/$groupId")
+        val chatUser = ChatData(groupId, groupImageUrl, message.text, message.timeStamp, message.timestampMillis, groupName,true, groupMembers)
+        chatUserRef.setValue(chatUser)
+
+        //pulisco la lista fissa che conteneva gli IDs una volta creato il gruppo
+        groupMembers.clear()
+    }
+
 
     private fun addMessageNotification(lastMessage: MessageData) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -183,6 +253,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     Log.e(TAG, "${error.message}")
                 }
         }
+
+
     }
 
     fun deleteMessage(messageId: String) {

@@ -2,6 +2,7 @@ package it.ter.sync.view.adapter
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -16,9 +17,10 @@ import it.ter.sync.databinding.ChatItemBinding
 import it.ter.sync.databinding.GroupItemBinding
 import it.ter.sync.view.MainActivity
 import it.ter.sync.viewmodel.ChatViewModel
+import it.ter.sync.viewmodel.MessageViewModel
 import it.ter.sync.viewmodel.NotificationViewModel
 
-class GroupAdapter (private var chatList: List<ChatData>, private var currentUser: UserData,private var chatViewModel: ChatViewModel) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
+class GroupAdapter (private var chatList: List<ChatData>, private var currentUser: UserData,private var messageViewModel: MessageViewModel) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
 
 
 
@@ -54,9 +56,10 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
         holder.binding.root.setOnClickListener {
             val context = holder.binding.root.context
 
-            val messengerId = chatList[position].messengerId!!
-            //groupIDs.add(messengerId)
-            chatViewModel.addUserToGroup(messengerId)
+
+            val messengerId = chatList[position].uid!!
+            messageViewModel.addUserToGroup(messengerId)
+            Log.d("INDAGINE", "updateChat: message: $messengerId")
 
 
             // Verifica se l'elemento è già stato selezionato
