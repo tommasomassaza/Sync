@@ -41,10 +41,14 @@ class GroupFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        groupAdapter = GroupAdapter(emptyList(), UserData())
+        groupAdapter = GroupAdapter(emptyList(), UserData(),chatViewModel)
         recyclerView.adapter = groupAdapter
 
         initObservers()
+
+        binding.saveBtn.setOnClickListener {
+        chatViewModel.createGroupWithUsers("")
+        }
 
         return root
     }

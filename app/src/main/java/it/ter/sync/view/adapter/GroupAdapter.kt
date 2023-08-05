@@ -14,8 +14,11 @@ import it.ter.sync.database.message.MessageData
 import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.ChatItemBinding
 import it.ter.sync.databinding.GroupItemBinding
+import it.ter.sync.view.MainActivity
+import it.ter.sync.viewmodel.ChatViewModel
+import it.ter.sync.viewmodel.NotificationViewModel
 
-class GroupAdapter (private var chatList: List<ChatData>, private var currentUser: UserData) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
+class GroupAdapter (private var chatList: List<ChatData>, private var currentUser: UserData,private var chatViewModel: ChatViewModel) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
 
 
 
@@ -23,6 +26,9 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
         private var selectedPosition = -1
         private val selectedColor = 0xFF00C3FF.toInt()  // Colore selezionato #00c3ff
         private val defaultColor = 0xFFECECEC.toInt()
+
+    // Lista di stringhe
+    val groupIDs: ArrayList<String> = ArrayList()
 
 
         fun setChatList(chats: List<ChatData>) {
@@ -44,8 +50,14 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         holder.binding.root.setOnClickListener {
             val context = holder.binding.root.context
+
+            val messengerId = chatList[position].messengerId!!
+            //groupIDs.add(messengerId)
+            chatViewModel.addUserToGroup(messengerId)
+
 
             // Verifica se l'elemento è già stato selezionato
             val isItemSelected = selectedPosition == position
@@ -66,6 +78,7 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
 
             // Aggiorna la RecyclerView dopo il clic
             notifyDataSetChanged()
+
         }
 
         // Resto del codice per il binding dei dati nell'elemento RecyclerView
@@ -80,7 +93,12 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
                     .into(profileImage)
             }
         }
+
+
+
     }
+
+
 
     override fun getItemCount(): Int {
         return chatList.size
