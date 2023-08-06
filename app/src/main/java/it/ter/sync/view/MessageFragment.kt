@@ -2,6 +2,7 @@ package it.ter.sync.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,8 @@ class MessageFragment : Fragment() {
     private lateinit var currentUserName: String
 
     private lateinit var messageAdapter: MessageAdapter
+
+    private var isChatGroup: Boolean = false
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -75,8 +78,25 @@ class MessageFragment : Fragment() {
         sendButton.setOnClickListener {
             val messageInput = binding.messageInput.text.toString()
             if (messageInput.isNotEmpty()) {
+                if(isChatGroup)
+                {
+                    Log.e("SUSHI2", "$isChatGroup")
+                    messageViewModel.sendMessageGroup(
+                        messageInput,
+                        messengerId,
+                        "",
+                        "Nome del gruppo"
+                    )
 
-                messageViewModel.sendMessage(messageInput,messengerId,userImageUrl,messengerImageUrl)
+                }else {
+                    Log.e("SUSHI", "$isChatGroup")
+                    messageViewModel.sendMessage(
+                        messageInput,
+                        messengerId,
+                        userImageUrl,
+                        messengerImageUrl
+                    )
+                }
                 binding.messageInput.text.clear()
                 binding.messageInput.clearFocus()
 
@@ -103,6 +123,10 @@ class MessageFragment : Fragment() {
         messageViewModel.messageList.observe(viewLifecycleOwner) {
             messageAdapter.setMessageList(it)
             recyclerView.scrollToPosition(it.size - 1)
+        }
+        messageViewModel.myBooleanLiveData.observe(viewLifecycleOwner) {
+            isChatGroup = it
+
         }
     }
 }

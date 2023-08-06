@@ -17,6 +17,7 @@ import it.ter.sync.database.message.MessageData
 import it.ter.sync.database.notify.NotificationData
 import it.ter.sync.database.notify.NotificationType
 import it.ter.sync.database.repository.MessageRepository
+import it.ter.sync.database.user.UserData
 import it.ter.sync.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,10 +42,15 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
     var messageList: MutableLiveData<List<MessageData>> = MutableLiveData()
 
+    var currentChat: MutableLiveData<ChatData?> = MutableLiveData()
 
-    private var groupMembers: ArrayList<String> = ArrayList()
+    // Dichiarazione del LiveData booleano
+    var myBooleanLiveData = MutableLiveData<Boolean>()
 
     private var messageRef: DatabaseReference? = null
+    private var chatGroupRef: DatabaseReference? = null
+
+    private var groupMembers: ArrayList<String> = ArrayList()
 
     fun retrieveMessages(messengerId: String?, messengerName: String, currentUserName: String){
         viewModelScope.launch(Dispatchers.IO) {
@@ -70,7 +76,39 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             messageRef = database.getReference("messages/${chatId}")
 
             messageRef!!.orderByChild("timestampMillis").startAfter(lastTimestamp.toString()).addValueEventListener(valueEventListener)
+
+
+            isChatGroup(user?.uid, messengerId) { isGroup ->
+                // Adesso hai il valore "isGroup" che indica se la chat è un gruppo o meno
+                // Puoi usarlo per prendere decisioni basate sul tipo di chat
+                // Esegui qui il codice che dipende dal risultato
+                myBooleanLiveData.value  = isGroup
+
+                Log.i("BIS BOOLEANO", "${ myBooleanLiveData.value} ")
+                Log.i("BIS BOOLEANO 2", "${ isGroup} ")
+            }
+
         }
+    }
+
+
+    fun isChatGroup(UserUid: String?,messengerId: String?,onResult: (Boolean) -> Unit) {
+
+        chatGroupRef = database.getReference("chats/${user?.uid}/${messengerId}")
+
+        chatGroupRef!!.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val chatData = snapshot.getValue(ChatData::class.java)
+                Log.i("BIS CHATDATA ", "${chatData?.group} ")
+                val isGroup = chatData?.group ?: false
+                onResult(isGroup)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error
+                onResult(false)
+            }
+        })
     }
 
     private val valueEventListener = object : ValueEventListener {
@@ -123,7 +161,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 dateFormat.timeZone = TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
                 val dateString = dateFormat.format(Date(timestampMillis))
 
-                val message = MessageData(messageId, userImageUrl, text, timestampMillis.toString(), dateString, user?.uid)
+                val message = MessageData(messageId, userImageUrl, text, timestampMillis.toString(), dateString, user?.uid,messageId)
 
                 // Salva il messaggio nella Firebase Realtime Database
                 messagesRef.child(messageId).setValue(message)
@@ -151,6 +189,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             val chatMessengerRef = database.getReference("chats/${messengerId}/${user?.uid}")
             val chatMessenger = ChatData(user?.uid!!, message.image, message.text, message.timeStamp, message.timestampMillis, currentUserName)
             chatMessengerRef.setValue(chatMessenger)
+
         }
     }
 
@@ -194,7 +233,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
     }
 
-    private fun sendMessageGroup(text: String, groupId: String?, groupImageUrl: String, groupName: String) {
+     fun sendMessageGroup(text: String, groupId: String?, groupImageUrl: String, groupName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             if (groupId != null) {
                 val user = firebaseAuth.currentUser
@@ -221,7 +260,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     // Salva il messaggio nella Firebase Realtime Database
                     messagesRef.child(messageId).setValue(message)
                         .addOnSuccessListener {
-                            Log.i(TAG, "Messaggio inviato con successo al gruppo")
+                            Log.i("GROOPON", "Messaggio inviato con successo al gruppo")
 
 
                             // Per ogni membro del gruppo, aggiorna la chat con il nuovo messaggio
@@ -236,50 +275,53 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                         }
                 }
 
+                Log.i("SONO QUI", "$groupMembers")
+
                 //Invia il messaggio dal gruppo a tutti
                 for (memberId in membersCopy) {
-                    val chatId = Utils.generateChatId(groupId, memberId)
-                    val messagesRef = database.getReference("messages/${chatId}")
+                    if (memberId != user!!.uid) {
+                        Log.i("SONO QUI", "Messaggio inviato con successo dal gruppo")
 
-                    val messageId = messagesRef.push().key
-                    if (messageId != null) {
-                        val timestampMillis = System.currentTimeMillis()
-                        val dateString = getDateString(timestampMillis)
+                        val chatId = Utils.generateChatId(groupId, memberId)
+                        val messagesRef = database.getReference("messages/${chatId}")
 
-                        val message = MessageData(
-                            messageId,
-                            groupImageUrl,
-                            text,
-                            timestampMillis.toString(),
-                            dateString,
-                            groupId,
-                            memberId
-                        )
+                        val messageId = messagesRef.push().key
+                        if (messageId != null) {
+                            val timestampMillis = System.currentTimeMillis()
+                            val dateString = getDateString(timestampMillis)
 
-                        // Salva il messaggio nella Firebase Realtime Database
-                        messagesRef.child(messageId).setValue(message)
-                            .addOnSuccessListener {
-                                Log.i(TAG, "Messaggio inviato con successo al gruppo")
+                            val message = MessageData(
+                                messageId,
+                                groupImageUrl,
+                                text,
+                                timestampMillis.toString(),
+                                dateString,
+                                groupId,
+                                memberId
+                            )
+
+                            // Salva il messaggio nella Firebase Realtime Database
+                            messagesRef.child(messageId).setValue(message)
+                                .addOnSuccessListener {
+                                    Log.i("DAL GRUPPO", "Messaggio inviato con successo dal gruppo")
 
 
-                                // Per ogni membro del gruppo, aggiorna la chat con il nuovo messaggio (anche per se stesso)
-                                //updateChatGroup(user!!.uid, groupId, message, groupImageUrl, groupName)
-                                for (memberId in membersCopy) {
-                                    if (memberId != user!!.uid) updateChatGroup(
-                                        memberId,
-                                        groupId,
-                                        message,
-                                        groupImageUrl,
-                                        groupName
-                                    )
+                                    // Per ogni membro del gruppo, aggiorna la chat con il nuovo messaggio (anche per se stesso)
+                                    //updateChatGroup(user!!.uid, groupId, message, groupImageUrl, groupName)
+
+                                        updateChatGroup(
+                                            memberId,
+                                            groupId,
+                                            message,
+                                            groupImageUrl,
+                                            groupName,
+                                        )
+
                                 }
-
-                                // Ora puoi pulire la lista originale
-                                groupMembers.clear()
-                            }
-                            .addOnFailureListener { error ->
-                                Log.e(TAG, "${error.message}")
-                            }
+                                .addOnFailureListener { error ->
+                                    Log.e("NON SONO RIUSCITO", "${error.message}")
+                                }
+                        }
                     }
                 }
 
@@ -310,6 +352,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 groupMembers
             )
             chatUserRef.setValue(chatUser)
+
+            //currentChat.postValue(chatUser)
 
             //pulisco la lista fissa che conteneva gli IDs una volta creato il gruppo
             groupMembers.clear()
