@@ -154,6 +154,9 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+
+
+
     fun addUserToGroup(messangerId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             groupMembers.add(messangerId)
@@ -161,46 +164,128 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun createGroupWithUsers(groupImageUrl: String, groupName: String) {
-        //WORK IN PROGRESS
-        // Verifica che ci siano utenti nel gruppo
-        if (groupMembers.isNotEmpty()) {
-            // Invia un messaggio di benvenuto a ciascun utente nel gruppo
-            for (groupId in groupMembers) {
-                sendMessageGroup("Benvenuto!", groupId, groupImageUrl, groupName)
-            }
-        } else {
-            Log.e(TAG, "Il gruppo non contiene utenti.")
+        viewModelScope.launch(Dispatchers.IO) {
+            // Ottieni il riferimento al nodo "groups" nel database
+            val groupsRef = database.getReference("chats")
+
+            // Genera un nuovo ID univoco per il gruppo
+            val groupId = groupsRef.push().key ?: ""
+
+            // Crea l'oggetto GroupData con le informazioni del gruppo
+            val groupData =
+                ChatData(groupId, groupImageUrl, "", "", "", groupName, true, groupMembers)
+
+            // Salva il gruppo nel database utilizzando l'ID appena generato
+            groupsRef.child(groupId).setValue(groupData)
+                .addOnSuccessListener {
+                    Log.i(TAG, "Gruppo creato con successo")
+                }
+                .addOnFailureListener { error ->
+                    Log.e(TAG, "Errore durante la creazione del gruppo: ${error.message}")
+                }
+
+            sendMessageGroup("Benvenuto!", groupId, groupImageUrl, groupName)
+            //metto groupIDs nell'entità chat
+
+            //metto me stesso in groupMembers
+            val user = firebaseAuth.currentUser
+            groupMembers.add(user!!.uid)
         }
 
-        //metto groupIDs nell'entità chat
-        //cancello groupIDs (la lista fissa) dopo aver cliccato su create, nel groupfragment
     }
 
     private fun sendMessageGroup(text: String, groupId: String?, groupImageUrl: String, groupName: String) {
-        if (groupId != null) {
-            val messagesRef = database.getReference("messages/$groupId")
+        viewModelScope.launch(Dispatchers.IO) {
+            if (groupId != null) {
+                val user = firebaseAuth.currentUser
+                // Fai una copia della lista groupMembers per evitare ConcurrentModificationException
+                val membersCopy = ArrayList(groupMembers)
+                val chatId = Utils.generateChatId(user?.uid ?: "", groupId)
+                val messagesRef = database.getReference("messages/${chatId}")
 
-            val messageId = messagesRef.push().key
-            if (messageId != null) {
-                val timestampMillis = System.currentTimeMillis()
-                val dateString = getDateString(timestampMillis)
+                val messageId = messagesRef.push().key
+                if (messageId != null) {
+                    val timestampMillis = System.currentTimeMillis()
+                    val dateString = getDateString(timestampMillis)
 
-                val message = MessageData(messageId, groupImageUrl, text, timestampMillis.toString(), dateString, user?.uid, groupId)
+                    val message = MessageData(
+                        messageId,
+                        groupImageUrl,
+                        text,
+                        timestampMillis.toString(),
+                        dateString,
+                        user?.uid,
+                        groupId
+                    )
 
-                // Salva il messaggio nella Firebase Realtime Database
-                messagesRef.child(messageId).setValue(message)
-                    .addOnSuccessListener {
-                        Log.i(TAG, "Messaggio inviato con successo al gruppo")
+                    // Salva il messaggio nella Firebase Realtime Database
+                    messagesRef.child(messageId).setValue(message)
+                        .addOnSuccessListener {
+                            Log.i(TAG, "Messaggio inviato con successo al gruppo")
 
-                        // Dopo aver inviato il messaggio, crea la chat del gruppo
-                        updateChatGroup(groupId, message, groupImageUrl, groupName)
+
+                            // Per ogni membro del gruppo, aggiorna la chat con il nuovo messaggio
+                            updateChatGroup(user!!.uid, groupId, message, groupImageUrl, groupName)
+                            /* for (memberId in membersCopy) {
+                            updateChatGroup(memberId, groupId, message, groupImageUrl, groupName)
+                        }*/
+
+                        }
+                        .addOnFailureListener { error ->
+                            Log.e(TAG, "${error.message}")
+                        }
+                }
+
+                //Invia il messaggio dal gruppo a tutti
+                for (memberId in membersCopy) {
+                    val chatId = Utils.generateChatId(groupId, memberId)
+                    val messagesRef = database.getReference("messages/${chatId}")
+
+                    val messageId = messagesRef.push().key
+                    if (messageId != null) {
+                        val timestampMillis = System.currentTimeMillis()
+                        val dateString = getDateString(timestampMillis)
+
+                        val message = MessageData(
+                            messageId,
+                            groupImageUrl,
+                            text,
+                            timestampMillis.toString(),
+                            dateString,
+                            groupId,
+                            memberId
+                        )
+
+                        // Salva il messaggio nella Firebase Realtime Database
+                        messagesRef.child(messageId).setValue(message)
+                            .addOnSuccessListener {
+                                Log.i(TAG, "Messaggio inviato con successo al gruppo")
+
+
+                                // Per ogni membro del gruppo, aggiorna la chat con il nuovo messaggio (anche per se stesso)
+                                //updateChatGroup(user!!.uid, groupId, message, groupImageUrl, groupName)
+                                for (memberId in membersCopy) {
+                                    if (memberId != user!!.uid) updateChatGroup(
+                                        memberId,
+                                        groupId,
+                                        message,
+                                        groupImageUrl,
+                                        groupName
+                                    )
+                                }
+
+                                // Ora puoi pulire la lista originale
+                                groupMembers.clear()
+                            }
+                            .addOnFailureListener { error ->
+                                Log.e(TAG, "${error.message}")
+                            }
                     }
-                    .addOnFailureListener { error ->
-                        Log.e(TAG, "${error.message}")
-                    }
+                }
+
+            } else {
+                Log.e(TAG, "L'ID del gruppo è nullo")
             }
-        } else {
-            Log.e(TAG, "L'ID del gruppo è nullo")
         }
     }
 
@@ -211,13 +296,24 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         return dateFormat.format(Date(timestampMillis))
     }
 
-    private fun updateChatGroup(groupId: String, message: MessageData, groupImageUrl: String, groupName: String) {
-        val chatUserRef = database.getReference("chats/${user?.uid}/$groupId")
-        val chatUser = ChatData(groupId, groupImageUrl, message.text, message.timeStamp, message.timestampMillis, groupName,true, groupMembers)
-        chatUserRef.setValue(chatUser)
+    private fun updateChatGroup(memberId: String, groupId: String, message: MessageData, groupImageUrl: String, groupName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val chatUserRef = database.getReference("chats/$memberId/$groupId")
+            val chatUser = ChatData(
+                groupId,
+                groupImageUrl,
+                message.text,
+                message.timeStamp,
+                message.timestampMillis,
+                groupName,
+                true,
+                groupMembers
+            )
+            chatUserRef.setValue(chatUser)
 
-        //pulisco la lista fissa che conteneva gli IDs una volta creato il gruppo
-        groupMembers.clear()
+            //pulisco la lista fissa che conteneva gli IDs una volta creato il gruppo
+            groupMembers.clear()
+        }
     }
 
 
@@ -253,7 +349,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     Log.e(TAG, "${error.message}")
                 }
         }
-
 
     }
 

@@ -32,8 +32,6 @@ class MessageFragment : Fragment() {
     private lateinit var messengerName: String
     private lateinit var currentUserName: String
 
-    private var groupIDs: ArrayList<String> = ArrayList()
-
     private lateinit var messageAdapter: MessageAdapter
 
     // This property is only valid between onCreateView and
@@ -72,17 +70,16 @@ class MessageFragment : Fragment() {
         messageAdapter = MessageAdapter(emptyList(), messengerId, messengerName)
         recyclerView.adapter = messageAdapter
 
-        groupIDs.add(messengerId)
-
-
         // Gestisci l'invio di nuovi messaggi quando viene premuto il pulsante di invio
         val sendButton = binding.sendButton
         sendButton.setOnClickListener {
             val messageInput = binding.messageInput.text.toString()
             if (messageInput.isNotEmpty()) {
+
                 messageViewModel.sendMessage(messageInput,messengerId,userImageUrl,messengerImageUrl)
                 binding.messageInput.text.clear()
                 binding.messageInput.clearFocus()
+
 
                 (activity as MainActivity).hideKeyboard()
             }
