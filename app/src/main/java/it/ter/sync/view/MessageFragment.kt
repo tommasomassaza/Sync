@@ -85,7 +85,8 @@ class MessageFragment : Fragment() {
                         messageInput,
                         messengerId,
                         "",
-                        "Nome del gruppo"
+                        "Nome del gruppo",
+                        currentUserName
                     )
 
                 }else {
@@ -94,7 +95,8 @@ class MessageFragment : Fragment() {
                         messageInput,
                         messengerId,
                         userImageUrl,
-                        messengerImageUrl
+                        messengerImageUrl,
+                        currentUserName
                     )
                 }
                 binding.messageInput.text.clear()

@@ -15,5 +15,6 @@ class MessageData(
     var timeStamp: String = "",
     var senderId: String? = "",
     var receiverId: String? = "",
+    var senderName: String? = ""
 
 ){}

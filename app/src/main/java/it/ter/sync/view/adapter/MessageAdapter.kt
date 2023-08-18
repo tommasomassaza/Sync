@@ -57,7 +57,7 @@ class MessageAdapter(
         val messageData = messageList[position]
         if (holder.binding is MessageSentItemBinding) {
             // Messaggio inviato dall'utente loggato
-            holder.binding.textViewSender.text = messengerName
+            holder.binding.textViewSender.text = messageData.senderName     //messengerNamee
             holder.binding.textViewMessage.text = messageData.text
             holder.binding.textViewTime.text = messageData.timeStamp
         } else if (holder.binding is MessageReceivedItemBinding) {
