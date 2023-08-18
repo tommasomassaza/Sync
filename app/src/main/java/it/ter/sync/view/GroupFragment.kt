@@ -49,7 +49,8 @@ class GroupFragment : Fragment() {
         initObservers()
 
         binding.saveBtn.setOnClickListener {
-            messageViewModel.createGroupWithUsers("","Nome del Gruppo")
+            val name = binding.editTextGroupName.text.toString().ifEmpty { binding.editTextGroupName.hint.toString()}
+            messageViewModel.createGroupWithUsers("",name)
         }
 
         return root

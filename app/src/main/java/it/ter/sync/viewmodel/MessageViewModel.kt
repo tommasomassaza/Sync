@@ -476,7 +476,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                         message.text,
                         message.timeStamp,
                         message.timestampMillis,
-                        groupName,
+                        messengerName,
                         true,
                         existingGroupMembers // Usa il valore corrente di groupMembers
                     )
