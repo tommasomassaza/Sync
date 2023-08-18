@@ -1,9 +1,11 @@
 package it.ter.sync.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +28,8 @@ class GroupFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var groupAdapter: GroupAdapter
+
+    private var saveButtonClicked: Boolean = false
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -51,6 +55,7 @@ class GroupFragment : Fragment() {
         binding.saveBtn.setOnClickListener {
             val name = binding.editTextGroupName.text.toString().ifEmpty { binding.editTextGroupName.hint.toString()}
             messageViewModel.createGroupWithUsers("",name)
+            saveButtonClicked = true
         }
 
         return root
@@ -76,6 +81,18 @@ class GroupFragment : Fragment() {
         }
         userViewModel.currentUser.observe(viewLifecycleOwner) {
             groupAdapter.setCurrentUser(it)
+        }
+
+        messageViewModel.groupCreated.observe(viewLifecycleOwner) { result ->
+            if(saveButtonClicked){
+                if(result) {
+                    Toast.makeText(activity, "Group created", Toast.LENGTH_SHORT).show()
+                    Log.i(TAG, "Save completed")
+                } else {
+                    Toast.makeText(activity, "Save failed", Toast.LENGTH_SHORT).show()
+                    Log.i(TAG, "Save failed")
+                }
+            }
         }
     }
 }

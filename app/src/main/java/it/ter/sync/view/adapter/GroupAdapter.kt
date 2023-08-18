@@ -53,41 +53,29 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
+        // Verifica se l'elemento è selezionato
+        val isItemSelected = selectedPosition == position
+
+        // Cambia il colore del layout in base allo stato dell'elemento
+        val backgroundColor = if (isItemSelected) selectedColor else defaultColor
+        holder.binding.root.setBackgroundColor(backgroundColor)
+
         holder.binding.root.setOnClickListener {
             val context = holder.binding.root.context
-
 
             val messengerId = chatList[position].uid!!
             messageViewModel.addUserToGroup(messengerId)
             Log.d("INDAGINE", "updateChat: message: $messengerId")
 
-
-            // Verifica se l'elemento è già stato selezionato
-            val isItemSelected = selectedPosition == position
-
-            // Cambia il colore del layout quando viene fatto clic sopra l'elemento
-            val newColor = if (isItemSelected) selectedColor
-            else defaultColor
-
-            holder.binding.root.setBackgroundColor(newColor)
-
-            // Memorizza lo stato del colore selezionato
-            if (isItemSelected) {
-                selectedPosition =
-                    -1 // Torna allo stato predefinito se l'elemento è già stato selezionato
-            } else {
-                selectedPosition = position // Memorizza la posizione dell'elemento selezionato
-            }
+            // Memorizza la posizione dell'elemento selezionato
+            selectedPosition = position
 
             // Aggiorna la RecyclerView dopo il clic
             notifyDataSetChanged()
-
         }
 
         // Resto del codice per il binding dei dati nell'elemento RecyclerView
         holder.binding.apply {
-            //lastMessage.text = currentUser.stato
-            //messageTime.text = chatList[position].timeStamp
             contactName.text = chatList[position].messengerName
 
             if (chatList[position].image != "") {
@@ -96,10 +84,8 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
                     .into(profileImage)
             }
         }
-
-
-
     }
+
 
 
 

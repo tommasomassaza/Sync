@@ -54,7 +54,7 @@ class ChatFragment : Fragment() {
         userViewModel.getUserInfo()
 
         // Recupera i messaggi esistenti dalla Firebase Realtime Database
-        chatViewModel.retrieveChats()
+        chatViewModel.retrieveChatsAndGroups()
     }
 
     override fun onDestroyView() {
@@ -63,7 +63,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun initObservers() {
-        chatViewModel.chatList.observe(viewLifecycleOwner) {
+        chatViewModel.chatAndGroupList.observe(viewLifecycleOwner) {
             chatAdapter.setChatList(it)
         }
         userViewModel.currentUser.observe(viewLifecycleOwner) {

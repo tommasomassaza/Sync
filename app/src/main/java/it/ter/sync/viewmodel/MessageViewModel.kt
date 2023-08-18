@@ -45,6 +45,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
     var currentChat: MutableLiveData<ChatData?> = MutableLiveData()
 
+    var groupCreated: MutableLiveData<Boolean> = MutableLiveData()
+
     // Dichiarazione del LiveData booleano
     var myBooleanLiveData = MutableLiveData<Boolean>()
 
@@ -219,9 +221,11 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             groupsRef.child(groupId).setValue(groupData)
                 .addOnSuccessListener {
                     Log.i(TAG, "Gruppo creato con successo")
+                    groupCreated.postValue(true)
                 }
                 .addOnFailureListener { error ->
                     Log.e(TAG, "Errore durante la creazione del gruppo: ${error.message}")
+                    groupCreated.postValue(false)
                 }
 
             sendMessageGroupCreate("Benvenuto!", groupId, groupImageUrl, groupName)

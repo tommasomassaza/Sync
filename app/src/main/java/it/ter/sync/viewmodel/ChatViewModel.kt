@@ -27,6 +27,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
 
 
     var chatList: MutableLiveData<List<ChatData>> = MutableLiveData()
+    var chatAndGroupList: MutableLiveData<List<ChatData>> = MutableLiveData()
 
 
 
@@ -43,11 +44,42 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
 
                     for (chatSnapshot in snapshot.children) {
                         val chat = chatSnapshot.getValue(ChatData::class.java)
-                        chat?.let {
-                            chats.add(it)
+                        if (chat?.group == false) {
+                            chat?.let {
+                                chats.add(it)
+                            }
                         }
                     }
                     chatList.postValue(chats.reversed())
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Gestisci l'errore di recupero dei messaggi
+                    Log.i(TAG, error.message)
+                }
+            })
+        }
+    }
+
+    fun retrieveChatsAndGroups() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+
+            val chatsRef = database.getReference("chats/${user?.uid}")
+
+            // Listener per chat da user ai vari messenger
+            chatsRef.orderByChild("timestampMillis").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val chats: MutableList<ChatData> = mutableListOf()
+
+                    for (chatSnapshot in snapshot.children) {
+                        val chat = chatSnapshot.getValue(ChatData::class.java)
+                            chat?.let {
+                                chats.add(it)
+                            }
+
+                    }
+                    chatAndGroupList.postValue(chats.reversed())
                 }
 
                 override fun onCancelled(error: DatabaseError) {
