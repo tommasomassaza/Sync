@@ -13,7 +13,7 @@
 - Filtri di ricerca per Età (o altro) 
 - Messaggi Destra e Sinistra
 - Recupero Password/Mail
-- Pallino di notifica sui messaggi nuovi nella Home 
+- Pallino di notifica sui messaggi nuovi nel Chat Fragment 
 - Cancellazione dei messaggi 
 - Cancellazione del profilo 
 - Gestione dei permessi (Immagini, Posizione, Altro)
