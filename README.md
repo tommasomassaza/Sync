@@ -21,6 +21,7 @@
 - Gruppi visione utenti
 - Gruppi Immagini
 - Desync/Blocco Utenti
+- Richiesta di consenso per il Sync (permesso di chattarre)
 - Notifiche per Gruppi
 - Ricerca chat anche per Tags
 - Squash Bugs 
