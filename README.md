@@ -19,6 +19,7 @@
 - Gestione dei permessi (Immagini, Posizione, Altro)
 - Tag nelle chat
 - Gruppi visione utenti
+- Gruppi Immagini
 - Ricerca chat anche per Tags
 - Squash Bugs 
 - Redesign (Finale) 
