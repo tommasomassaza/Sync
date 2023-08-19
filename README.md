@@ -20,6 +20,8 @@
 - Tag nelle chat
 - Gruppi visione utenti
 - Gruppi Immagini
+- Desync/Blocco Utenti
+- Notifiche per Gruppi
 - Ricerca chat anche per Tags
 - Squash Bugs 
 - Redesign (Finale) 
