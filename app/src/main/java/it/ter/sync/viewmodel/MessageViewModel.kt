@@ -201,7 +201,13 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
     fun addUserToGroup(messangerId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            groupMembers.add(messangerId)
+            //se l'utente era già presente nella lista lo rimuovo, perché significa che è stato deselezionato
+            if (messangerId in groupMembers) {
+                groupMembers.remove(messangerId)
+            } else {
+                //altrimenti lo aggiungo perché significa che è stato selezionato
+                groupMembers.add(messangerId)
+            }
         }
     }
 
@@ -375,7 +381,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                         timestampMillis.toString(),
                         dateString,
                         user?.uid,
-                        groupId
+                        groupId,
+                        "Benvenuto"
                     )
 
                     // Salva il messaggio nella Firebase Realtime Database
@@ -418,7 +425,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                                 timestampMillis.toString(),
                                 dateString,
                                 groupId,
-                                memberId
+                                memberId,
+                                "Benvenuto"
                             )
 
                             // Salva il messaggio nella Firebase Realtime Database

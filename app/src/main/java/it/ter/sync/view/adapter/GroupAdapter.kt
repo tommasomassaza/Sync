@@ -25,12 +25,9 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
 
 
         // Aggiungi questa variabile per memorizzare lo stato del colore
-        private var selectedPosition = -1
+        private val selectedPositions = mutableListOf<Int>()
         private val selectedColor = 0xFF00C3FF.toInt()  // Colore selezionato #00c3ff
         private val defaultColor = 0xFFECECEC.toInt()
-
-    // Lista di stringhe
-    val groupIDs: ArrayList<String> = ArrayList()
 
 
         fun setChatList(chats: List<ChatData>) {
@@ -52,9 +49,10 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val chatData = chatList[position]
 
         // Verifica se l'elemento è selezionato
-        val isItemSelected = selectedPosition == position
+        val isItemSelected = selectedPositions.contains(position)
 
         // Cambia il colore del layout in base allo stato dell'elemento
         val backgroundColor = if (isItemSelected) selectedColor else defaultColor
@@ -63,12 +61,17 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
         holder.binding.root.setOnClickListener {
             val context = holder.binding.root.context
 
-            val messengerId = chatList[position].uid!!
+            val messengerId = chatData.uid!!
+            //Questo metodo gestisce anche la rimozione dal gruppo se l'utente era già stato selezionato
             messageViewModel.addUserToGroup(messengerId)
+
             Log.d("INDAGINE", "updateChat: message: $messengerId")
 
-            // Memorizza la posizione dell'elemento selezionato
-            selectedPosition = position
+            if (isItemSelected) {
+                selectedPositions.remove(position)
+            } else {
+                selectedPositions.add(position)
+            }
 
             // Aggiorna la RecyclerView dopo il clic
             notifyDataSetChanged()
@@ -76,15 +79,16 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
 
         // Resto del codice per il binding dei dati nell'elemento RecyclerView
         holder.binding.apply {
-            contactName.text = chatList[position].messengerName
+            contactName.text = chatData.messengerName
 
-            if (chatList[position].image != "") {
+            if (chatData.image != "") {
                 Glide.with(root)
-                    .load(chatList[position].image)
+                    .load(chatData.image)
                     .into(profileImage)
             }
         }
     }
+
 
 
 
