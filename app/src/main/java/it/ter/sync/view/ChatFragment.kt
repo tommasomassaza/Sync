@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import it.ter.sync.R
 import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.FragmentChatBinding
 import it.ter.sync.view.adapter.ChatAdapter
@@ -22,6 +25,7 @@ class ChatFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var chatAdapter: ChatAdapter
+    private var searchString: String = ""
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -41,6 +45,35 @@ class ChatFragment : Fragment() {
 
         chatAdapter = ChatAdapter(emptyList(), UserData())
         recyclerView.adapter = chatAdapter
+
+
+
+        // Aggiungi questo codice all'interno del metodo onCreateView del tuo Fragment
+        binding.searchView.setOnClickListener {
+            binding.searchView.isIconified = false // Rende attiva la SearchView
+        }
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Azioni da eseguire quando viene premuto il tasto "Invio" sulla tastiera
+                chatViewModel.filterChatsAndGroups(searchString)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Azioni da eseguire quando il testo nella SearchView cambia
+                // Qui puoi aggiornare la tua stringa con il nuovo testo
+                searchString = ""
+                searchString = newText ?: ""
+                chatViewModel.filterChatsAndGroups(searchString)
+                // O fai qualsiasi altra cosa con la stringa
+                return true
+            }
+        })
+
+        binding.btnSearch.setOnClickListener {
+            chatViewModel.filterChatsAndGroups(searchString)
+        }
 
 
         initObservers()

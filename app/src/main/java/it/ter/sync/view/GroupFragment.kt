@@ -1,11 +1,15 @@
 package it.ter.sync.view
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +32,7 @@ class GroupFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var groupAdapter: GroupAdapter
+    private var groupImageUri: Uri? = null
 
     private var saveButtonClicked: Boolean = false
 
@@ -58,6 +63,10 @@ class GroupFragment : Fragment() {
             saveButtonClicked = true
         }
 
+        binding.imageViewGroupIcon.setOnClickListener {
+            pickImageFromGallery()
+        }
+
         return root
     }
 
@@ -73,6 +82,23 @@ class GroupFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, 101)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == AppCompatActivity.RESULT_OK && requestCode == 101) {
+            val imageUri = data?.data
+
+            groupImageUri = imageUri
+            // Ora che hai il bitmap, puoi chiamare il metodo UpdateUser()
+            //chatViewModel.updateGroupImage(imageUri)
+        }
     }
 
     private fun initObservers() {

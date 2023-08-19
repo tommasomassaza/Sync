@@ -1,6 +1,7 @@
 package it.ter.sync.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.AndroidViewModel
@@ -74,9 +75,9 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
 
                     for (chatSnapshot in snapshot.children) {
                         val chat = chatSnapshot.getValue(ChatData::class.java)
-                            chat?.let {
+                        chat?.let {
                                 chats.add(it)
-                            }
+                        }
 
                     }
                     chatAndGroupList.postValue(chats.reversed())
@@ -88,6 +89,44 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
                 }
             })
         }
+    }
+
+    fun filterChatsAndGroups(searchString: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+
+            val chatsRef = database.getReference("chats/${user?.uid}")
+
+            // Listener per chat da user ai vari messenger
+            chatsRef.orderByChild("timestampMillis").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val chats: MutableList<ChatData> = mutableListOf()
+
+                    for (chatSnapshot in snapshot.children) {
+                        val chat = chatSnapshot.getValue(ChatData::class.java)
+                        val messengerName = chat?.messengerName ?: ""
+
+                        if (messengerName.contains(searchString, ignoreCase = true)) {
+                            chat?.let {
+                                chats.add(it)
+                            }
+                        }
+                    }
+                    chatAndGroupList.postValue(chats.reversed())
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Gestisci l'errore di recupero dei messaggi
+                    Log.i(TAG, error.message)
+                }
+            })
+        }
+    }
+
+
+
+    fun updateGroupImage(imageUri: Uri?) {
+
     }
 
 
