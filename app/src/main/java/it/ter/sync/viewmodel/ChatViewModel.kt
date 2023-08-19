@@ -13,6 +13,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.message.MessageData
 import it.ter.sync.utils.Utils
@@ -29,6 +31,10 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
 
     var chatList: MutableLiveData<List<ChatData>> = MutableLiveData()
     var chatAndGroupList: MutableLiveData<List<ChatData>> = MutableLiveData()
+
+
+    private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
 
 
 
