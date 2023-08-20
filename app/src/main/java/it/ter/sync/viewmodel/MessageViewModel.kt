@@ -278,9 +278,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
 
                             updateChatGroup(user!!.uid, groupId, message, groupName)
-                            /* for (memberId in membersCopy) {
-                            updateChatGroup(memberId, groupId, message, groupImageUrl, groupName)
-                        }*/
 
                         }
                         .addOnFailureListener { error ->
@@ -487,7 +484,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     updates["lastMessage"] = message.text
                     updates["timeStamp"] = message.timeStamp
                     updates["timestampMillis"] = message.timestampMillis
-                    updates["messengerName"] = groupName
+                    //updates["messengerName"] = groupName
                     updates["group"] = true
                     updates["groupMembers"] = existingGroupMembers // Manteniamo la lista esistente
 

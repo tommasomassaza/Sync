@@ -85,7 +85,7 @@ class MessageFragment : Fragment() {
                         messageInput,
                         messengerId,
                         "",
-                        "Nome del gruppo",
+                        "",
                         currentUserName
                     )
 
