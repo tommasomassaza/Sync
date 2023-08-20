@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        tools:context=".view.SignUpFragment">
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/image_account_cardView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardCornerRadius="150dp"
+            android:scaleType="centerInside">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="150dp"
+                android:layout_margin="4dp"
+                android:src="@mipmap/ic_launcher">
+
+                <ImageView
+                    android:id="@+id/image_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_launcher"
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
+
+
+        <!-- Aggiungi il TextView con il testo "Partecipants:" -->
+        <TextView
+            android:id="@+id/text_participants_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Partecipants:"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/image_account_cardView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:textColor="@android:color/black" />
+
+        <!-- RecyclerView per gli utenti esistenti -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_group"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_participants_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:listitem="@layout/group_item" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

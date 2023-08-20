@@ -60,6 +60,9 @@
         android:name="it.ter.sync.view.MessageFragment"
         android:label="@string/menu_message"
         tools:layout="@layout/fragment_message" >
+        <action
+            android:id="@+id/action_messageFragment_to_groupDetailsFragment"
+            app:destination="@id/groupDetailsFragment" />
     </fragment>
 
     <fragment
@@ -77,6 +80,14 @@
         android:name="it.ter.sync.view.GroupFragment"
         android:label="@string/menu_groups"
         tools:layout="@layout/group_creation" >
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/groupDetailsFragment"
+        android:name="it.ter.sync.view.GroupDetailsFragment"
+        android:label="@string/group_details"
+        tools:layout="@layout/fragment_group_details" >
     </fragment>
 
     <fragment

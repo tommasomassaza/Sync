@@ -34,6 +34,7 @@
 
     <string name="interessi_string">Topics</string>
     <string name="filtri_string">Filtra:</string>
+    <string name="group_details">Group Details</string>
 
     <string name="max_length_tag">20</string>
     <string name="max_length_message">200</string>
