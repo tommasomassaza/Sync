@@ -1,6 +1,7 @@
 package it.ter.sync.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +13,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.message.MessageData
 import it.ter.sync.database.notify.NotificationData
@@ -43,9 +45,9 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
     var messageList: MutableLiveData<List<MessageData>> = MutableLiveData()
 
-    var currentChat: MutableLiveData<ChatData?> = MutableLiveData()
 
     var groupCreated: MutableLiveData<Boolean> = MutableLiveData()
+    var imageString: MutableLiveData<String> = MutableLiveData()
 
     // Dichiarazione del LiveData booleano
     var myBooleanLiveData = MutableLiveData<Boolean>()
@@ -211,7 +213,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun createGroupWithUsers(groupImageUrl: String, groupName: String) {
+    fun createGroupWithUsers(groupImageUrl: Uri?, groupName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             // Ottieni il riferimento al nodo "groups" nel database
             val groupsRef = database.getReference("chats")
@@ -221,7 +223,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
             // Crea l'oggetto GroupData con le informazioni del gruppo
             val groupData =
-                ChatData(groupId, groupImageUrl, "", "", "", groupName, true, groupMembers)
+                ChatData(groupId, groupImageUrl.toString(), "", "", "", groupName, true, groupMembers)
 
             // Salva il gruppo nel database utilizzando l'ID appena generato
             groupsRef.child(groupId).setValue(groupData)
@@ -275,7 +277,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                             Log.i("GROOPON", "Messaggio inviato con successo al gruppo")
 
 
-                            updateChatGroup(user!!.uid, groupId, message, groupImageUrl, groupName)
+                            updateChatGroup(user!!.uid, groupId, message, groupName)
                             /* for (memberId in membersCopy) {
                             updateChatGroup(memberId, groupId, message, groupImageUrl, groupName)
                         }*/
@@ -333,7 +335,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                                                 memberId,
                                                 groupId,
                                                 message,
-                                                groupImageUrl,
                                                 groupName,
                                             )
 
@@ -360,7 +361,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     }
 
 
-    fun sendMessageGroupCreate(text: String, groupId: String?, groupImageUrl: String, groupName: String) {
+    fun sendMessageGroupCreate(text: String, groupId: String?, groupImageUrl: Uri?, groupName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             if (groupId != null) {
                 val user = firebaseAuth.currentUser
@@ -376,7 +377,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
                     val message = MessageData(
                         messageId,
-                        groupImageUrl,
+                        groupImageUrl.toString(),
                         text,
                         timestampMillis.toString(),
                         dateString,
@@ -391,11 +392,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                             Log.i("GROOPON", "Messaggio inviato con successo al gruppo")
 
 
-                            // Per ogni membro del gruppo, aggiorna la chat con il nuovo messaggio
-                            updateChatGroupCreate(user!!.uid, groupId, message, groupImageUrl, groupName)
-                            /* for (memberId in membersCopy) {
-                            updateChatGroup(memberId, groupId, message, groupImageUrl, groupName)
-                        }*/
+                            updateChatGroupCreate(user!!.uid, groupId, message, "", groupName)
+                            updateGroupImage(user!!.uid, groupId, groupImageUrl)
 
                         }
                         .addOnFailureListener { error ->
@@ -420,7 +418,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
                             val message = MessageData(
                                 messageId,
-                                groupImageUrl,
+                                groupImageUrl.toString(),
                                 text,
                                 timestampMillis.toString(),
                                 dateString,
@@ -442,9 +440,11 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                                         memberId,
                                         groupId,
                                         message,
-                                        groupImageUrl,
+                                        "",
                                         groupName,
                                     )
+
+                                    updateGroupImage(memberId, groupId, groupImageUrl)
 
                                 }
                                 .addOnFailureListener { error ->
@@ -471,7 +471,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         return dateFormat.format(Date(timestampMillis))
     }
 
-    private fun updateChatGroup(memberId: String, groupId: String, message: MessageData, groupImageUrl: String, groupName: String) {
+    private fun updateChatGroup(memberId: String, groupId: String, message: MessageData, groupName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val chatUserRef = database.getReference("chats/$memberId/$groupId")
 
@@ -480,19 +480,19 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     val existingChatData = snapshot.getValue(ChatData::class.java)
                     val existingGroupMembers = existingChatData?.groupMembers ?: emptyList()
 
-                    Log.e("VALORE VECCHIO", "${existingGroupMembers}")
+                    Log.e("VALORE VECCHIO", "$existingGroupMembers")
 
-                    val chatUser = ChatData(
-                        groupId,
-                        groupImageUrl,
-                        message.text,
-                        message.timeStamp,
-                        message.timestampMillis,
-                        messengerName,
-                        true,
-                        existingGroupMembers // Usa il valore corrente di groupMembers
-                    )
-                    chatUserRef.setValue(chatUser)
+                    // Creo una mappa delle modifiche da apportare
+                    val updates = HashMap<String, Any>()
+                    updates["lastMessage"] = message.text
+                    updates["timeStamp"] = message.timeStamp
+                    updates["timestampMillis"] = message.timestampMillis
+                    updates["messengerName"] = groupName
+                    updates["group"] = true
+                    updates["groupMembers"] = existingGroupMembers // Manteniamo la lista esistente
+
+                    // Applica le modifiche solo ai campi specificati
+                    chatUserRef.updateChildren(updates)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -501,7 +501,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             })
         }
     }
-
 
 
     private fun updateChatGroupCreate(memberId: String, groupId: String, message: MessageData, groupImageUrl: String, groupName: String) {
@@ -519,10 +518,54 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             )
             chatUserRef.setValue(chatUser)
 
-            //currentChat.postValue(chatUser)
-
             //pulisco la lista fissa che conteneva gli IDs una volta creato il gruppo
             groupMembers.clear()
+        }
+    }
+
+
+    //DA IMPLEMENTARE
+    private fun updateGroupImage(memberId: String, groupId: String, messengerImageUrl: Uri?) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            if (messengerImageUrl != null) {
+                // Carica l'immagine nello storage di Firebase
+                val storageRef =
+                    FirebaseStorage.getInstance().reference.child("group_images/${messengerImageUrl.lastPathSegment}")
+                val uploadTask = storageRef.putFile(messengerImageUrl)
+
+                uploadTask.addOnSuccessListener {
+                    // Ottieni l'URL dell'immagine caricata
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+                        // Ora hai l'URL dell'immagine, puoi aggiornare il database con questo URL
+                        val chatUserRef = database.getReference("chats/$memberId/$groupId")
+                        val imageUrl = uri.toString()
+                        // Aggiorna il tuo database Realtime con imageUrl
+                        chatUserRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                // Creo una mappa delle modifiche da apportare
+                                val updates = HashMap<String, Any>()
+                                updates["image"] = imageUrl
+
+                                // Applica le modifiche solo ai campi specificati
+                                chatUserRef.updateChildren(updates)
+
+                                //da prendere nel groupFragment
+                                imageString.postValue(messengerImageUrl.toString())
+                            }
+
+                            // Esegui altre operazioni necessarie, come la creazione del gruppo
+                            // ...
+                            override fun onCancelled(error: DatabaseError) {
+                                // Handle error
+                            }
+                        })
+                    }.addOnFailureListener { exception ->
+                        // Gestisci l'errore nel caricamento dell'immagine
+                        // ...
+                    }
+                }
+            }
         }
     }
 

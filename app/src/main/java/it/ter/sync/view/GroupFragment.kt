@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import it.ter.sync.R
 import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.FragmentChatBinding
 import it.ter.sync.databinding.GroupCreationBinding
@@ -59,11 +61,11 @@ class GroupFragment : Fragment() {
 
         binding.saveBtn.setOnClickListener {
             val name = binding.editTextGroupName.text.toString().ifEmpty { binding.editTextGroupName.hint.toString()}
-            messageViewModel.createGroupWithUsers("",name)
+            messageViewModel.createGroupWithUsers(groupImageUri,name)
             saveButtonClicked = true
         }
 
-        binding.imageViewGroupIcon.setOnClickListener {
+        binding.imagePost.setOnClickListener {
             pickImageFromGallery()
         }
 
@@ -96,8 +98,12 @@ class GroupFragment : Fragment() {
             val imageUri = data?.data
 
             groupImageUri = imageUri
-            // Ora che hai il bitmap, puoi chiamare il metodo UpdateUser()
-            //chatViewModel.updateGroupImage(imageUri)
+
+            // Carica l'immagine nell'ImageView immediatamente
+            Glide.with(requireContext())
+                .load(imageUri)
+                .error(R.mipmap.ic_launcher)
+                .into(binding.imagePost)
         }
     }
 
@@ -119,6 +125,12 @@ class GroupFragment : Fragment() {
                     Log.i(TAG, "Save failed")
                 }
             }
+        }
+        messageViewModel.imageString.observe(viewLifecycleOwner) {
+            Glide.with(this)
+                .load(it)
+                .error(R.mipmap.ic_launcher)
+                .into(binding.imagePost)
         }
     }
 }
