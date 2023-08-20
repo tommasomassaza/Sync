@@ -79,6 +79,9 @@ class GroupFragment : Fragment() {
 
         // Recupera i messaggi esistenti dalla Firebase Realtime Database
         chatViewModel.retrieveChats()
+
+        // Reimposta l'immagine predefinita per imagePost
+        binding.imagePost.setImageResource(R.mipmap.ic_launcher)
     }
 
     override fun onDestroyView() {
@@ -99,11 +102,13 @@ class GroupFragment : Fragment() {
 
             groupImageUri = imageUri
 
-            // Carica l'immagine nell'ImageView immediatamente
-            Glide.with(requireContext())
-                .load(imageUri)
-                .error(R.mipmap.ic_launcher)
-                .into(binding.imagePost)
+            if(groupImageUri != null) {
+                // Carica l'immagine nell'ImageView immediatamente
+                Glide.with(requireContext())
+                    .load(groupImageUri)
+                    .error(R.mipmap.ic_launcher)
+                    .into(binding.imagePost)
+            }
         }
     }
 
@@ -126,11 +131,6 @@ class GroupFragment : Fragment() {
                 }
             }
         }
-        messageViewModel.imageString.observe(viewLifecycleOwner) {
-            Glide.with(this)
-                .load(it)
-                .error(R.mipmap.ic_launcher)
-                .into(binding.imagePost)
-        }
+
     }
 }

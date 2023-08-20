@@ -89,8 +89,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 // Esegui qui il codice che dipende dal risultato
                 myBooleanLiveData.value  = isGroup
 
-                Log.i("BIS BOOLEANO", "${ myBooleanLiveData.value} ")
-                Log.i("BIS BOOLEANO 2", "${ isGroup} ")
+                Log.i("IS_GROUP", "${ myBooleanLiveData.value} ")
+                Log.i("IS_GROUP2", "${ isGroup} ")
             }
 
         }
@@ -197,8 +197,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
         }
     }
-
-
 
 
     fun addUserToGroup(messangerId: String) {
@@ -458,10 +456,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     }
 
 
-
-
-
-
+    
     private fun getDateString(timestampMillis: Long): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         dateFormat.timeZone = TimeZone.getTimeZone("Europe/Rome") // Imposta il fuso orario su Italia
@@ -484,7 +479,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     updates["lastMessage"] = message.text
                     updates["timeStamp"] = message.timeStamp
                     updates["timestampMillis"] = message.timestampMillis
-                    //updates["messengerName"] = groupName
                     updates["group"] = true
                     updates["groupMembers"] = existingGroupMembers // Manteniamo la lista esistente
 
