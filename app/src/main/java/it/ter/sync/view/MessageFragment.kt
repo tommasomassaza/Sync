@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,8 @@ import it.ter.sync.view.adapter.MessageAdapter
 import it.ter.sync.viewmodel.MessageViewModel
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.navigation.fragment.findNavController
+
 
 class MessageFragment : Fragment() {
     private val TAG: String = javaClass.simpleName
@@ -73,6 +76,17 @@ class MessageFragment : Fragment() {
         messageAdapter = MessageAdapter(emptyList(), messengerId, messengerName)
         recyclerView.adapter = messageAdapter
 
+
+        // Dentro il listener del click di profileImage
+        binding.profileImage.setOnClickListener {
+            val navController = Navigation.findNavController(it)
+            val bundle = Bundle()
+            bundle.putString("messengerId", messengerId)
+            bundle.putString("messengerName", messengerName)
+            bundle.putString("messengerImageUrl", messengerImageUrl)
+            navController.navigate(R.id.action_messageFragment_to_groupDetailsFragment, bundle)
+        }
+
         // Gestisci l'invio di nuovi messaggi quando viene premuto il pulsante di invio
         val sendButton = binding.sendButton
         sendButton.setOnClickListener {
@@ -115,6 +129,7 @@ class MessageFragment : Fragment() {
         // Recupera i messaggi esistenti
         messageViewModel.retrieveMessages(messengerId, messengerName, currentUserName)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
