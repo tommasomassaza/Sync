@@ -31,6 +31,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
 
     var chatList: MutableLiveData<List<ChatData>> = MutableLiveData()
     var chatAndGroupList: MutableLiveData<List<ChatData>> = MutableLiveData()
+    var groupUsersList: MutableLiveData<List<String>> = MutableLiveData()
 
 
     private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -129,11 +130,29 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
         }
     }
 
+    fun retrieveUsersInGroup(messangerId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
 
+            val chatsRef = database.getReference("chats/${user?.uid}/${messangerId}")
 
-    fun updateGroupImage(imageUri: Uri?) {
+            // Listener per chat da user ai vari messenger
+            chatsRef.orderByChild("timestampMillis").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val existingChatData = snapshot.getValue(ChatData::class.java)
+                    val usersInGroup = existingChatData?.groupMembers ?: emptyList()
 
+                    groupUsersList.postValue(usersInGroup)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Gestisci l'errore di recupero dei messaggi
+                    Log.i(TAG, error.message)
+                }
+            })
+        }
     }
+
 
 
 }

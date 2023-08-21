@@ -34,7 +34,7 @@
                 android:src="@mipmap/ic_launcher">
 
                 <ImageView
-                    android:id="@+id/image_account"
+                    android:id="@+id/image_group"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@mipmap/ic_launcher"
