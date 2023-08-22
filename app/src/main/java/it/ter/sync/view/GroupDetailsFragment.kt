@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import it.ter.sync.R
 import it.ter.sync.database.user.UserData
 import it.ter.sync.databinding.FragmentGroupDetailsBinding
+import it.ter.sync.view.adapter.ChatAdapter
 import it.ter.sync.view.adapter.GroupDetailsAdapter
 import it.ter.sync.viewmodel.ChatViewModel
 import it.ter.sync.viewmodel.MessageViewModel
@@ -53,6 +54,9 @@ class GroupDetailsFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
+        groupDetailsAdapter = GroupDetailsAdapter(emptyList())
+        recyclerView.adapter = groupDetailsAdapter
+
         initObservers()
 
 
@@ -77,7 +81,10 @@ class GroupDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        chatViewModel.retrieveUsersInGroup(messengerId)
+        messageViewModel.retrieveUsersInGroup(messengerId)
+
+        // Setto il nome del gruppo
+        binding.textGroupName.text = messengerName
     }
 
 
@@ -88,7 +95,7 @@ class GroupDetailsFragment : Fragment() {
 
 
     private fun initObservers() {
-        chatViewModel.groupUsersList.observe(viewLifecycleOwner) {
+        messageViewModel.groupUsersList.observe(viewLifecycleOwner) {
             groupDetailsAdapter.setGroupUsersList(it)
         }
     }

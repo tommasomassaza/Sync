@@ -1,45 +1,41 @@
 package it.ter.sync.view.adapter
 
-import android.os.Bundle
+
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import it.ter.sync.R
-import it.ter.sync.database.chat.ChatData
-import it.ter.sync.database.message.MessageData
 import it.ter.sync.database.user.UserData
-import it.ter.sync.databinding.ChatItemBinding
+import it.ter.sync.databinding.GroupItemBinding
 
-class GroupDetailsAdapter (private var groupUsersList: List<String>) : RecyclerView.Adapter<GroupDetailsAdapter.ViewHolder>() {
+class GroupDetailsAdapter (private var groupUsersList: List<UserData>) : RecyclerView.Adapter<GroupDetailsAdapter.ViewHolder>() {
 
-    fun setGroupUsersList(groupUsers: List<String>) {
+    fun setGroupUsersList(groupUsers: List<UserData>) {
         groupUsersList = groupUsers
         notifyDataSetChanged() // Aggiorna la RecyclerView
     }
 
 
-    class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: GroupItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = GroupItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        /*
-        holder.binding.apply {
-            lastMessage.text = chatList[position].lastMessage
-            messageTime.text = chatList[position].timeStamp
-            contactName.text = chatList[position].messengerName
 
-            if(chatList[position].image != "") {
-                Glide.with(root)
-                    .load(chatList[position].image)
-                    .into(profileImage)
-            }
-        }*/
+        holder.binding.apply {
+            contactName.text = groupUsersList[position].name
+
+
+            Glide.with(root)
+                .load(groupUsersList[position].image)
+                .error(R.mipmap.ic_launcher)
+                .into(profileImage)
+        }
     }
 
     override fun getItemCount(): Int {

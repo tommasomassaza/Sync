@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.message.MessageData
@@ -44,6 +45,10 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     private var lastTimestamp: Long = 0
 
     var messageList: MutableLiveData<List<MessageData>> = MutableLiveData()
+
+
+    private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    var groupUsersList: MutableLiveData<List<UserData>> = MutableLiveData()
 
 
     var groupCreated: MutableLiveData<Boolean> = MutableLiveData()
@@ -602,6 +607,57 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 .addOnFailureListener { error ->
                     Log.e(TAG, "${error.message}")
                 }
+        }
+    }
+
+
+    fun retrieveUsersInGroup(messangerId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = firebaseAuth.currentUser
+
+            val chatsRef = database.getReference("chats/${user?.uid}/${messangerId}")
+
+            // Listener per chat da user ai vari messenger
+            chatsRef.orderByChild("timestampMillis").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val existingChatData = snapshot.getValue(ChatData::class.java)
+                    val usersInGroup = existingChatData?.groupMembers ?: emptyList()
+
+                    for (memberId in usersInGroup) {
+                        if (memberId != user!!.uid) {
+                            fireStore.collection("users")
+                                .document(memberId)
+                                .get()
+                                .addOnSuccessListener { documentSnapshot ->
+                                    if (documentSnapshot.exists()) {
+                                        val name = documentSnapshot.getString("name") ?: ""
+                                        val age = documentSnapshot.getString("age") ?: ""
+                                        val location = documentSnapshot.getString("location") ?: ""
+                                        val image = documentSnapshot.getString("image") ?: ""
+                                        val tag = documentSnapshot.getString("tag") ?: ""
+                                        val tag2 = documentSnapshot.getString("tag2") ?: ""
+                                        val tag3 = documentSnapshot.getString("tag3") ?: ""
+                                        val stato = documentSnapshot.getString("stato") ?: ""
+                                        val privatetag1 = documentSnapshot.getString("privatetag1") ?: ""
+                                        val privatetag2 = documentSnapshot.getString("privatetag2") ?: ""
+                                        val privatetag3 = documentSnapshot.getString("privatetag3") ?: ""
+                                        val userData = UserData(uid=memberId,name=name,location=location,age=age,image=image,tag=tag,tag2=tag2,tag3=tag3, stato=stato,privatetag1=privatetag1,privatetag2=privatetag2,privatetag3=privatetag3)
+
+                                        val currentList = groupUsersList.value ?: emptyList()
+                                        val updatedList = currentList.toMutableList()
+                                        updatedList.add(userData)
+                                        groupUsersList.postValue(updatedList)
+                                    }
+                                }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Gestisci l'errore di recupero dei messaggi
+                    Log.i(TAG, error.message)
+                }
+            })
         }
     }
 }

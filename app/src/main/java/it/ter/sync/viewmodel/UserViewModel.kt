@@ -29,7 +29,6 @@ class UserViewModel(private val application: Application) : AndroidViewModel(app
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val storage: FirebaseStorage = FirebaseStorage.getInstance()
-    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     private val userRepository: UserRepository = UserRepository(application)
 

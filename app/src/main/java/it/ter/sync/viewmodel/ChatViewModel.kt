@@ -34,9 +34,6 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
     var groupUsersList: MutableLiveData<List<String>> = MutableLiveData()
 
 
-    private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
-
 
 
     fun retrieveChats() {
@@ -141,6 +138,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val existingChatData = snapshot.getValue(ChatData::class.java)
                     val usersInGroup = existingChatData?.groupMembers ?: emptyList()
+
 
                     groupUsersList.postValue(usersInGroup)
                 }
