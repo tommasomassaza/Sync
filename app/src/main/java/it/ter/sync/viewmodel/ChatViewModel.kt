@@ -189,8 +189,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
                                             Log.i("USERDATA", "${userData.name}")
 
 
-                                            // Verifica se userData è già presente nella lista
-                                            if (!currentList.contains(userData)) {
+                                            if (currentList.none { it.uid == userData.uid }) {
                                                 currentList.add(userData)
                                             }
 
@@ -219,6 +218,8 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
         }
 
     }
+
+
 
 
 
