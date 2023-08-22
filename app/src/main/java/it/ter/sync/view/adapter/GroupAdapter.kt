@@ -20,7 +20,7 @@ import it.ter.sync.viewmodel.ChatViewModel
 import it.ter.sync.viewmodel.MessageViewModel
 import it.ter.sync.viewmodel.NotificationViewModel
 
-class GroupAdapter (private var chatList: List<ChatData>, private var currentUser: UserData,private var messageViewModel: MessageViewModel) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
+class GroupAdapter (private var groupUsersList: List<UserData>, private var currentUser: UserData,private var messageViewModel: MessageViewModel) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
 
 
 
@@ -30,8 +30,8 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
         private val defaultColor = 0xFFECECEC.toInt()
 
 
-        fun setChatList(chats: List<ChatData>) {
-        chatList = chats
+        fun setUsersList(groupUsers: List<UserData>) {
+            groupUsersList = groupUsers
         notifyDataSetChanged() // Aggiorna la RecyclerView
     }
 
@@ -49,7 +49,7 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val chatData = chatList[position]
+        val userData = groupUsersList[position]
 
         // Verifica se l'elemento è selezionato
         val isItemSelected = selectedPositions.contains(position)
@@ -61,7 +61,7 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
         holder.binding.root.setOnClickListener {
             val context = holder.binding.root.context
 
-            val messengerId = chatData.uid!!
+            val messengerId = userData.uid!!
             //Questo metodo gestisce anche la rimozione dal gruppo se l'utente era già stato selezionato
             messageViewModel.addUserToGroup(messengerId)
 
@@ -79,11 +79,11 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
 
         // Resto del codice per il binding dei dati nell'elemento RecyclerView
         holder.binding.apply {
-            contactName.text = chatData.messengerName
+            contactName.text = userData.name
 
-            if (chatData.image != "") {
+            if (userData.image != "") {
                 Glide.with(root)
-                    .load(chatData.image)
+                    .load(userData.image)
                     .into(profileImage)
             }
         }
@@ -94,6 +94,6 @@ class GroupAdapter (private var chatList: List<ChatData>, private var currentUse
 
 
     override fun getItemCount(): Int {
-        return chatList.size
+        return groupUsersList.size
     }
 }

@@ -624,7 +624,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     val usersInGroup = existingChatData?.groupMembers ?: emptyList()
 
                     for (memberId in usersInGroup) {
-                        if (memberId != user!!.uid) {
                             fireStore.collection("users")
                                 .document(memberId)
                                 .get()
@@ -649,8 +648,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                                         groupUsersList.postValue(updatedList)
                                     }
                                 }
-                        }
-                    }
+                            }
                 }
 
                 override fun onCancelled(error: DatabaseError) {

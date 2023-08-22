@@ -78,7 +78,7 @@ class GroupFragment : Fragment() {
         userViewModel.getUserInfo()
 
         // Recupera i messaggi esistenti dalla Firebase Realtime Database
-        chatViewModel.retrieveChats()
+        chatViewModel.retrieveUsersWhoChattedWithMe()
 
         // Reimposta l'immagine predefinita per imagePost
         binding.imagePost.setImageResource(R.mipmap.ic_launcher)
@@ -113,8 +113,8 @@ class GroupFragment : Fragment() {
     }
 
     private fun initObservers() {
-        chatViewModel.chatList.observe(viewLifecycleOwner) {
-            groupAdapter.setChatList(it)
+        chatViewModel.groupUsersList.observe(viewLifecycleOwner) {
+            groupAdapter.setUsersList(it)
         }
         userViewModel.currentUser.observe(viewLifecycleOwner) {
             groupAdapter.setCurrentUser(it)

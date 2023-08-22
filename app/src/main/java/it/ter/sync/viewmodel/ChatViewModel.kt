@@ -14,9 +14,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
 import it.ter.sync.database.chat.ChatData
 import it.ter.sync.database.message.MessageData
+import it.ter.sync.database.user.UserData
 import it.ter.sync.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +33,9 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
 
     var chatList: MutableLiveData<List<ChatData>> = MutableLiveData()
     var chatAndGroupList: MutableLiveData<List<ChatData>> = MutableLiveData()
-    var groupUsersList: MutableLiveData<List<String>> = MutableLiveData()
+    var groupUsersList: MutableLiveData<List<UserData>> = MutableLiveData()
+
+    private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
 
 
@@ -127,20 +131,83 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
         }
     }
 
-    fun retrieveUsersInGroup(messangerId: String) {
+    fun retrieveUsersWhoChattedWithMe() {
         viewModelScope.launch(Dispatchers.IO) {
             val user = firebaseAuth.currentUser
 
-            val chatsRef = database.getReference("chats/${user?.uid}/${messangerId}")
+            val currentList: MutableList<UserData> = mutableListOf()
+            val chatsRef = database.getReference("chats/${user?.uid}")
 
+            Log.i("USER", "${user?.uid}")
             // Listener per chat da user ai vari messenger
             chatsRef.orderByChild("timestampMillis").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val existingChatData = snapshot.getValue(ChatData::class.java)
-                    val usersInGroup = existingChatData?.groupMembers ?: emptyList()
+
+                    for (chatSnapshot in snapshot.children) {
+                        val chat = chatSnapshot.getValue(ChatData::class.java)
+                        if (chat?.group == false) {
+                            val secondElementId = chatSnapshot.key
+                            Log.i("SECONDELEMENT", "$secondElementId")
+                            // Ora hai il secondo elemento (l'id del messanger) con cui l'utente ha chattato
+                            // Puoi fare ciò che desideri con questo ID.
+                            if (secondElementId != null) {
+                                fireStore.collection("users")
+                                    .document(secondElementId)
+                                    .get()
+                                    .addOnSuccessListener { documentSnapshot ->
+                                        if (documentSnapshot.exists()) {
+                                            val name = documentSnapshot.getString("name") ?: ""
+                                            val age = documentSnapshot.getString("age") ?: ""
+                                            val location =
+                                                documentSnapshot.getString("location") ?: ""
+                                            val image = documentSnapshot.getString("image") ?: ""
+                                            val tag = documentSnapshot.getString("tag") ?: ""
+                                            val tag2 = documentSnapshot.getString("tag2") ?: ""
+                                            val tag3 = documentSnapshot.getString("tag3") ?: ""
+                                            val stato = documentSnapshot.getString("stato") ?: ""
+                                            val privatetag1 =
+                                                documentSnapshot.getString("privatetag1") ?: ""
+                                            val privatetag2 =
+                                                documentSnapshot.getString("privatetag2") ?: ""
+                                            val privatetag3 =
+                                                documentSnapshot.getString("privatetag3") ?: ""
+                                            val userData = UserData(
+                                                uid = secondElementId,
+                                                name = name,
+                                                location = location,
+                                                age = age,
+                                                image = image,
+                                                tag = tag,
+                                                tag2 = tag2,
+                                                tag3 = tag3,
+                                                stato = stato,
+                                                privatetag1 = privatetag1,
+                                                privatetag2 = privatetag2,
+                                                privatetag3 = privatetag3
+                                            )
+
+                                            Log.i("USERDATA", "${userData.name}")
 
 
-                    groupUsersList.postValue(usersInGroup)
+                                            // Verifica se userData è già presente nella lista
+                                            if (!currentList.contains(userData)) {
+                                                currentList.add(userData)
+                                            }
+
+                                                Log.i("UPDATED LIST", "${currentList}")
+                                                // Ora updatedList contiene userData solo se non era già presente
+
+                                            // Aggiorna groupUsersList con la nuova lista
+                                            groupUsersList.postValue(currentList)
+                                            Log.i("LA CURRENT", "${currentList}")
+                                            Log.i("GROUP LIST", "${groupUsersList.value}")
+                                            }
+
+                                    }
+                            }
+                        }
+                    }
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -148,7 +215,9 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
                     Log.i(TAG, error.message)
                 }
             })
+
         }
+
     }
 
 
