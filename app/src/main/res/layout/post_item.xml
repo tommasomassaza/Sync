@@ -110,18 +110,59 @@
         app:layout_constraintEnd_toEndOf="parent">
     </TextView>
 
-    <TextView
-        android:id="@+id/tags_view"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textColor="#00c3ff"
-        app:layout_constraintTop_toBottomOf="@id/interessi"
+        android:text="Button 1"
+        android:textSize="12sp"
+        android:clickable="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-    </TextView>
+        app:layout_constraintEnd_toStartOf="@id/button2"
+        app:layout_constraintTop_toBottomOf="@id/interessi"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:paddingHorizontal="8dp"
+        android:backgroundTint="#36747d"
+       />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button 2"
+        android:textSize="12sp"
+        android:clickable="false"
+        app:layout_constraintStart_toEndOf="@id/button1"
+        app:layout_constraintEnd_toStartOf="@id/button3"
+        app:layout_constraintTop_toBottomOf="@id/interessi"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:backgroundTint="#36747d"
+
+        />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button 3"
+        android:textSize="12sp"
+        android:clickable="false"
+        app:layout_constraintStart_toEndOf="@id/button2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/interessi"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:backgroundTint="#36747d"
+
+        />
+
 
     <ImageView
         android:id="@+id/sad"
@@ -146,7 +187,7 @@
         app:backgroundTint="@android:color/holo_green_light"
         app:layout_constraintEnd_toStartOf="@+id/chat"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tags_view" />
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
     <ImageButton
         android:id="@+id/chat"
@@ -159,7 +200,7 @@
         app:backgroundTint="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/like"
-        app:layout_constraintTop_toBottomOf="@+id/tags_view" />
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

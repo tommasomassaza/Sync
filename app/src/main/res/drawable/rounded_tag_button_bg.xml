@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#33cc5a " />
-    <corners android:radius="20dp" /> <!-- Modifica questo valore per regolare il raggio degli angoli -->
+    <corners android:radius="20dp" /> <!-- Raggio degli angoli -->
 </shape>

@@ -101,10 +101,12 @@ class PostAdapter(private var postList: List<UserData>, private var likeList: Li
 
                 if(postList[position].tag.isEmpty() || postList[position].tag2.isEmpty() || postList[position].tag3.isEmpty()) {
                     sad.visibility = View.VISIBLE
-                    tagsView.text = "\n"+ postList[position].name+" non ha inserito interessi"
+                   // tagsView.text = "\n"+ postList[position].name+" non ha inserito interessi"
                 } else{
                     sad.visibility = View.INVISIBLE
-                    tagsView.text = "#"+postList[position].tag + " #" + postList[position].tag2 +" #"+postList[position].tag3
+                    button1.text = postList[position].tag
+                    button2.text = postList[position].tag2
+                    button3.text = postList[position].tag3
                 }
 
 

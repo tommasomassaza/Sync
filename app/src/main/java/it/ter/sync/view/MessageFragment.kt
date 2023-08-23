@@ -79,12 +79,15 @@ class MessageFragment : Fragment() {
 
         // Dentro il listener del click di profileImage
         binding.profileImage.setOnClickListener {
+            if(isChatGroup) {
             val navController = Navigation.findNavController(it)
             val bundle = Bundle()
             bundle.putString("messengerId", messengerId)
             bundle.putString("messengerName", messengerName)
             bundle.putString("messengerImageUrl", messengerImageUrl)
-            navController.navigate(R.id.action_messageFragment_to_groupDetailsFragment, bundle)
+                navController.navigate(R.id.action_messageFragment_to_groupDetailsFragment, bundle)
+            }
+
         }
 
         // Gestisci l'invio di nuovi messaggi quando viene premuto il pulsante di invio
