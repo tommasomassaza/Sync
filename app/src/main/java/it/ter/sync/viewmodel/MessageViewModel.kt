@@ -53,6 +53,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 
     var groupCreated: MutableLiveData<Boolean> = MutableLiveData()
     var imageString: MutableLiveData<String> = MutableLiveData()
+    var imageStringDetails: MutableLiveData<String> = MutableLiveData()
 
     // Dichiarazione del LiveData booleano
     var myBooleanLiveData = MutableLiveData<Boolean>()
@@ -508,8 +509,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-
-    //DA IMPLEMENTARE
     private fun updateGroupImage(memberId: String, groupId: String, messengerImageUrl: Uri?) {
         viewModelScope.launch(Dispatchers.IO) {
 
@@ -545,6 +544,55 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                                 // Handle error
                             }
                         })
+                    }.addOnFailureListener { exception ->
+                        // Gestisci l'errore nel caricamento dell'immagine
+                        // ...
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun updateGroupImageFromGroupDetails(groupId: String, messengerImageUrl: Uri?) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val currentList = groupUsersList.value ?: emptyList()
+            if (messengerImageUrl != null) {
+                // Carica l'immagine nello storage di Firebase
+                val storageRef =
+                    FirebaseStorage.getInstance().reference.child("group_images/${messengerImageUrl.lastPathSegment}")
+                val uploadTask = storageRef.putFile(messengerImageUrl)
+
+                uploadTask.addOnSuccessListener {
+                    // Ottieni l'URL dell'immagine caricata
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+
+                        for (userData in currentList) {
+                        // Ora hai l'URL dell'immagine, puoi aggiornare il database con questo URL
+                        val chatUserRef = database.getReference("chats/${userData.uid}/$groupId")
+                        val imageUrl = uri.toString()
+                        // Aggiorna il tuo database Realtime con imageUrl
+                        chatUserRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                // Creo una mappa delle modifiche da apportare
+                                val updates = HashMap<String, Any>()
+                                updates["image"] = imageUrl
+
+                                // Applica le modifiche solo ai campi specificati
+                                chatUserRef.updateChildren(updates)
+
+                                //da prendere nel groupDetailsFragment
+                                imageStringDetails.postValue(messengerImageUrl.toString())
+                            }
+
+                            // Esegui altre operazioni necessarie, come la creazione del gruppo
+                            // ...
+                            override fun onCancelled(error: DatabaseError) {
+                                // Handle error
+                            }
+                        })
+                        }
                     }.addOnFailureListener { exception ->
                         // Gestisci l'errore nel caricamento dell'immagine
                         // ...

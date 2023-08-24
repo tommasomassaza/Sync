@@ -123,7 +123,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="5dp"
         android:paddingHorizontal="8dp"
-        android:backgroundTint="#141ab8"
+        android:backgroundTint="#ff7300"
        />
 
     <Button
@@ -141,8 +141,8 @@
         android:layout_marginEnd="5dp"
         android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"
-        android:backgroundTint="#00c3ff"
-        android:background="@drawable/rounded_tag_button_bg"
+        android:backgroundTint="#ff7300"
+
 
         />
 
@@ -160,7 +160,7 @@
         android:layout_marginStart="5dp"
         android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"
-        android:backgroundTint="#36747d"
+        android:backgroundTint="#ff7300"
 
         />
 
