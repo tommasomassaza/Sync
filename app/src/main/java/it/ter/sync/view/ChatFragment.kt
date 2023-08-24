@@ -71,9 +71,9 @@ class ChatFragment : Fragment() {
             }
         })
 
-        binding.btnSearch.setOnClickListener {
+        /*binding.btnSearch.setOnClickListener {
             chatViewModel.filterChatsAndGroups(searchString)
-        }
+        }*/
 
 
         initObservers()
