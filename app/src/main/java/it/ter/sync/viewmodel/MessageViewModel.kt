@@ -554,7 +554,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     }
 
 
-    private fun updateGroupImageFromGroupDetails(groupId: String, messengerImageUrl: Uri?) {
+     fun updateGroupImageFromGroupDetails(groupId: String, messengerImageUrl: Uri?) {
         viewModelScope.launch(Dispatchers.IO) {
 
             val currentList = groupUsersList.value ?: emptyList()

@@ -1,12 +1,15 @@
 package it.ter.sync.view
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,6 +68,9 @@ class GroupDetailsFragment : Fragment() {
         messengerImageUrl = arguments?.getString("messengerImageUrl") ?: ""
 
 
+        binding.imageGroup.setOnClickListener {
+            pickImageFromGallery()
+        }
 
         if(messengerImageUrl != null) {
             // Carica l'immagine nell'ImageView immediatamente
@@ -75,6 +81,28 @@ class GroupDetailsFragment : Fragment() {
         }
 
         return root
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, 101)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == AppCompatActivity.RESULT_OK && requestCode == 101) {
+            val imageUri = data?.data
+
+            messageViewModel.updateGroupImageFromGroupDetails(messengerId, imageUri)
+
+            if(imageUri != null) {
+                // Carica l'immagine nell'ImageView immediatamente
+                Glide.with(requireContext())
+                    .load(imageUri)
+                    .error(R.mipmap.ic_launcher)
+                    .into(binding.imageGroup)
+            }
+        }
     }
 
 
