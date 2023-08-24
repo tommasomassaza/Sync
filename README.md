@@ -18,8 +18,8 @@
 - Cancellazione del profilo 
 - Gestione dei permessi (Immagini, Posizione, Altro)
 - Tag nelle chat
-- Gruppi visione utenti
-- Gruppi Immagini
+- [x] Gruppi visione utenti
+- [x] Gruppi Immagini
 - Desync/Blocco Utenti
 - Richiesta di consenso per il Sync (permesso di chattarre)
 - Notifiche per Gruppi
