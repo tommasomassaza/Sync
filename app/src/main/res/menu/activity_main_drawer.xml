@@ -8,24 +8,29 @@
             android:id="@+id/homeFragment"
             android:icon="@drawable/baseline_home_24"
             android:title="@string/menu_home"
+            android:itemBackground="#00c3ff"
 
             />
         <item
             android:id="@+id/accountFragment"
             android:icon="@drawable/baseline_manage_accounts_24"
-            android:title="@string/menu_account" />
+            android:title="@string/menu_account"
+            android:itemBackground="#00c3ff"/>
         <item
             android:id="@+id/chatFragment"
             android:icon="@drawable/baseline_chat_bubble_outline_24"
-            android:title="@string/menu_chat"/>
+            android:title="@string/menu_chat"
+            />
         <item
             android:id="@+id/GroupFragment"
             android:icon="@drawable/baseline_chat_bubble_outline_24"
-            android:title="@string/menu_groups"/>
+            android:title="@string/menu_groups"
+            android:itemBackground="#00c3ff"/>
 
         <item
             android:id="@+id/loginFragment"
             android:icon="@drawable/ic_menu_logout"
-            android:title="@string/menu_logout"/>
+            android:title="@string/menu_logout"
+            android:itemBackground="#00c3ff"/>
     </group>
 </menu>

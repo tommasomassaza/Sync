@@ -200,13 +200,14 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
                                             groupUsersList.postValue(currentList)
                                             Log.i("LA CURRENT", "${currentList}")
                                             Log.i("GROUP LIST", "${groupUsersList.value}")
+
+
                                             }
 
                                     }
                             }
                         }
                     }
-
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -214,6 +215,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application)  {
                     Log.i(TAG, error.message)
                 }
             })
+            currentList.clear()
 
         }
 

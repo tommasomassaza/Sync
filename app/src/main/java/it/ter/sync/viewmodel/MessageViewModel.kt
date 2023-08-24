@@ -618,44 +618,51 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             val chatsRef = database.getReference("chats/${user?.uid}/${messangerId}")
 
             // Listener per chat da user ai vari messenger
-            chatsRef.orderByChild("timestampMillis").addValueEventListener(object : ValueEventListener {
+            val valueEventListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    // Svuota la lista all'inizio del metodo
+                    val updatedList = mutableListOf<UserData>()
+
                     val existingChatData = snapshot.getValue(ChatData::class.java)
                     val usersInGroup = existingChatData?.groupMembers ?: emptyList()
 
                     for (memberId in usersInGroup) {
-                            fireStore.collection("users")
-                                .document(memberId)
-                                .get()
-                                .addOnSuccessListener { documentSnapshot ->
-                                    if (documentSnapshot.exists()) {
-                                        val name = documentSnapshot.getString("name") ?: ""
-                                        val age = documentSnapshot.getString("age") ?: ""
-                                        val location = documentSnapshot.getString("location") ?: ""
-                                        val image = documentSnapshot.getString("image") ?: ""
-                                        val tag = documentSnapshot.getString("tag") ?: ""
-                                        val tag2 = documentSnapshot.getString("tag2") ?: ""
-                                        val tag3 = documentSnapshot.getString("tag3") ?: ""
-                                        val stato = documentSnapshot.getString("stato") ?: ""
-                                        val privatetag1 = documentSnapshot.getString("privatetag1") ?: ""
-                                        val privatetag2 = documentSnapshot.getString("privatetag2") ?: ""
-                                        val privatetag3 = documentSnapshot.getString("privatetag3") ?: ""
-                                        val userData = UserData(uid=memberId,name=name,location=location,age=age,image=image,tag=tag,tag2=tag2,tag3=tag3, stato=stato,privatetag1=privatetag1,privatetag2=privatetag2,privatetag3=privatetag3)
+                        fireStore.collection("users")
+                            .document(memberId)
+                            .get()
+                            .addOnSuccessListener { documentSnapshot ->
+                                if (documentSnapshot.exists()) {
+                                    // ... (resto del codice)
+                                    val name = documentSnapshot.getString("name") ?: ""
+                                    val age = documentSnapshot.getString("age") ?: ""
+                                    val location = documentSnapshot.getString("location") ?: ""
+                                    val image = documentSnapshot.getString("image") ?: ""
+                                    val tag = documentSnapshot.getString("tag") ?: ""
+                                    val tag2 = documentSnapshot.getString("tag2") ?: ""
+                                    val tag3 = documentSnapshot.getString("tag3") ?: ""
+                                    val stato = documentSnapshot.getString("stato") ?: ""
+                                    val privatetag1 = documentSnapshot.getString("privatetag1") ?: ""
+                                    val privatetag2 = documentSnapshot.getString("privatetag2") ?: ""
+                                    val privatetag3 = documentSnapshot.getString("privatetag3") ?: ""
+                                    val userData = UserData(uid=memberId,name=name,location=location,age=age,image=image,tag=tag,tag2=tag2,tag3=tag3, stato=stato,privatetag1=privatetag1,privatetag2=privatetag2,privatetag3=privatetag3)
 
-                                        val currentList = groupUsersList.value ?: emptyList()
-                                        val updatedList = currentList.toMutableList()
-                                        updatedList.add(userData)
-                                        groupUsersList.postValue(updatedList)
-                                    }
+                                    updatedList.add(userData)
+                                    groupUsersList.postValue(updatedList)
                                 }
                             }
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     // Gestisci l'errore di recupero dei messaggi
                     Log.i(TAG, error.message)
                 }
-            })
+            }
+
+            // Rimuovi il listener ValueEventListener se è già stato impostato in precedenza
+            chatsRef.orderByChild("timestampMillis").removeEventListener(valueEventListener)
+            chatsRef.orderByChild("timestampMillis").addValueEventListener(valueEventListener)
         }
     }
+
 }

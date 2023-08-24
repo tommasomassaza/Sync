@@ -43,7 +43,7 @@
         android:id="@+id/editTextGroupName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Inserisci il nome del gruppo"
+        android:hint="Insert the name of the group"
         android:inputType="text"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
